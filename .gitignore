@@ -45,6 +45,12 @@ local.properties
 
 # Node
 node_modules
+
+
+ios/build
+android/build
+
+
 *.log
 .nvm
 /danger/node_modules/
@@ -58,3 +64,5 @@ node_modules
 
 /coverage
 /third-party
+
+
