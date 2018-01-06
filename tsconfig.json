@@ -1,0 +1,12 @@
+/*
+ * @Author: toringo 
+ * @Date: 2018-01-06 12:26:03 
+ * @Last Modified by: tori
+ * @Last Modified time: 2018-01-06 12:54:02
+ */
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "allowJs": true
+    }
+}
