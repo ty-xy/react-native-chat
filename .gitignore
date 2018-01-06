@@ -47,8 +47,7 @@ local.properties
 node_modules
 
 
-ios/build
-android/build
+
 
 
 *.log
