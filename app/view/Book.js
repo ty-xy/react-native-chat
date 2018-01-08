@@ -43,6 +43,7 @@ export default class Book extends Component {
             <Text style={styles.welcome}>
               1
             </Text>
+            <Text  style={{fontFamily:'iconfont'}}>&#xe63f;</Text>
           </View>
           <View style={[styles.box, styles.box2]}>
             <Text style={styles.welcome}>
