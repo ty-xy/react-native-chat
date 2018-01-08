@@ -27,7 +27,7 @@ export default class Home extends Component {
       alignSelf: 'center',
     },
     // tabBarIcon: ({ tintColor }) => (),
-    // tabBarIcon: ({ tintColor }) => (<Icon name="home" color={tintColor} size={22} />),
+    tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont'}}>&#xe62d;</Text>),
   }
   render() {
     const { navigation } = this.props;
