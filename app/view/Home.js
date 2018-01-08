@@ -27,6 +27,7 @@ export default class Home extends Component {
       alignSelf: 'center',
     },
     // tabBarIcon: ({ tintColor }) => (),
+    // tabBarIcon: ({ tintColor }) => (<Icon name="home" color={tintColor} size={22} />),
   }
   render() {
     const { navigation } = this.props;
@@ -42,7 +43,10 @@ export default class Home extends Component {
           </View>  
           <View style={styles.container}>  
             <View style={styles.box}><Text style={styles.text} onPress={ () => navigation.navigate('Detail') }>读书列表</Text></View>
-            <View style={styles.box}><Text style={styles.text}>应急包</Text></View>
+            <View style={styles.box}>
+              <Text style={styles.text}>应急包</Text>
+              <Text style={{fontFamily:'iconfont'}}>&#xe62d;</Text>
+            </View>
             <View style={styles.box}><Text style={styles.text}>救助设置</Text></View>
             <View style={styles.box}><Text style={styles.text}>避难点</Text></View>
           </View>
