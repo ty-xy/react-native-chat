@@ -16,8 +16,8 @@ import hostUser from '../store/mobx';
 @observer
 export default class Home extends Component {
   static navigationOptions = {
-    title: '首页',
-    tabBarLabel: '首页',
+    title: '消息',
+    tabBarLabel: '消息',
     alignSelf: 'center',
     headerStyle: {
       height: 49,

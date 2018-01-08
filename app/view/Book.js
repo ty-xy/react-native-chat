@@ -12,8 +12,8 @@ import {
 
 export default class Book extends Component {
   static navigationOptions = {
-    title: 'flex布局',
-    tabBarLabel: '布局',
+    title: '我的',
+    tabBarLabel: '我的',
     alignSelf: 'center',
     headerStyle: {
       height: 49,
