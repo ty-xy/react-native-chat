@@ -15,6 +15,7 @@ export default class Card extends PureComponent {
     _id: PropTypes.any,
     lastMessage: PropTypes.string,
     name: PropTypes.string,
+    _goChatWindow: PropTypes.func,
   };
 
   constructor(props) {
@@ -26,10 +27,6 @@ export default class Card extends PureComponent {
   componentDidMount() {
 
   }
-  _goChatWindow = () => {
-        const { navigation } = this.props;
-        navigation.navigate('CourseDetail', { id: item.article });
-  }
   render() {
     const { style = {}, lastMessage, _id, name } = this.props;
 
@@ -39,7 +36,7 @@ export default class Card extends PureComponent {
             ref={this.handleRef}
             underlayColor={'rgba(100,100,100,0.2)'}
             onPress={() => {
-                this._goChatWindow(item);
+                this.props._goChatWindow();
             }}
         >
             <View style={styles.chatList}>
