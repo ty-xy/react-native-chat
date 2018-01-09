@@ -34,6 +34,10 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>Fonts provided by application</key>
+	<array>
+	     <string>iconfont.ttf</string>
+	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

@@ -32,7 +32,7 @@ export default class Love extends Component {
     headerTitleStyle: {
       alignSelf: 'center',
     },
-    // tabBarIcon: ({ tintColor }) => (<Icon name="ios-heart" color={tintColor} size={22} />),
+    tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe635;</Text>),
   }
   componentWillMount() {
     this.props.list.list = [];
