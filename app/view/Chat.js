@@ -69,7 +69,8 @@ const styles = StyleSheet.create({
     alignContent: 'stretch',
     flexDirection: 'row',
     flexWrap: 'wrap', 
-    position: 'relative'
+    position: 'relative',
+    marginBottom: 15,
   },
   image: {
     width: '100%',

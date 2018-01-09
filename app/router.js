@@ -1,7 +1,8 @@
 import { TabNavigator, StackNavigator } from 'react-navigation';
 // import Icon from 'react-native-vector-icons/Ionicons';
 
-import HomePage from './view/Home';
+import Chat from './view/Chat';
+import ChatWindow from './view/ChatWindow';
 import LovePage from './view/Love';
 import BookPage from './view/Book';
 import DetailPage from './view/Detail';
@@ -11,7 +12,7 @@ import Panels from './view/Panel';
 // APP tab 配置: https://reactnavigation.org/docs/navigators/tab
 const TabNavigation = TabNavigator({
   Home: {
-    screen: HomePage,
+    screen: Chat,
   },
   Love: {
     screen: LovePage,
@@ -59,8 +60,8 @@ const Navigation = StackNavigator({
   Detail: {
     screen: Panels,
   },
-  DetailPage: {
-    screen: DetailPage,
+  ChatWindow: {
+    screen: ChatWindow,
   },
 });
 

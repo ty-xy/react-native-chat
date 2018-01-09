@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 
-export default class Card extends PureComponent {
+export default class ChatWindow extends PureComponent {
   static propTypes = {
     style: PropTypes.object,
     _id: PropTypes.any,
@@ -26,43 +26,23 @@ export default class Card extends PureComponent {
   componentDidMount() {
 
   }
-  _goChatWindow = () => {
-        const { navigation } = this.props;
-        navigation.navigate('CourseDetail', { id: item.article });
-  }
+
   render() {
     const { style = {}, lastMessage, _id, name } = this.props;
 
     return (
-        <TouchableHighlight
-            style={styles.card}
-            ref={this.handleRef}
-            underlayColor={'rgba(100,100,100,0.2)'}
-            onPress={() => {
-                this._goChatWindow(item);
-            }}
-        >
-            <View style={styles.chatList}>
-                <View style={styles.chatTitle}>
-                    <Text style={styles.chatContent}>{name}</Text>
-                    <Text style={styles.chatDate}>下午3：23</Text>
-                </View>
-                <Text style={styles.lastMessage}>{lastMessage}</Text>
-                <View style={styles.avatar}>
-                    <Image
-                        style={{width: 42, height: 42, borderRadius: 21}}
-                        source={require('../image/bg.png')}
-                    />
-                </View>
-                <View style={styles.badge}><Text style={{fontSize: 12, color: '#fff'}}>23</Text></View>
-            </View>
-        </TouchableHighlight>
+        <View style={styles.avatar}>
+            <Image
+                style={{width: 42, height: 42, borderRadius: 21}}
+                source={require('../image/bg.png')}
+            />
+        </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-    card: {
+    ChatWindow: {
         backgroundColor: '#ffffff',
         // paddingBottom: 14,
         marginTop: 15,
