@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
   AppRegistry,
   StyleSheet,
@@ -6,67 +6,62 @@ import {
   View,
   Image,
   ImageBackground,
-  Dimensions,
+  FlatList,
 } from 'react-native';
+// import { RkButton, RkCard } from 'react-native-ui-kitten';
 // import Icon from 'react-native-vector-icons/Ionicons';
-import { observer } from 'mobx-react/native';
-import hostUser from '../store/mobx';
+import { observer, inject } from 'mobx-react/native';
+import Card from '../component/Card';
 
 
 @observer
-export default class Home extends Component {
-  static navigationOptions = {
-    title: '首页',
-    tabBarLabel: '首页',
-    alignSelf: 'center',
-    headerStyle: {
-      height: 49,
-      backgroundColor: '#fff',
-    },
-    headerTitleStyle: {
-      alignSelf: 'center',
-    },
-    // tabBarIcon: ({ tintColor }) => (),
-    tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont'}}>&#xe62d;</Text>),
-  }
-  render() {
-    const { navigation } = this.props;
-    return (
-      <View style={styles.wrap}>
-        <ImageBackground
-          style={styles.image}
-          source={require('../image/bg.png')}
-          resizeMode="contain"
-        >
-          <View style={styles.extend}>
-            <Text>{hostUser.user.name}-{hostUser.user.username}</Text>          
-          </View>  
-          <View style={styles.container}>  
-            <View style={styles.box}><Text style={styles.text} onPress={ () => navigation.navigate('Detail') }>读书列表</Text></View>
-            <View style={styles.box}>
-              <Text style={styles.text}>应急包</Text>
-              <Text style={{fontFamily:'iconfont'}}>&#xe62d;</Text>
+@inject('home')
+export default class Home extends PureComponent {
+    
+    static navigationOptions = {
+        title: '消息(14)',
+        tabBarLabel: '消息',
+        alignSelf: 'center',
+        headerStyle: {
+            height: 49,
+            backgroundColor: '#fff',
+        },
+        headerTitleStyle: {
+            alignSelf: 'center',
+            fontSize: 16,
+            fontWeight: 'normal'
+        },
+        tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont', color: tintColor}}>&#xe63d;</Text>),
+    }
+    constructor() {
+        super();
+    }
+    _renderItem = ({item}) => {
+        return (<Card {...item} key={item._id} />);
+    }
+    _keyExtractor = (item, index) => item._id;
+    render() {
+        const { navigation, home } = this.props;
+        console.ignoredYellowBox = ['Remote debugger'];
+        return (
+            <View style={styles.wrap}>
+                <View style={styles.container}>
+                    <FlatList
+                        data={home.chatList}
+                        keyExtractor={this._keyExtractor}
+                        renderItem={this._renderItem}
+                    />
+                </View>
             </View>
-            <View style={styles.box}><Text style={styles.text}>救助设置</Text></View>
-            <View style={styles.box}><Text style={styles.text}>避难点</Text></View>
-          </View>
-        </ImageBackground>
-      </View>
-    );
-  }
+        );
+    }
 }
 
 const styles = StyleSheet.create({
   wrap: {
     flex: 1,
     justifyContent: 'flex-start',
-  },
-  extend: {
-    flex: 1,
-    justifyContent: 'space-around',
-    width: '100%',
-    height: '40%',
-    backgroundColor: 'transparent',
+    backgroundColor: '#F6F6F6',
   },
   container: {
     flex: 1,
@@ -74,7 +69,7 @@ const styles = StyleSheet.create({
     alignContent: 'stretch',
     flexDirection: 'row',
     flexWrap: 'wrap', 
-    // backgroundColor: '#EBF8FD',
+    position: 'relative'
   },
   image: {
     width: '100%',
