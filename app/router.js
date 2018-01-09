@@ -31,6 +31,13 @@ const TabNavigation = TabNavigator({
     },
     labelStyle: {
       marginTop: 0,
+      fontSize: 10,
+    },
+    iconStyle: {
+      marginBottom: 0,
+    },
+    tabStyle: {
+      padding: 0,
     },
     style: {
       height: 49,
