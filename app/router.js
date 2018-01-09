@@ -7,7 +7,7 @@ import LovePage from './view/Love';
 import BookPage from './view/Book';
 import DetailPage from './view/Detail';
 import Panels from './view/Panel';
-
+import Person from './view/myown/Person';
 
 // APP tab 配置: https://reactnavigation.org/docs/navigators/tab
 const TabNavigation = TabNavigator({
@@ -21,11 +21,14 @@ const TabNavigation = TabNavigator({
     screen: BookPage,
   },
 }, {
-  initialRouteName: 'Home',
+  initialRouteName: 'Book',
   order: ['Home', 'Love', 'Book'],
   tabBarOptions: {
     inactiveTintColor: '#999A9B',
     activeTintColor: '#218DF4',
+    fontSize: 10,
+    color: '#29B6F6',
+    letterSpacing: 0,
     showIcon: true, // android 默认不显示 icon, 需要设置为 true 才会显示
     indicatorStyle: {
       height: 0, // 如TabBar下面显示有一条线，可以设高度为0后隐藏
@@ -62,6 +65,9 @@ const Navigation = StackNavigator({
   },
   ChatWindow: {
     screen: ChatWindow,
+  },
+  Person: {
+    screen: Person,
   },
 });
 

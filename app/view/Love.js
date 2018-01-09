@@ -22,8 +22,8 @@ export default class Love extends Component {
     showInput: false
   }
   static navigationOptions = {
-    title: 'Mobx',
-    tabBarLabel: 'MOBX',
+    title: '联系人',
+    tabBarLabel: '联系人',
     alignSelf: 'center',
     headerStyle: {
       height: 49,
@@ -32,7 +32,7 @@ export default class Love extends Component {
     headerTitleStyle: {
       alignSelf: 'center',
     },
-    // tabBarIcon: ({ tintColor }) => (<Icon name="ios-heart" color={tintColor} size={22} />),
+    tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe635;</Text>),
   }
   componentWillMount() {
     this.props.list.list = [];
