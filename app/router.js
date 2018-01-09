@@ -33,7 +33,14 @@ const TabNavigation = TabNavigator({
       height: 0, // 如TabBar下面显示有一条线，可以设高度为0后隐藏
     },
     labelStyle: {
-      marginTop: 15,
+      marginTop: 0,
+      fontSize: 10,
+    },
+    iconStyle: {
+      marginBottom: 0,
+    },
+    tabStyle: {
+      padding: 0,
     },
     style: {
       height: 49,
