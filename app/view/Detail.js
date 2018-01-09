@@ -28,6 +28,7 @@ export default class Home extends Component {
   render() {
     return (
       <View style={styles.container}>
+      
         <Text style={styles.welcome}>
           DetailPage
         </Text>

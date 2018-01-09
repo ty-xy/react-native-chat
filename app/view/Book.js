@@ -5,9 +5,12 @@ import {
   Text,
   View,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  ImageBackground,
+  Image
 } from 'react-native';
-// import Icon from 'react-native-vector-icons/Ionicons';
+import { observer } from 'mobx-react/native';
+import hostUser from '../store/mobx';
 
 
 export default class Book extends Component {
@@ -22,79 +25,52 @@ export default class Book extends Component {
     headerTitleStyle: {
       alignSelf: 'center',
     },
-    // tabBarIcon: ({ tintColor }) => (<Icon name="ios-book" color={tintColor} size={22} />),
+    tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe63a;</Text>),
   }
-  itemshorizonal = () => {
-    const items = [];
-    for (var i = 0; i < 10; i++) {
-       items[i] = (
-         <TouchableOpacity key={i} style={styles.horizontalitem}>
-           <Text style={styles.item}>{`horizontal${i}`}</Text>
-         </TouchableOpacity>
-       );
-    }
-    return items;
-  }
+ 
   render() {
+    const { navigation } = this.props;
+    console.log(navigation);
     return (
       <ScrollView style={styles.container}>
         <View style={styles.wrap}>
-          <View style={[styles.box, styles.box1]}>
-            <Text style={styles.welcome}>
-              1
-            </Text>
-            <Text  style={{fontFamily:'iconfont'}}>&#xe63f;</Text>
-          </View>
-          <View style={[styles.box, styles.box2]}>
-            <Text style={styles.welcome}>
-              2
-            </Text>
-          </View>
-          <View style={[styles.box, styles.box3]}>
-            <Text style={styles.welcome}>
-              3
-            </Text>
-          </View>
-        </View>
-        <View style={styles.wrap}>
-          <View style={[styles.box, styles.three1]}>
-            <Text style={styles.welcome}>
-              5
-            </Text>
-          </View>
-          <View style={styles.fivecontainer}>
-            <View style={[styles.box, styles.three2]}>
-              <Text style={styles.welcome}>
-                6
-              </Text>
+           <ImageBackground 
+           source={require('../image/touxiang.png')} 
+           style={{width:345, height: 160}}
+           >
+            <View style={styles.first}>
+            <Image source={require('../image/oval.png')} style={styles.img} />
+            <Text style={styles.firstname} >林亦宣</Text>
+            <Text style={styles.numbert}>账号:176 0022 4466</Text>
             </View>
-            <View style={[styles.box, styles.three3]}>
-              <Text style={styles.welcome}>
-                7
-              </Text>
-            </View>
-          </View>  
-        </View>
-        <ScrollView key={'scrollView'} horizontal={true} style={ styles.horizontals }>
-          {this.itemshorizonal()}
-        </ScrollView>
-        <View style={styles.panels}>
-          <Text style={styles.item}>this is panels.</Text>
-        </View>
-        <View style={styles.panels}>
-          <Text style={styles.item}>this is panels.</Text>
-        </View>
-        <View style={styles.panels}>
-          <Text style={styles.item}>this is panels.</Text>
-        </View>
-        <View style={styles.panels}>
-          <Text style={styles.item}>this is panels.</Text>
+           </ImageBackground>
+           <View  style={styles.mybody}>
+             <View style={styles.mytext} >
+               <Image source={require('../image/curriculum.png')} style={styles.imgicon} />
+               <Text onPress={ () => navigation.navigate('Person') }>个人资料</Text>
+             </View>
+             <View style={styles.mytext}>
+               <Image source={require('../image/repair.png')} style={styles.imgicon} />
+               <Text>系统设置</Text>
+             </View>
+             <View style={[styles.mytext,{marginRight:0}] }>
+               <Image source={require('../image/human-resources.png')} style={styles.imgicon} />
+               <Text>账号管理</Text>
+             </View>
+             <View style={styles.mytext}>
+               <Image source={require('../image/networking.png')} style={styles.imgicon} />
+               <Text>邀请朋友</Text>
+             </View>
+             <View style={styles.mytext}>
+               <Image source={require('../image/businessmen.png')} style={styles.imgicon} />
+               <Text>关于我们</Text>
+             </View>
+           </View>
         </View>
       </ScrollView>
     );
   }
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -102,59 +78,56 @@ const styles = StyleSheet.create({
   },
   wrap: {
     justifyContent: 'flex-start',
-    flexDirection: 'row',
+    // flexDirection: 'row',
     alignItems: 'flex-start',
+    padding:15
   },
-  box: {
+  first:{
+    backgroundColor: 'transparent',
+    flexDirection: 'column',
+    alignItems:'center',
+    justifyContent: 'space-around',
     flex: 1,
-    height: 100,
-    justifyContent: 'center',
-    backgroundColor: '#4AF2A1',
+    paddingTop:8,
+    paddingBottom:6,
   },
-  box2: {
-    flex: 2,
-    backgroundColor: '#B0F566',
+  img:{
+    width: 80, 
+    height: 80,
   },
-  box3: {
-    flex: 3,
-    backgroundColor: '#5CC9F5',    
+  imgicon:{
+    width:40,
+    height:40,
+    marginBottom:10,
   },
-  welcome: {
-    textAlign: 'center',
+  firstname:{
+    fontSize: 14,
+    color: '#4D4D4D',
+    letterSpacing: -0.34,
+    // marginTop:15,
   },
-  fivecontainer: {
-    flex: 1,
+  numbert :{
+    fontSize: 12,
+    color: '#4D4D4D',
+    letterSpacing: -0.34,
+    // marginTop:5,
   },
-  three1: {
-    height: 200,
-    backgroundColor: '#6638F0',
+  mybody:{
+  // paddingTop:10,
+  flexDirection: 'row',
+  flexWrap:'wrap',
+  justifyContent: 'flex-start',
   },
-  three2: {
-    height: 100,
-    backgroundColor: '#F78AE0',
+  mytext:{
+    height:108,
+    width:108,
+    backgroundColor: '#FFFFFF',
+    shadowOpacity:0.02,
+    borderRadius: 4,
+    shadowColor:'rgba(41,182,246,0.02)',
+    marginTop:10,
+    marginRight:10,
+    alignItems:'center',
+    justifyContent:'center',
   },
-  three3: {
-    height: 100,
-    backgroundColor: '#B0F566',
-  },
-  panels: {
-    height: 60,
-    marginTop: 20,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-  },
-  item: {
-    textAlign: 'center'
-  },
-  horizontals: {
-    marginTop: 20,
-    flexDirection: 'row',
-  },
-  horizontalitem: {
-    height: 120,
-    width: 100,
-    margin: 5,
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-  }
 });
