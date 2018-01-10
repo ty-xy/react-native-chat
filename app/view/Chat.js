@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
@@ -13,10 +13,9 @@ import {
 import { observer, inject } from 'mobx-react/native';
 import Card from '../component/Card';
 
-
-@observer
 @inject('home')
-export default class Home extends PureComponent {
+@observer
+export default class Home extends Component {
     static navigationOptions = {
         title: '消息(14)',
         tabBarLabel: '消息',
@@ -30,7 +29,7 @@ export default class Home extends PureComponent {
             fontSize: 16,
             fontWeight: 'normal'
         },
-        tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont', color: tintColor}}>&#xe63d;</Text>),
+        tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont', color: tintColor, fontSize: 24}}>&#xe63d;</Text>),
     }
     constructor() {
         super();
@@ -50,9 +49,11 @@ export default class Home extends PureComponent {
             <View style={styles.wrap}>
                 <View style={styles.container}>
                     <FlatList
+                        style={{paddingTop: 15, paddingBottom: 30}}
                         data={home.chatList}
                         keyExtractor={this._keyExtractor}
                         renderItem={this._renderItem}
+                        ListFooterComponent={() => <View style={{height: 15}} />}
                     />
                 </View>
             </View>
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap', 
     position: 'relative',
-    paddingTop: 15,
+    // paddingTop: 15,
   },
   image: {
     width: '100%',
