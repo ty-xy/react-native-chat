@@ -8,6 +8,11 @@ import BookPage from './view/Book';
 import DetailPage from './view/Detail';
 import Panels from './view/Panel';
 import Person from './view/myown/Person';
+import System from './view/myown/System';
+import Account from './view/myown/Account';
+import FixNumber from './view/myown/FixNumber';
+import FixPassWord from './view/myown/FixPassWord';
+import Aboutus from  './view/myown/Aboutus';
 
 // APP tab 配置: https://reactnavigation.org/docs/navigators/tab
 const TabNavigation = TabNavigator({
@@ -34,7 +39,7 @@ const TabNavigation = TabNavigator({
       height: 0, // 如TabBar下面显示有一条线，可以设高度为0后隐藏
     },
     labelStyle: {
-      marginTop: 0,
+      marginTop: 15,
       fontSize: 10,
     },
     iconStyle: {
@@ -69,6 +74,21 @@ const Navigation = StackNavigator({
   Person: {
     screen: Person,
   },
+  System:{
+    screen: System,
+  },
+  Account:{
+    screen: Account,
+  },
+  FixNumber:{
+    screen:FixNumber,
+  },
+  FixPassWord:{
+    screen:FixPassWord,
+  },
+  Aboutus: {
+    screen:Aboutus,
+  }
 });
 
 export default Navigation;

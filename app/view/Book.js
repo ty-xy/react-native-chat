@@ -7,13 +7,38 @@ import {
   ScrollView,
   TouchableOpacity,
   ImageBackground,
-  Image
+  Image,
+  Modal,
+  TouchableHighlight,
+  Button,
 } from 'react-native';
 import { observer } from 'mobx-react/native';
 import hostUser from '../store/mobx';
 
 
 export default class Book extends Component {
+  
+  constructor(props) {
+    super(props)
+    this.state={
+      animationType: 'none',
+      modalVisible: false,
+      transparent: false,
+    }
+  }
+
+  _setModalVisible(visible) {
+    this.setState({modalVisible: visible});
+  }
+
+  _setAnimationType(type) {
+    this.setState({animationType: type});
+  }
+
+  _toggleTransparent() {
+    this.setState({transparent: !this.state.transparent});
+  }
+
   static navigationOptions = {
     title: '我的',
     tabBarLabel: '我的',
@@ -27,10 +52,21 @@ export default class Book extends Component {
     },
     tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe63a;</Text>),
   }
- 
+  _onPressButton(id){
+   this.props.navigation.navigate(id)
+  }
   render() {
     const { navigation } = this.props;
-    console.log(navigation);
+    var modalBackgroundStyle = {
+      backgroundColor: this.state.transparent ? 'rgba(0, 0, 0, 0.5)' : '#f5fcff',
+    };
+    var innerContainerTransparentStyle = this.state.transparent
+      ? {backgroundColor: '#fff', padding: 20}
+      : null;
+    var activeButtonStyle = {
+      backgroundColor: '#ddd'
+    };
+
     return (
       <ScrollView style={styles.container}>
         <View style={styles.wrap}>
@@ -45,28 +81,57 @@ export default class Book extends Component {
             </View>
            </ImageBackground>
            <View  style={styles.mybody}>
+           <TouchableHighlight onPress={ () => this._onPressButton('Person') }>
              <View style={styles.mytext} >
                <Image source={require('../image/curriculum.png')} style={styles.imgicon} />
-               <Text onPress={ () => navigation.navigate('Person') }>个人资料</Text>
+               <Text >个人资料</Text>
              </View>
+             </TouchableHighlight>
+             <TouchableHighlight onPress={() => this._onPressButton('System')}>
              <View style={styles.mytext}>
                <Image source={require('../image/repair.png')} style={styles.imgicon} />
                <Text>系统设置</Text>
              </View>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={() => this._onPressButton('Account')}>
              <View style={[styles.mytext,{marginRight:0}] }>
                <Image source={require('../image/human-resources.png')} style={styles.imgicon} />
                <Text>账号管理</Text>
              </View>
+             </TouchableHighlight>
+             <TouchableHighlight 
+            onPress={this._setModalVisible.bind(this, true)}
+             >
              <View style={styles.mytext}>
                <Image source={require('../image/networking.png')} style={styles.imgicon} />
                <Text>邀请朋友</Text>
              </View>
+             </TouchableHighlight>
+             <TouchableHighlight onPress={() => this._onPressButton('Aboutus')}>
              <View style={styles.mytext}>
                <Image source={require('../image/businessmen.png')} style={styles.imgicon} />
                <Text>关于我们</Text>
              </View>
+             </TouchableHighlight>
            </View>
         </View>
+        <Modal
+          animationType={this.state.animationType}
+          transparent={this.state.transparent}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {this._setModalVisible(false)}}
+          >
+          <View style={[styles.container, modalBackgroundStyle]}>
+            <View style={[styles.innerContainer, innerContainerTransparentStyle]}>
+              <Text>This modal was presented {this.state.animationType === 'none' ? 'without' : 'with'} animation.</Text>
+              {/* <Button
+                onPress={this._setModalVisible.bind(this,false)}
+                style={styles.modalButton}>
+                Close
+              </Button> */}
+            </View>
+          </View>
+        </Modal>
       </ScrollView>
     );
   }
