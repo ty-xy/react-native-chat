@@ -96,6 +96,8 @@ export default class Book extends Component {
                <Text>账号管理</Text>
              </View>
              </TouchableHighlight>
+             </View>
+             <View  style={styles.mybody}>
              <TouchableHighlight 
             onPress={() => {
               this.setModalVisible(true)}
@@ -111,6 +113,7 @@ export default class Book extends Component {
                <Text>关于我们</Text>
              </View>
              </TouchableHighlight>
+             <View style={[styles.mytext,{backgroundColor:'transparent'}]}/>
            </View>
         </View>
         <Modal
@@ -172,7 +175,8 @@ const styles = StyleSheet.create({
   // paddingTop:10,
   flexDirection: 'row',
   flexWrap:'wrap',
-  justifyContent: 'flex-start',
+  justifyContent:'space-between',
+  width:'100%',
   },
   mytext:{
     height:108,
@@ -182,7 +186,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     shadowColor:'rgba(41,182,246,0.02)',
     marginTop:10,
-    marginRight:10,
+    // marginRight:10,
     alignItems:'center',
     justifyContent:'center',
   },
