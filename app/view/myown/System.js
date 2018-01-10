@@ -5,7 +5,6 @@ import {
   Text,
   FlatList,
   View,
-  TouchableOpacity,
   // Button,
 } from 'react-native';
 import Book from '../Item';
@@ -26,49 +25,26 @@ const styles = StyleSheet.create({
     shadowColor:'rgba(41,182,246,0.02)',
     borderRadius: 4,
     width:345,
-    height:67,
-    marginTop:15,
+    height:42,
     padding:10,
+    marginTop:15,
+    flexDirection: 'row',
+    alignItems:'center',
+    justifyContent: 'space-between',
   },
   keylist:{
-    fontSize: 14,
-    color: "#D1D1D1",
-    letterSpacing: -0.34,
-    marginBottom:5,
-    height:18,
-    lineHeight:18,
+    fontSize: 16,
+    color: "#4D4d4d",
+    letterSpacing: -0.39,
+    // marginBottom:5,
+    // height:18,
+    // lineHeight:18,
   },
   namelist:{
     fontSize: 16,
-    color: "#666",
+    color: "#d1d1d1",
     letterSpacing: -0.39,
-    height:22,
-    lineHeight:22,
   },
-  bstyle:{
-    height:40,
-    width:206,
-    backgroundColor:'#22B1FF',
-    borderRadius:100,
-    marginBottom:20,
-  },
-  button: {
-    height: 48,
-    width: 206,
-    borderRadius: 100,
-    backgroundColor: '#22B1FF',
-    justifyContent: 'center',
-    margin: 20,
-},
-buttonText: {
-    textAlign: 'center',
-    color: 'white',
-    // height: 48,
-    width: 200,
-    marginLeft:3,
-    // lineHeight:48,
-    // borderBottomLeftRadius:100,
-},
 });
 
 export default class Person extends Component {
@@ -76,18 +52,13 @@ export default class Person extends Component {
     super(props);
     this.state={
       data : [
-              {key:'昵称',name:'林亦宣'},
-              {key:'手机号',name:'176 0022 4466'},
-              {key:'地区',name:'北京市-朝阳区'},
-              {key:'公司',name:'万科企业股份有限公司'},
-              {key:'部门',name:'商务部'},
-              {key:'职务',name:'商务总监'},
+              {key:'清除缓存',space:'11.22MB'},
              ]
   }
 }
   static navigationOptions = {
-    title: '个人信息',
-    tabBarLabel: '个人信息',
+    title: '系统设置',
+    // tabBarLabel: '个人信息',
     alignSelf: 'center',
     headerStyle: {
       height: 49,
@@ -96,12 +67,13 @@ export default class Person extends Component {
     headerTitleStyle: {
       alignSelf: 'center',
     },
+    // tabBarIcon: ({ tintColor }) => (<Icon name="ios-book" color={tintColor} size={22} />),
   }
   _renderFlatlist(item) {
       return (
         <View style={styles.flatlist}>
            <Text style={styles.keylist}>{item.key}</Text>
-           <Text style={styles.namelist}>{item.name}</Text>
+           <Text style={styles.namelist}>{item.space}</Text>
         </View>
       )
   }
@@ -116,10 +88,6 @@ export default class Person extends Component {
         data={this.state.data}
         renderItem={({item}) => this._renderFlatlist(item)}
       />
-      <TouchableOpacity
-          style={styles.button}>
-         <Text style={styles.buttonText}>保存</Text>  
-       </TouchableOpacity>
       </View>
       
     );
