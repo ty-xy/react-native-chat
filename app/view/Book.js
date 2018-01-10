@@ -8,12 +8,14 @@ import {
   TouchableOpacity,
   ImageBackground,
   Image,
-  Modal,
   TouchableHighlight,
   Button,
+  Modal,
 } from 'react-native';
+// import Modal from 'react-native-modal';
 import { observer } from 'mobx-react/native';
 import hostUser from '../store/mobx';
+import Invite from './myown/Invite';
 
 
 export default class Book extends Component {
@@ -22,23 +24,18 @@ export default class Book extends Component {
     super(props)
     this.state={
       animationType: 'none',
-      modalVisible: false,
+      isModalVisible: false,
       transparent: false,
+      modalVisible: false
     }
   }
 
-  _setModalVisible(visible) {
+  // _showModal = () => this.setState({ isModalVisible: true })
+
+  // _hideModal = () => this.setState({ isModalVisible: false })
+  setModalVisible(visible) {
     this.setState({modalVisible: visible});
   }
-
-  _setAnimationType(type) {
-    this.setState({animationType: type});
-  }
-
-  _toggleTransparent() {
-    this.setState({transparent: !this.state.transparent});
-  }
-
   static navigationOptions = {
     title: '我的',
     tabBarLabel: '我的',
@@ -100,8 +97,9 @@ export default class Book extends Component {
              </View>
              </TouchableHighlight>
              <TouchableHighlight 
-            onPress={this._setModalVisible.bind(this, true)}
-             >
+            onPress={() => {
+              this.setModalVisible(true)}
+            }>
              <View style={styles.mytext}>
                <Image source={require('../image/networking.png')} style={styles.imgicon} />
                <Text>邀请朋友</Text>
@@ -116,20 +114,13 @@ export default class Book extends Component {
            </View>
         </View>
         <Modal
-          animationType={this.state.animationType}
-          transparent={this.state.transparent}
+          animationType={"slide"}
+          transparent={true}
           visible={this.state.modalVisible}
-          onRequestClose={() => {this._setModalVisible(false)}}
+          onRequestClose={() => {alert("Modal has been closed.")}}
           >
-          <View style={[styles.container, modalBackgroundStyle]}>
-            <View style={[styles.innerContainer, innerContainerTransparentStyle]}>
-              <Text>This modal was presented {this.state.animationType === 'none' ? 'without' : 'with'} animation.</Text>
-              {/* <Button
-                onPress={this._setModalVisible.bind(this,false)}
-                style={styles.modalButton}>
-                Close
-              </Button> */}
-            </View>
+         <View style={{flex:1,backgroundColor:'rgba(0, 0, 0, 0.5)',position:'relative'}}>
+          <Invite hide={this.setModalVisible.bind(this)}/>
           </View>
         </Modal>
       </ScrollView>

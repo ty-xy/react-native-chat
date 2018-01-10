@@ -22,13 +22,14 @@ export default class Aboutus extends Component {
     super(props);
     this.state={
       data : [
-        {key:'联系我们',num:'400-800-2046',icon:'&#xe640;'},
+        {link:'联系我们',key:'400-800-2046',icon:'&#xe640;'},
         {key:'关于e建联',icon:'&#xe63b;'},
-       ]
-  }
-}
+       ],
+       text: '创业就像走在一条长长的道路上，你看不见尽头，望不到边。有人忍受不了孤独而走上众人的通途，有人受不了困苦沿着脚印一步步退后，只有一种人可以看到豁然开朗的景色：他们从不畏孤独、险途，他们始终与梦想相伴，他们记得为什么出发，所以他们始终都能到达。',
+      }
+ }
   static navigationOptions = {
-    title: '账号设置',
+    title: '关于我们',
     // tabBarLabel: '个人信息',
     alignSelf: 'center',
     headerStyle: {
@@ -40,11 +41,18 @@ export default class Aboutus extends Component {
     },
   }
   _renderFlatlist(item) {
+    console.log(item.icon)
     return (
-      <View style={styles.flatlist}>
-         <Text style={styles.keylist}>{item.key}</Text>
-         <Text style={{fontFamily:'iconfont',fontSize:24}} >&#xe63b;</Text>
-      </View>
+        <View style={styles.flatlist}>
+           <View style={item.link?styles.total:''}>
+           {item.link?
+           <Text style={styles.link}>{item.link}</Text>:null}
+           <Text style={styles.keylist}>{item.key}</Text>
+           </View>
+           {item.link==="联系我们"?
+           <Text style={[styles.namelist,{color:'#29B6F6'}]} >&#xe640;</Text>:
+           <Text style={[styles.namelist,{color:'#D1D1D1'}]} >&#xe63b;</Text>}
+        </View>
     )
 }
   render() {
@@ -52,7 +60,7 @@ export default class Aboutus extends Component {
       <View style={styles.container}>
           <View style={styles.detail}>
              <Text style={styles.title}>意见反馈</Text>
-             <PassWord/>
+             <PassWord texts={this.state.text}/>
               <View style={styles.submit}>
                  <Text  style={styles.sub}>提交</Text>
                  <Text>取消</Text>
@@ -102,10 +110,41 @@ const styles = StyleSheet.create({
     color: '#29B6F6',
    letterSpacing: -0.34,
  },
- keylist:{
-   height:67,
-   width:'100%',
-   backgroundColor:'#fff',
-   marginTop:15,
- }
+ flatlist:{
+  backgroundColor: '#FFFFFF',
+  shadowOffset: {width: 8, height: 8},
+  shadowColor:'rgba(41,182,246,0.02)',
+  borderRadius: 4,
+  width:345,
+  height:67,
+  padding:10,
+  marginTop:15,
+  flexDirection: 'row',
+  alignItems:'center',
+  justifyContent: 'space-between',
+},
+keylist:{
+  fontSize: 16,
+  color: "#4D4d4d",
+  letterSpacing: -0.39,
+ 
+},
+namelist:{
+  fontSize: 16,
+  letterSpacing: -0.39,
+  fontFamily:'iconfont',
+  fontSize:24,
+  marginRight:10,
+},
+link:{
+  fontSize: 14,
+  color: "#d1d1d1",
+  letterSpacing: -0.34,
+},
+total:{
+  flexDirection: 'column',
+  alignItems:'flex-start',
+  justifyContent: 'space-between',
+  height:47,
+}
 });
