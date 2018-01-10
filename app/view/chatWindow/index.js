@@ -61,9 +61,9 @@ export default class ChatWindow extends Component {
             keyboardHeight:0
         };
     }
-    componentDidMount = () => {
-        console.log('componentDidMount', this._chatList)
-    }
+    // componentDidMount = () => {
+    //     console.log('componentDidMount', this._chatList)
+    // }
     // componentWillUnmount() {
     //     this.keyboardDidShowListener.remove();
     //     this.keyboardDidHideListener.remove();
@@ -132,7 +132,7 @@ export default class ChatWindow extends Component {
                         style={[styles.input, {height}]}
                         onChangeText={(text) => this.setState({text})}
                         value={this.state.text}
-                        onContentSizeChange={this._onContentSizeChange.bind(this)}
+                        // onContentSizeChange={this._onContentSizeChange.bind(this)}
                         // onFocus={this._onFocus}
                     />
                     <Text style={[styles.iconfont, {marginLeft: 10}]}>&#xe631;</Text>

@@ -33,7 +33,6 @@ export default class Card extends PureComponent {
     return (
         <TouchableHighlight
             style={styles.card}
-            ref={this.handleRef}
             underlayColor={'rgba(100,100,100,0.2)'}
             onPress={() => {
                 this.props._goChatWindow();
