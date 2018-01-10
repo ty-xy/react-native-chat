@@ -63,31 +63,30 @@ export default class ChatWindow extends Component {
     }
     componentDidMount = () => {
         console.log('componentDidMount', this._chatList)
-        this._chatList.scrollToEnd({ animated: false });
     }
-    componentWillUnmount() {
-        this.keyboardDidShowListener.remove();
-        this.keyboardDidHideListener.remove();
-    }
+    // componentWillUnmount() {
+    //     this.keyboardDidShowListener.remove();
+    //     this.keyboardDidHideListener.remove();
+    // }
 
-    componentWillMount() {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
-    }
+    // componentWillMount() {
+    //     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+    //     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+    // }
 
-    _keyboardDidShow = (e) => {
-        console.log('Keyboard', e)
-        this.setState({
-            keyboardHeight: e.height
-        })
+    // _keyboardDidShow = (e) => {
+    //     console.log('Keyboard', e)
+    //     this.setState({
+    //         keyboardHeight: e.height
+    //     })
 
-    }
+    // }
 
-    _keyboardDidHide = (e) => {
-        this.setState({
-            keyboardHeight:0
-        })
-    }
+    // _keyboardDidHide = (e) => {
+    //     this.setState({
+    //         keyboardHeight:0
+    //     })
+    // }
     // componentWillMount() {
     //     // this.props.message.getMessageList();
     // }
@@ -121,7 +120,6 @@ export default class ChatWindow extends Component {
                     keyExtractor={this._keyExtractor}
                     renderItem={({item}) => <Message {...item} />}
                     ListEmptyComponent={() => this._renderPullBottom()}
-                    initialNumToRender={1}
                     ref={i => this._chatList = i}
                 />
                 <View style={[styles.enterCard, {height: height + 13}]}>
