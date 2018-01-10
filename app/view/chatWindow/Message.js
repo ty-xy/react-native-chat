@@ -20,7 +20,7 @@ export default class Message extends PureComponent {
 
     componentDidMount() {
     }
-    messageLeft = () => {
+    messageLeft = (name) => {
         return (
             <View style={styles.message}>
                 <Image
@@ -29,18 +29,18 @@ export default class Message extends PureComponent {
                 />
                 <View style={styles.content}>
                     <View style={styles.contentDiv}>
-                        <Text style={styles.text}>节食减肥建设大街, 节食减肥建设大</Text>
+                        <Text style={styles.text}>节食减肥建设大街, 节食减肥建设大===={name}</Text>
                     </View>
                 </View>
             </View>
         );
     }
-    messageRight = () => {
+    messageRight = (name) => {
         return (
             <View style={styles.messageRight}>
                 <View style={styles.contentRight}>
                     <View style={styles.contentDivRight}>
-                        <Text style={styles.textRight}>节食减肥建设大街节食减肥建设大街, 节食减肥建设大街</Text>
+                        <Text style={styles.textRight}>节食减肥建设大街节食减肥建设大街, 节食减肥建设大街 ===> {name}</Text>
                     </View>
                 </View>
                 <Image
@@ -51,8 +51,8 @@ export default class Message extends PureComponent {
         );
     }
     render() {
-        const { chatType } = this.props;
-        return (chatType !== 'me' ? this.messageLeft() : this.messageRight());
+        const { chatType, name } = this.props;
+        return (chatType !== 'me' ? this.messageLeft(name) : this.messageRight(name));
     }
 }
 

@@ -9,6 +9,7 @@ import {
     Button,
     ActivityIndicator,
     FlatList,
+    Keyboard,
     TextInput
 } from 'react-native';
 import Message from './Message';
@@ -30,7 +31,7 @@ const messageList = [
     {key: '2sdghj12123sk', name: '小白', chatType: 'mqe'},     
     {key: 'sdg342hcvjdsk', name: '小明', chatType: 'me'},
     {key: 'sdg67322eds4f8sk', name: '小刘', chatType: 'mee'},
-    {key: 'sdghj15sdfsd2sk', name: '小白', chatType: 'me'},  
+    {key: 'sdghj15sdfsd2sk', name: '小郭', chatType: 'me'},  
 ];
 
 @inject('message')
@@ -57,9 +58,36 @@ export default class ChatWindow extends Component {
 
         this.state = {
             inputHeight: 36,
+            keyboardHeight:0
         };
     }
+    componentDidMount = () => {
+        console.log('componentDidMount', this._chatList)
+        this._chatList.scrollToEnd({ animated: false });
+    }
+    componentWillUnmount() {
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
+    }
 
+    componentWillMount() {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+    }
+
+    _keyboardDidShow = (e) => {
+        console.log('Keyboard', e)
+        this.setState({
+            keyboardHeight: e.height
+        })
+
+    }
+
+    _keyboardDidHide = (e) => {
+        this.setState({
+            keyboardHeight:0
+        })
+    }
     // componentWillMount() {
     //     // this.props.message.getMessageList();
     // }
@@ -75,18 +103,26 @@ export default class ChatWindow extends Component {
         let el = null;
         return (<Text style={styles.pullUp}>~~我们是有底线的~~</Text>);
     }
+    // 输入框获得焦点
+    _onFocus = () => {
+        this.setState({inputFocus: true});
+    }
+    _keyExtractor = (item, index) => item.key;
     render() {
-        const { inputHeight } = this.state;
+        const { inputHeight, inputFocus } = this.state;
         const height = inputHeight < 30 ? 36 : inputHeight;
-        console.log('chatwndow', height, height + 13)
+        const focusFlatList = inputFocus ? ({marginBottom: 120}) : ({});
+        console.log('chatwndow', height, height + 13, this.state)
         return (
             <View style={styles.window}>
                 <FlatList
-                    style={styles.chatWindow}
+                    style={[styles.chatWindow, focusFlatList]}
                     data={messageList}
+                    keyExtractor={this._keyExtractor}
                     renderItem={({item}) => <Message {...item} />}
-                    ListEmptyComponent={() => <Text style={styles.pullUp}>~~空空如也~~</Text>}
-                    ListFooterComponent={() => this._renderPullBottom()}
+                    ListEmptyComponent={() => this._renderPullBottom()}
+                    initialNumToRender={1}
+                    ref={i => this._chatList = i}
                 />
                 <View style={[styles.enterCard, {height: height + 13}]}>
                     <Text style={styles.iconfont}>&#xe63e;</Text>
@@ -99,6 +135,7 @@ export default class ChatWindow extends Component {
                         onChangeText={(text) => this.setState({text})}
                         value={this.state.text}
                         onContentSizeChange={this._onContentSizeChange.bind(this)}
+                        // onFocus={this._onFocus}
                     />
                     <Text style={[styles.iconfont, {marginLeft: 10}]}>&#xe631;</Text>
                     <Text style={[styles.iconfont, {marginRight: 0, marginLeft: 0}]}>&#xe62f;</Text>

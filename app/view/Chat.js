@@ -35,6 +35,7 @@ export default class Home extends PureComponent {
     constructor() {
         super();
     }
+    
     _goChatWindow = () => {
         const { navigation } = this.props;
         navigation.navigate('ChatWindow', { id: '323' });
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap', 
     position: 'relative',
-    marginBottom: 15,
+    paddingTop: 15,
   },
   image: {
     width: '100%',
