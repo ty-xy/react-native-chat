@@ -43,7 +43,7 @@ export default class Aboutus extends Component {
     return (
       <View style={styles.flatlist}>
          <Text style={styles.keylist}>{item.key}</Text>
-         <Text style={styles.namelist}>{item.name}</Text>
+         <Text style={{fontFamily:'iconfont',fontSize:24}} >&#xe63b;</Text>
       </View>
     )
 }
@@ -101,5 +101,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#29B6F6',
    letterSpacing: -0.34,
+ },
+ keylist:{
+   height:67,
+   width:'100%',
+   backgroundColor:'#fff',
+   marginTop:15,
  }
 });
