@@ -1,6 +1,12 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
+import {
+    Image,
+    StyleSheet,
+    Text,
+    View,
+    TouchableHighlight
+} from 'react-native';
 
 
 export default class Card extends PureComponent {
@@ -9,6 +15,7 @@ export default class Card extends PureComponent {
     _id: PropTypes.any,
     lastMessage: PropTypes.string,
     name: PropTypes.string,
+    _goChatWindow: PropTypes.func,
   };
 
   constructor(props) {
@@ -20,25 +27,32 @@ export default class Card extends PureComponent {
   componentDidMount() {
 
   }
-
   render() {
     const { style = {}, lastMessage, _id, name } = this.props;
 
     return (
-      <View style={styles.card} ref={this.handleRef}>
-        <View style={styles.chatTitle}>
-            <Text style={styles.chatContent}>{name}</Text>
-            <Text style={styles.chatDate}>下午3：23</Text>
-        </View>
-        <Text style={styles.lastMessage}>{lastMessage}</Text>
-        <View style={styles.avatar}>
-            <Image
-                style={{width: 42, height: 42, borderRadius: 21}}
-                source={require('../image/bg.png')}
-            />
-        </View>
-        <View style={styles.badge}><Text style={{fontSize: 12, color: '#fff'}}>23</Text></View>
-      </View>
+        <TouchableHighlight
+            style={styles.card}
+            underlayColor={'rgba(100,100,100,0.2)'}
+            onPress={() => {
+                this.props._goChatWindow();
+            }}
+        >
+            <View style={styles.chatList}>
+                <View style={styles.chatTitle}>
+                    <Text style={styles.chatContent}>{name}</Text>
+                    <Text style={styles.chatDate}>下午3：23</Text>
+                </View>
+                <Text style={styles.lastMessage}>{lastMessage}</Text>
+                <View style={styles.avatar}>
+                    <Image
+                        style={{width: 42, height: 42, borderRadius: 21}}
+                        source={require('../image/bg.png')}
+                    />
+                </View>
+                <View style={styles.badge}><Text style={{fontSize: 12, color: '#fff'}}>23</Text></View>
+            </View>
+        </TouchableHighlight>
     );
   }
 }
@@ -47,19 +61,21 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: '#ffffff',
         // paddingBottom: 14,
-        marginTop: 15,
+        marginBottom: 15,
         marginRight: 15,
         marginLeft: 30,
         height: 71,
-        paddingRight: 10,
-        paddingLeft: 21,
         borderColor: 'transparent',
         borderRadius: 4,
+    },
+    chatList: {
+        height: 71,
+        paddingRight: 10,
+        paddingLeft: 21,
         flexDirection: 'column',
         justifyContent: 'center',
         position: "relative",
         zIndex: 0,
-        overflow: 'visible',
     },
     chatTitle: {
         width: '100%',
@@ -90,7 +106,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: 14,
         left: -21,
-        zIndex: 9999999,
+        zIndex: 1,
     },
     badge: {
         // display: 'flex',

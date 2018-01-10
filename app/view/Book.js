@@ -36,7 +36,7 @@ export default class Book extends Component {
         <View style={styles.wrap}>
            <ImageBackground 
            source={require('../image/touxiang.png')} 
-           style={{width:345, height: 160}}
+           style={{width:'100%', height: 160}}
            >
             <View style={styles.first}>
             <Image source={require('../image/oval.png')} style={styles.img} />

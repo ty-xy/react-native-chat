@@ -17,7 +17,6 @@ import Card from '../component/Card';
 @observer
 @inject('home')
 export default class Home extends PureComponent {
-    
     static navigationOptions = {
         title: '消息(14)',
         tabBarLabel: '消息',
@@ -36,13 +35,17 @@ export default class Home extends PureComponent {
     constructor() {
         super();
     }
+    
+    _goChatWindow = () => {
+        const { navigation } = this.props;
+        navigation.navigate('ChatWindow', { id: '323' });
+    }
     _renderItem = ({item}) => {
-        return (<Card {...item} key={item._id} />);
+        return (<Card {...item} key={item._id} _goChatWindow={this._goChatWindow} />);
     }
     _keyExtractor = (item, index) => item._id;
     render() {
-        const { navigation, home } = this.props;
-        console.ignoredYellowBox = ['Remote debugger'];
+        const { home } = this.props;
         return (
             <View style={styles.wrap}>
                 <View style={styles.container}>
@@ -69,7 +72,8 @@ const styles = StyleSheet.create({
     alignContent: 'stretch',
     flexDirection: 'row',
     flexWrap: 'wrap', 
-    position: 'relative'
+    position: 'relative',
+    paddingTop: 15,
   },
   image: {
     width: '100%',
