@@ -11,11 +11,18 @@ import {
     FlatList,
     Keyboard,
     TextInput,
-    Platform
+    Platform,
+    ToastAndroid,
+    platform,
+    ImageBackground
 } from 'react-native';
-import Message from './Message';
-
+import Toast, {DURATION} from 'react-native-easy-toast'
 import { observer, inject } from 'mobx-react/native';
+
+import Message from './Message';
+import Fujian from './Fujian';
+import toast from '../../util/toast'
+
 
 
 const messageList = [
@@ -34,6 +41,9 @@ const messageList = [
     {key: 'sdg67322eds4f8sk', name: '小刘', chatType: 'mee'},
     {key: 'sdghj15sdfsd2sk', name: '小郭', chatType: 'me'},  
 ];
+let dateInOut = 0;
+
+
 
 @inject('message')
 @observer
@@ -63,22 +73,40 @@ export default class ChatWindow extends Component {
             sendButton: false, // 发送按钮显示
             showAudio: false, // 语音输入切换
             showEmoji: false, // 表情
+            showFile: false, // 附件
             text: '',
         };
     }
-
+    componentWillMount () {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+    }
+    
+    componentWillUnmount () {
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
+    }
 
     _keyboardDidShow = (e) => {
-        console.log('Keyboard', e)
         this.setState({
-            keyboardHeight: e.height
+            keyboardHeight: e.endCoordinates.height,
+            sendButton: true,
         })
     }
 
     _keyboardDidHide = (e) => {
-        this.setState({
-            keyboardHeight:0
-        })
+        if (this.state.keyboardHeight) {
+            this.setState({
+                keyboardHeight: 0,
+                sendButton: false,
+                inputHeight: 154
+            })
+        } else {
+            this.setState({
+                keyboardHeight: 0,
+                sendButton: false
+            })
+        }
     }
     _onContentSizeChange = (event) => {
         this.setState({inputHeight: event.nativeEvent.contentSize.height});
@@ -90,11 +118,12 @@ export default class ChatWindow extends Component {
     }
     // 输入框获得焦点
     _onFocus = () => {
-        // this.setState({inputFocus: true});
-        this.setState({sendButton: true});
+        console.log('_onFocus')
+        this.setState({ sendButton: true });
     }
     _onBlur = () => {
-        this.setState({sendButton: false});
+        console.log('state', this.state)
+        this.setState({ sendButton: false });
     }
     // 输入文字
     _inputChange = (text) => {
@@ -103,11 +132,31 @@ export default class ChatWindow extends Component {
     // 发送消息
     _handleSendMsg = () => {
         const { text } = this.state;
+        if (text.length === 0) {
+            toast.toast('输入内容为空', this);
+        }
         console.log('_handleSendMsg', text)
+    }
+    // 发送语音
+    _handleSendAudio = () => {
+        console.log('obj_handleSendAudioect')
+    }
+    _handlePressIn = () => {
+        dateInOut = new Date().valueOf();
+    }
+    _handlePressOut = () => {
+        // dateInOut = new Date().valueOf();
+        const date = (new Date().valueOf() - dateInOut) / 1000;
+        if (date > 1) {
+            this._handleSendAudio();
+            console.log('发送录音')
+        } else {
+            toast.toast('时间太短', this);
+        }
     }
     // 发送按钮
     _sendButton = () => {
-        const {sendButton} = this.state;
+        const { sendButton } = this.state;
         if (sendButton) {
             return (
                 <TouchableOpacity
@@ -118,7 +167,7 @@ export default class ChatWindow extends Component {
                 </TouchableOpacity>
             );
         }
-        return <Text style={[styles.iconfont, {marginRight: 0, marginLeft: 0}]}>&#xe62f;</Text>;
+        return <Text style={[styles.iconfont, {marginRight: 0, marginLeft: 0}]} onPress={this._handleFile}>&#xe62f;</Text>;
     }
 
     // 语音切换
@@ -131,7 +180,7 @@ export default class ChatWindow extends Component {
     }
     // 语音切换点击
     _handleTabAudio = () => {
-        this.setState({showAudio: !this.state.showAudio});
+        this.setState({ showAudio: !this.state.showAudio, sendButton: false, showEmoji: false, showFile: false });
     }
     _auditTabInput = () => {
         const { showAudio, height, text } = this.state;
@@ -139,7 +188,9 @@ export default class ChatWindow extends Component {
             return (
                 <TouchableOpacity
                     style={styles.inputAudit}
-                    onPress={this._handleSendMsg}
+                    // onPress={this._handleSendMsg}
+                    onPressIn={this._handlePressIn}
+                    onPressOut={this._handlePressOut}
                 >
                     <Text style={{color: '#999999'}}>按住 说话</Text>
                 </TouchableOpacity>
@@ -158,15 +209,25 @@ export default class ChatWindow extends Component {
                 onContentSizeChange={this._onContentSizeChange}
                 onFocus={this._onFocus}
                 onBlur={this._onBlur}
+                ref={i => this.content = i}
             />
         );
     }
     // 表情按钮
     _emojiButton = () => {
+        const { showEmoji } = this.state;
+        if (showEmoji) {
+            return (<Text onPress={this._hideEmoji} style={[styles.iconfont, {marginLeft: 10}]}>&#xe632;</Text>);
+        }
         return (<Text onPress={this._showEmoji} style={[styles.iconfont, {marginLeft: 10}]}>&#xe631;</Text>);
     }
     _showEmoji = () => {
-        this.setState({ showEmoji: !this.state.showEmoji, inputHeight: this.state.inputHeight === 154 ? 36 : 154  });
+        this.content.blur();
+        this.setState({ showEmoji: true, showFile: false, inputHeight: 154 });
+    }
+    _hideEmoji = () => {
+        this.content.focus();
+        this.setState({ showEmoji: false, showFile: false, inputHeight: 36  });
     }
     // 表情列表
     _emojiList = () => {
@@ -174,21 +235,37 @@ export default class ChatWindow extends Component {
         if (showEmoji) {
             return (
                 <View style={styles.emoji}>
-                    <Text>合适的坊间还</Text>
+                    <Text>emoji</Text>
+                    {/* <ImageBackground style={{width: 200, height: 20}} source={require('../../image/emoji.png')}>
+                        <Text>Inside</Text>
+                    </ImageBackground> */}
+                    <Image source={{uri: 'http://cdn.zg18.com/expressions.png'}} style={{width: 200, height: 400}} />
                 </View>
+            );
+        }
+        return null;
+    }
+    // 添加附件
+    _handleFile = () => {
+        this.setState({ showFile: !this.state.showFile, showEmoji: false, inputHeight: this.state.showFile ? 36 : 154 });
+    }
+    _fileList = () => {
+        const { showFile } = this.state;
+        if (showFile) {
+            return (
+                <Fujian />
             );
         }
         return null;
     }
 
 
-
     _keyExtractor = (item, index) => item.key;
     render() {
-        const { inputHeight, inputFocus, sendButton } = this.state;
+        const { inputHeight, inputFocus, sendButton, keyboardHeight } = this.state;
         const height = inputHeight < 30 ? 36 : inputHeight;
         const focusFlatList = inputFocus ? ({marginBottom: 120}) : ({});
-        console.log('chatwndow', height, height + 13, this.state)
+        console.log(toast)
         return (
             <View style={styles.window}>
                 <FlatList
@@ -208,7 +285,15 @@ export default class ChatWindow extends Component {
                         {this._sendButton()}
                     </View>
                     {this._emojiList()}
+                    {this._fileList()}
                 </View>
+                <Toast
+                    style={{borderRadius: 20, paddingTop: 10, paddingBottom: 10}}
+                    ref={i => this.toast = i}
+                    position='bottom'
+                    positionValue={200}
+                    opacity={0.8}
+                />
             </View>
         );
     }
@@ -249,7 +334,6 @@ const styles = StyleSheet.create({
         // justifyContent: 'center',
         alignItems: 'flex-start',
         overflow: 'hidden',
-        
     },
     emoji: {
         // flexDirection: 'row',
@@ -270,6 +354,7 @@ const styles = StyleSheet.create({
         paddingBottom: Platform.OS === 'ios' ? 10 : 2,
         // alignSelf: 'center'
         alignItems: 'center',
+        
     },
     inputAudit: {
         // height: 30,
