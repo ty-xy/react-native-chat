@@ -15,6 +15,7 @@ import {
     platform,
     ImageBackground,
     CameraRoll,
+    NativeModules
 } from 'react-native';
 import Toast, {DURATION} from 'react-native-easy-toast'
 import { observer, inject } from 'mobx-react/native';
@@ -265,23 +266,29 @@ export default class ChatWindow extends Component {
         console.log('showCamera', bool)
         const { navigation } = this.props;
         // this.setState({ showCamera: bool });
-        var _that = this;   
+        var _that = this;
+        // NativeModules.HeadImageModule.callCamera();
+        var rnToastAndroid = NativeModules.ToastByAndroid;
         CameraRoll.getPhotos({
-             first: 200, //参数 获取最近五张图片
+            first: 2000, //参数 获取最近五张图片
+            // groupTypes: 'All',
+            // assetType: 'Photos'
         }).done( 
             function (data) { //成功的回调     
                 console.log(data);    
-                var edges = data.edges;   
-                var photos = [];     
+                const edges = data.edges;   
+                const photos = [];     
                 for (var i in edges) { 
-                    photos.push(edges[i].node.image.uri);  
+                    photos.push(edges[i].node);  
                 }
+                const _photos = toast.photoCategory(photos);
+                console.log('_photos', _photos)
                 navigation.navigate('SelectImage', { photos });
             },         
             function (error) { //失败的回调
                 console.log(error.message);
             }
-         )
+        )
     }
 
     _keyExtractor = (item, index) => item.key;
