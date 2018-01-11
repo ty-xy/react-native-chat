@@ -11,6 +11,7 @@ import {
 // import Icon from 'react-native-vector-icons/Ionicons';
 import { observer, inject } from 'mobx-react/native';
 import hostUser from '../store/mobx';
+import PassWord from './myown/PassWord';
 
 // 引用store mobx文件
 @inject('mobx')
@@ -19,7 +20,8 @@ import hostUser from '../store/mobx';
 export default class Love extends Component {
   state = {
     text: '',
-    showInput: false
+    showInput: false,
+    text:'请输入姓名或电话号码'
   }
   static navigationOptions = {
     title: '联系人',
@@ -32,172 +34,41 @@ export default class Love extends Component {
     headerTitleStyle: {
       alignSelf: 'center',
     },
+    headerRight: (<Text style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe637;</Text>),
     tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe635;</Text>),
-  }
-  componentWillMount() {
-    this.props.list.list = [];
-  }
-  toggleInput () {
-    this.setState({ showInput: !this.state.showInput })
-  }
-  addListItem() {
-    this.props.list.addListItem(this.state.text)
-    this.setState({
-      text: '',
-      showInput: !this.state.showInput
-    })
-  }
-  removeListItem (item) {
-    this.props.list.removeListItem(item)
-  }
-  updateText (text) {
-    this.setState({text})
-  }
-  addItemToList (item) {
-    this.props.navigator.push({
-      component: NoList,
-      type: 'Modal',
-      passProps: {
-        item,
-        store: this.props.store
-      }
-    })
   }
   render() {
     console.log('props', this.props.list);
-    const { add, minus } = this.props.mobx;
-    const { list } = this.props.list;
-    const { showInput } = this.state;
     return (
       <View style={styles.container}>
-        <Text style={styles.love}>Love</Text>  
-        <View style={styles.counter}>
-          <TouchableHighlight
-            style={styles.welcome}  
-            onPress={() => { add() }}
-          >
-            <Text>Add</Text>
-          </TouchableHighlight>
-          <Text style={styles.welcome}>
-            {this.props.mobx.stores.num}
-          </Text>
-          <TouchableHighlight
-            style={styles.welcome}  
-            onPress = {() => { minus() }}>
-              <Text>Minus</Text>
-          </TouchableHighlight>
+        <View style={styles.search}>
+        <PassWord texts={this.state.text}/>
+        <Text style={{fontFamily:'iconfont',fontSize:16,color:'#29B6F6',marginRight:-24}}>&#xe636;</Text>
         </View>
-        <ScrollView style={{flex:1, width: '100%'}}>
-          {list.map((l, i) => {
-            return <View key={i} style={styles.itemContainer}>
-              <Text
-                style={styles.item}
-              >{l.name.toUpperCase()}</Text>
-              <Text
-                style={styles.deleteItem}
-                onPress={this.removeListItem.bind(this, l)}>Remove</Text>
-            </View>
-          })}
-        </ScrollView>
-        <TouchableHighlight
-          underlayColor='transparent'
-          onPress={
-            this.state.text === '' ? this.toggleInput.bind(this)
-            : this.addListItem.bind(this, this.state.text)
-          }
-          style={styles.button}>
-          <Text style={styles.buttonText}>
-            {this.state.text === '' && '+ New List'}
-            {this.state.text !== '' && '+ Add New List Item'}
-          </Text>
-        </TouchableHighlight>
-        {showInput && <TextInput
-          style={styles.input}
-          onChangeText={(text) => this.updateText(text)} />}
+        <View style={styles.body}>
+           <View style={style.left}/>
+        </View>
       </View>
     );
   }
 }
 
-const NoList = () => (
-  <View style={styles.noList}>
-    <Text style={styles.noListText}>No List, Add List To Get Started</Text>
-  </View>
-)
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    padding:15,
     backgroundColor: '#F5FCFF',
   },
-  love: {
-    fontSize: 40,
-    margin: 40
-  },
-  counter: {
-    justifyContent: 'space-around',
-    flexDirection: 'row'
-  },
-  welcome: {
-    padding: 30
-  },
-  itemContainer: {
-    width: '100%',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ededed',
-    flexDirection: 'row'
-  },
-  item: {
-    color: '#156e9a',
-    fontSize: 18,
-    flex: 3,
-    padding: 20
-  },
-  deleteItem: {
-    flex: 1,
-    padding: 20,
-    color: '#a3a3a3',
-    fontWeight: 'bold',
-    marginTop: 3
-  },
-  button: {
-    height: 70,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#156e9a'
-  },
-  buttonText: {
-    color: '#156e9a',
-    fontWeight: 'bold'
-  },
-  heading: {
-    height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#156e9a'
-  },
-  headingText: {
-    color: '#156e9a',
-    fontWeight: 'bold'
-  },
-  input: {
-    height: 70,
-    width: '100%',
-    backgroundColor: '#f2f2f2',
-    padding: 20,
-    color: '#156e9a'
-  },
-  noList: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  noListText: {
-    fontSize: 22,
-    color: '#156e9a'
-  },
+  search:{
+   backgroundColor:'#fff',
+   height:32,
+   width:'100%',
+   borderRadius:100,
+   paddingLeft:12,
+   paddingRight:30,
+   flexDirection: 'row',
+   alignItems: 'center',
+  }
 });
