@@ -5,25 +5,33 @@ import {
     StyleSheet,
     Text,
     View,
+    TouchableHighlight,
 } from 'react-native';
-
 
 export default class Fujian extends Component {
     static propTypes = {
+        showCamera: PropTypes.func
     };
 
     constructor(props) {
         super(props);
 
-        this.state = {};
+        this.state = {
+        };
     }
     render() {
+        console.log('fujian', this.props)
         return (
             <View style={styles.files}>
-                <View style={styles.fujian}>
-                    <Image source={require('../../image/photo.png')} style={{width: 44, height: 44}} />
-                    <Text>照片</Text>
-                </View>
+                <TouchableHighlight
+                    onPress={() => this.props.showCamera(true)}
+                    underlayColor="#ffffff"
+                >
+                    <View style={styles.fujian}>
+                        <Image source={require('../../image/photo.png')} style={{width: 44, height: 44}} />
+                        <Text>照片</Text>
+                    </View>
+                </TouchableHighlight>
                 <View style={styles.fujian}>
                     <Image source={require('../../image/location.png')} style={{width: 44, height: 44}} />
                     <Text>位置</Text>
@@ -35,7 +43,7 @@ export default class Fujian extends Component {
                 <View style={styles.fujian}>
                     <Image source={require('../../image/file.png')} style={{width: 44, height: 44}} />
                     <Text>文件</Text>
-                </View>                    
+                </View>        
             </View>
         );
     }

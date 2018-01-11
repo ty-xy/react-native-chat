@@ -13,6 +13,7 @@ import Account from './view/myown/Account';
 import FixNumber from './view/myown/FixNumber';
 import FixPassWord from './view/myown/FixPassWord';
 import Aboutus from  './view/myown/Aboutus';
+import SelectImage from './view/common/ImageSelect'
 
 // APP tab 配置: https://reactnavigation.org/docs/navigators/tab
 const TabNavigation = TabNavigator({
@@ -70,6 +71,9 @@ const Navigation = StackNavigator({
   },
   ChatWindow: {
     screen: ChatWindow,
+  },
+  SelectImage: {
+    screen: SelectImage,
   },
   Person: {
     screen: Person,

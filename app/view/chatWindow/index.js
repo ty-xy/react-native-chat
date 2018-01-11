@@ -5,7 +5,6 @@ import {
     StyleSheet,
     Text,
     View,
-    TouchableHighlight,
     TouchableOpacity,
     ActivityIndicator,
     FlatList,
@@ -14,7 +13,8 @@ import {
     Platform,
     ToastAndroid,
     platform,
-    ImageBackground
+    ImageBackground,
+    CameraRoll,
 } from 'react-native';
 import Toast, {DURATION} from 'react-native-easy-toast'
 import { observer, inject } from 'mobx-react/native';
@@ -22,6 +22,7 @@ import { observer, inject } from 'mobx-react/native';
 import Message from './Message';
 import Fujian from './Fujian';
 import toast from '../../util/toast'
+import Camera from '../../component/Camera';
 
 
 
@@ -249,23 +250,45 @@ export default class ChatWindow extends Component {
     _handleFile = () => {
         this.setState({ showFile: !this.state.showFile, showEmoji: false, inputHeight: this.state.showFile ? 36 : 154 });
     }
+    
     _fileList = () => {
         const { showFile } = this.state;
         if (showFile) {
             return (
-                <Fujian />
+                <Fujian showCamera={this.showCamera} />
             );
         }
         return null;
     }
-
+    // 激活相机
+    showCamera = (bool) => {
+        console.log('showCamera', bool)
+        const { navigation } = this.props;
+        // this.setState({ showCamera: bool });
+        var _that = this;   
+        CameraRoll.getPhotos({
+             first: 200, //参数 获取最近五张图片
+        }).done( 
+            function (data) { //成功的回调     
+                console.log(data);    
+                var edges = data.edges;   
+                var photos = [];     
+                for (var i in edges) { 
+                    photos.push(edges[i].node.image.uri);  
+                }
+                navigation.navigate('SelectImage', { photos });
+            },         
+            function (error) { //失败的回调
+                console.log(error.message);
+            }
+         )
+    }
 
     _keyExtractor = (item, index) => item.key;
     render() {
-        const { inputHeight, inputFocus, sendButton, keyboardHeight } = this.state;
+        const { inputHeight, inputFocus, sendButton, keyboardHeight, showCamera } = this.state;
         const height = inputHeight < 30 ? 36 : inputHeight;
         const focusFlatList = inputFocus ? ({marginBottom: 120}) : ({});
-        console.log(toast)
         return (
             <View style={styles.window}>
                 <FlatList
@@ -294,6 +317,8 @@ export default class ChatWindow extends Component {
                     positionValue={200}
                     opacity={0.8}
                 />
+                {/* 相机 */}
+                {showCamera ? <Camera /> : null}
             </View>
         );
     }
@@ -303,6 +328,8 @@ const styles = StyleSheet.create({
     window: {
         flex: 1,
         backgroundColor: '#F6F6F6',
+        position: 'relative',
+        zIndex: 0,
     },
     chatWindow: {
         flex: 1,

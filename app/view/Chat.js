@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   AppRegistry,
   StyleSheet,
@@ -16,6 +17,9 @@ import Card from '../component/Card';
 @inject('home')
 @observer
 export default class Home extends Component {
+    static propTypes = {
+        navigation: PropTypes.object,
+    }
     static navigationOptions = {
         title: '消息(14)',
         tabBarLabel: '消息',
