@@ -8,7 +8,7 @@ import {
     ScrollView,
     TouchableOpacity
 } from 'react-native';
-import FadeInView from './photoBook';
+import FadeInView from './FadeInView';
 
 
 
@@ -44,10 +44,10 @@ export default class SelectImage extends PureComponent {
         this.setState({ uris, photos });
     }
     _handleSendMsg = () => {
-        this.setState({ showPhotoList: true });
+        
     }
     render() {
-        const { uris, photos, showPhotoList } = this.state;
+        const { uris, photos } = this.state;
         const photosView = [];
         const photoCategory = [];
        
@@ -78,11 +78,7 @@ export default class SelectImage extends PureComponent {
                 <View style={styles.container}>
                     {photosView}
                 </View>
-                {showPhotoList ? (
-                    <TouchableOpacity onPress = {()=> this.startAnimation()} style={styles.button}>
-                        <Text>Start Animation</Text>
-                    </TouchableOpacity>
-                ) : null}
+                {}
             </ScrollView>
         );
     }
