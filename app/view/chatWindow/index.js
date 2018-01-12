@@ -17,13 +17,14 @@ import {
     CameraRoll,
     NativeModules
 } from 'react-native';
-import Toast, {DURATION} from 'react-native-easy-toast'
+import Toast, { DURATION } from 'react-native-easy-toast'
 import { observer, inject } from 'mobx-react/native';
 
 import Message from './Message';
 import Fujian from './Fujian';
-import toast from '../../util/toast'
+import toast from '../../util/util'
 import Camera from '../../component/Camera';
+import Emoji from './emoji';
 
 
 
@@ -79,37 +80,37 @@ export default class ChatWindow extends Component {
             text: '',
         };
     }
-    componentWillMount () {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
-    }
+    // componentWillMount () {
+    //     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+    //     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+    // }
     
-    componentWillUnmount () {
-        this.keyboardDidShowListener.remove();
-        this.keyboardDidHideListener.remove();
-    }
+    // componentWillUnmount () {
+    //     this.keyboardDidShowListener.remove();
+    //     this.keyboardDidHideListener.remove();
+    // }
 
-    _keyboardDidShow = (e) => {
-        this.setState({
-            keyboardHeight: e.endCoordinates.height,
-            sendButton: true,
-        })
-    }
+    // _keyboardDidShow = (e) => {
+    //     this.setState({
+    //         keyboardHeight: e.endCoordinates.height,
+    //         sendButton: true,
+    //     })
+    // }
 
-    _keyboardDidHide = (e) => {
-        if (this.state.keyboardHeight) {
-            this.setState({
-                keyboardHeight: 0,
-                sendButton: false,
-                inputHeight: 154
-            })
-        } else {
-            this.setState({
-                keyboardHeight: 0,
-                sendButton: false
-            })
-        }
-    }
+    // _keyboardDidHide = (e) => {
+    //     if (this.state.keyboardHeight) {
+    //         this.setState({
+    //             keyboardHeight: 0,
+    //             sendButton: false,
+    //             inputHeight: 154
+    //         })
+    //     } else {
+    //         this.setState({
+    //             keyboardHeight: 0,
+    //             sendButton: false
+    //         })
+    //     }
+    // }
     _onContentSizeChange = (event) => {
         this.setState({inputHeight: event.nativeEvent.contentSize.height});
     }
@@ -237,15 +238,15 @@ export default class ChatWindow extends Component {
         if (showEmoji) {
             return (
                 <View style={styles.emoji}>
-                    <Text>emoji</Text>
-                    {/* <ImageBackground style={{width: 200, height: 20}} source={require('../../image/emoji.png')}>
-                        <Text>Inside</Text>
-                    </ImageBackground> */}
-                    <Image source={{uri: 'http://cdn.zg18.com/expressions.png'}} style={{width: 200, height: 400}} />
+                    <Emoji sendEmoji={this.sendEmoji} />
                 </View>
             );
         }
         return null;
+    }
+    // 发送表情
+    sendEmoji = (name) => {
+        console.log('name', name)
     }
     // 添加附件
     _handleFile = () => {
@@ -277,20 +278,25 @@ export default class ChatWindow extends Component {
             function (data) { //成功的回调     
                 console.log(data);    
                 const edges = data.edges;   
-                const photos = [];     
+                const photos = [];  
+                const uris = [];
                 for (var i in edges) { 
                     photos.push(edges[i].node);  
+                    uris.push(edges[i].node.image.uri);
                 }
                 const _photos = toast.photoCategory(photos);
                 console.log('_photos', _photos)
-                navigation.navigate('SelectImage', { photos });
+                navigation.navigate('SelectImage', { photos: _photos, uris });
             },         
             function (error) { //失败的回调
                 console.log(error.message);
             }
         )
     }
-
+    // 点击其他地方关闭附件
+    closeFujian = () => {
+        console.log('closeFujian')
+    }
     _keyExtractor = (item, index) => item.key;
     render() {
         const { inputHeight, inputFocus, sendButton, keyboardHeight, showCamera } = this.state;
