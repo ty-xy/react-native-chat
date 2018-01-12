@@ -5,8 +5,10 @@ import {
     StyleSheet,
     Text,
     View,
-    ScrollView
+    ScrollView,
+    TouchableOpacity
 } from 'react-native';
+import FadeInView from './FadeInView';
 
 
 
@@ -32,31 +34,51 @@ export default class SelectImage extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-
+            uris: [],
         };
     }
-    render() {
+    componentWillMount() {
         const { navigation } = this.props;
+        const uris = navigation.state.params && navigation.state.params.uris || [];
         const photos = navigation.state.params && navigation.state.params.photos || [];
-        console.log('photos', this.props)
+        this.setState({ uris, photos });
+    }
+    _handleSendMsg = () => {
+        
+    }
+    render() {
+        const { uris, photos } = this.state;
         const photosView = [];
-        for(var i = 0; i < photos.length ; i += 2){
+        const photoCategory = [];
+       
+        for(var i = 0; i < uris.length ; i += 3){
             photosView.push(
                 <View key={i} style={styles.row}>
+                    <TouchableOpacity
+                        style={styles.flex}
+                        onPress={this._handleSendMsg}
+                    >
+                        <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i]}}/>
+                    </TouchableOpacity>
                     <View style={styles.flex}>
-                        <Image resizeMode="stretch" style={styles.image} source={{uri:photos[i]}}/>
+                        <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i+1]}}/>
                     </View>
                     <View style={styles.flex}>
-                        <Image resizeMode="stretch" style={styles.image} source={{uri:photos[i+1]}}/>
+                        <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i+2]}}/>
                     </View>
                 </View>
             )
         }
+        for (let name in photos) {
+            photoCategory.push({ name, detail: photos[name] })
+        }
+        console.log('render', photosView, photoCategory)
         return (
             <ScrollView>
                 <View style={styles.container}>
                     {photosView}
                 </View>
+                {}
             </ScrollView>
         );
     }
@@ -75,7 +97,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     image:{
-        height: 200,
+        height: 100,
         marginTop: 10,
         marginLeft: 5,
         marginRight: 5,
