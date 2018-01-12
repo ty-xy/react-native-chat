@@ -17,9 +17,6 @@ export default class Message extends PureComponent {
 
         this.state = {};
     }
-
-    componentDidMount() {
-    }
     messageLeft = (name) => {
         return (
             <View style={styles.message}>
