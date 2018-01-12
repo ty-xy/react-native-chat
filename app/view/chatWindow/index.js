@@ -271,7 +271,7 @@ export default class ChatWindow extends Component {
         // NativeModules.HeadImageModule.callCamera();
         var rnToastAndroid = NativeModules.ToastByAndroid;
         CameraRoll.getPhotos({
-            first: 6, //参数 获取最近五张图片
+            first: 200, //参数 获取最近五张图片
             // groupTypes: 'All',
             // assetType: 'Photos'
         }).done( 
@@ -285,8 +285,8 @@ export default class ChatWindow extends Component {
                     uris.push(edges[i].node.image.uri);
                 }
                 const _photos = toast.photoCategory(photos);
-                console.log('_photos', _photos)
-                navigation.navigate('SelectImage', { photos: _photos, uris });
+                console.log('_photos', _photos, uris)
+                navigation.navigate('SelectImage', { photos: _photos || {}, uris });
             },         
             function (error) { //失败的回调
                 console.log(error.message);

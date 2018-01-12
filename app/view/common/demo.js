@@ -46,9 +46,10 @@ export default class SelectImage extends PureComponent {
         this.setState({ uris, photos });
     }
     _handleShowPhotoList= () => {
+        console.log('_handleShowPhotoList')
         this.setState({ showOpacity: true });
     }
-    _handleHidePhotoList = (name) => {
+    hide = (name) => {
         const { photos } = this.state;
         console.log('photos', photos)
         const uris = [];
@@ -61,35 +62,30 @@ export default class SelectImage extends PureComponent {
         }
         this.setState({ showOpacity: false, uris });
     }
-    // 选中
-    _handleSelect = (uri) => {
-        console.log('_handleSelect', uri, [`showSelected${uri}`])
-        this.setState({ [`showSelected${uri}`]: !this.state[`showSelected${uri}`] });
-    }
     render() {
         const { uris, photos, showOpacity } = this.state;
         const photosView = [];
         const photoCategory = [];
         console.log('uris', uris)
-        for(var i = 0; i < uris.length ; i += 4){
+        for(var i = 0; i < uris.length ; i += 3){
             photosView.push(
-                <View key={i} style={styles.row}>
-                    <TouchableOpacity style={styles.flex} onPress={this._handleSelect.bind(this, uris[i])}>
-                        <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i]}}/>
-                        {uris[i] ? (this.state[`showSelected${uris[i]}`] ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />) : null}
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.flex} onPress={this._handleSelect.bind(this, uris[i+1])}>
-                        <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i+1]}}/>
-                        {uris[i+1] ? (this.state[`showSelected${uris[i+1]}`] ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />) : null}
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.flex} onPress={this._handleSelect.bind(this, uris[i+2])}>
-                        <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i+2]}}/>
-                        {uris[i+2] ? (this.state[`showSelected${uris[i+2]}`] ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />) : null}
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.flex} onPress={this._handleSelect.bind(this, uris[i+3])}>
-                        <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i+3]}}/>
-                        {uris[i+3] ? (this.state[`showSelected${uris[i+3]}`] ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />) : null}
-                    </TouchableOpacity>
+                <View key={uris[i].uri} style={styles.row}>
+                    {uris[i] ? <TouchableOpacity style={styles.flex}>
+                        <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i].uri}}/>
+                        {uris[i].seleted ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />}
+                    </TouchableOpacity> : null}
+                    {uris[i+1] ? <TouchableOpacity style={styles.flex}>
+                        <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i+1].uri}}/>
+                        {uris[i+1].seleted ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />}
+                    </TouchableOpacity> : null}
+                    {uris[i+2] ? <TouchableOpacity style={styles.flex}>
+                        <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i+2].uri}}/>
+                        {uris[i+2].seleted ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />}
+                    </TouchableOpacity> : null}
+                    {uris[i+3] ? <TouchableOpacity style={styles.flex}>
+                        <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i+2].uri}}/>
+                        {uris[i+3].seleted ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />}
+                    </TouchableOpacity> : null}
                 </View>
             )
         }
@@ -105,7 +101,7 @@ export default class SelectImage extends PureComponent {
                     <Text onPress={this._handleShowPhotoList} style={{color: '#666666'}}>所有相册</Text>
                     <Text style={{color: '#29B6F6'}}>预览</Text>
                 </View>
-                {showOpacity ? <PhotoList photoCategory={photoCategory} _handleHidePhotoList={this._handleHidePhotoList} /> : null}
+                {showOpacity ? <PhotoList photoCategory={photoCategory} hide={this.hide} /> : null}
             </View>
         );
     }
@@ -122,7 +118,7 @@ const styles = StyleSheet.create({
     },
 
     row:{
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     image:{
         height: 100,
