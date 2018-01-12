@@ -271,7 +271,7 @@ export default class ChatWindow extends Component {
         // NativeModules.HeadImageModule.callCamera();
         var rnToastAndroid = NativeModules.ToastByAndroid;
         CameraRoll.getPhotos({
-            first: 2000, //参数 获取最近五张图片
+            first: 6, //参数 获取最近五张图片
             // groupTypes: 'All',
             // assetType: 'Photos'
         }).done( 

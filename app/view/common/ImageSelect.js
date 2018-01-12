@@ -5,8 +5,10 @@ import {
     StyleSheet,
     Text,
     View,
-    ScrollView
+    ScrollView,
+    TouchableOpacity
 } from 'react-native';
+import FadeInView from './photoBook';
 
 
 
@@ -41,18 +43,23 @@ export default class SelectImage extends PureComponent {
         const photos = navigation.state.params && navigation.state.params.photos || [];
         this.setState({ uris, photos });
     }
+    _handleSendMsg = () => {
+        this.setState({ showPhotoList: true });
+    }
     render() {
-        const { uris } = this.state;
+        const { uris, photos, showPhotoList } = this.state;
         const photosView = [];
         const photoCategory = [];
-        console.log('render', this.props, this.state)
+       
         for(var i = 0; i < uris.length ; i += 3){
             photosView.push(
                 <View key={i} style={styles.row}>
-                    <View style={styles.flex}>
+                    <TouchableOpacity
+                        style={styles.flex}
+                        onPress={this._handleSendMsg}
+                    >
                         <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i]}}/>
-                        {}
-                    </View>
+                    </TouchableOpacity>
                     <View style={styles.flex}>
                         <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i+1]}}/>
                     </View>
@@ -62,11 +69,20 @@ export default class SelectImage extends PureComponent {
                 </View>
             )
         }
+        for (let name in photos) {
+            photoCategory.push({ name, detail: photos[name] })
+        }
+        console.log('render', photosView, photoCategory)
         return (
             <ScrollView>
                 <View style={styles.container}>
                     {photosView}
                 </View>
+                {showPhotoList ? (
+                    <TouchableOpacity onPress = {()=> this.startAnimation()} style={styles.button}>
+                        <Text>Start Animation</Text>
+                    </TouchableOpacity>
+                ) : null}
             </ScrollView>
         );
     }
