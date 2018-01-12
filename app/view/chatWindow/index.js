@@ -5,16 +5,26 @@ import {
     StyleSheet,
     Text,
     View,
-    TouchableHighlight,
-    Button,
+    TouchableOpacity,
     ActivityIndicator,
     FlatList,
     Keyboard,
-    TextInput
+    TextInput,
+    Platform,
+    ToastAndroid,
+    platform,
+    ImageBackground,
+    CameraRoll,
+    NativeModules
 } from 'react-native';
-import Message from './Message';
-
+import Toast, {DURATION} from 'react-native-easy-toast'
 import { observer, inject } from 'mobx-react/native';
+
+import Message from './Message';
+import Fujian from './Fujian';
+import toast from '../../util/toast'
+import Camera from '../../component/Camera';
+
 
 
 const messageList = [
@@ -33,6 +43,9 @@ const messageList = [
     {key: 'sdg67322eds4f8sk', name: '小刘', chatType: 'mee'},
     {key: 'sdghj15sdfsd2sk', name: '小郭', chatType: 'me'},  
 ];
+let dateInOut = 0;
+
+
 
 @inject('message')
 @observer
@@ -58,43 +71,46 @@ export default class ChatWindow extends Component {
 
         this.state = {
             inputHeight: 36,
-            keyboardHeight:0
+            keyboardHeight:0,
+            sendButton: false, // 发送按钮显示
+            showAudio: false, // 语音输入切换
+            showEmoji: false, // 表情
+            showFile: false, // 附件
+            text: '',
         };
     }
-    // componentDidMount = () => {
-    //     console.log('componentDidMount', this._chatList)
-    // }
-    // componentWillUnmount() {
-    //     this.keyboardDidShowListener.remove();
-    //     this.keyboardDidHideListener.remove();
-    // }
+    componentWillMount () {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+    }
+    
+    componentWillUnmount () {
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
+    }
 
-    // componentWillMount() {
-    //     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
-    //     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
-    // }
+    _keyboardDidShow = (e) => {
+        this.setState({
+            keyboardHeight: e.endCoordinates.height,
+            sendButton: true,
+        })
+    }
 
-    // _keyboardDidShow = (e) => {
-    //     console.log('Keyboard', e)
-    //     this.setState({
-    //         keyboardHeight: e.height
-    //     })
-
-    // }
-
-    // _keyboardDidHide = (e) => {
-    //     this.setState({
-    //         keyboardHeight:0
-    //     })
-    // }
-    // componentWillMount() {
-    //     // this.props.message.getMessageList();
-    // }
-    // _onContentSizeChange = (parmas) => {
-    //     console.log('parmas', parmas)
-    // }
+    _keyboardDidHide = (e) => {
+        if (this.state.keyboardHeight) {
+            this.setState({
+                keyboardHeight: 0,
+                sendButton: false,
+                inputHeight: 154
+            })
+        } else {
+            this.setState({
+                keyboardHeight: 0,
+                sendButton: false
+            })
+        }
+    }
     _onContentSizeChange = (event) => {
-        console.log('_onContentSizeChange', event.nativeEvent.contentSize)
         this.setState({inputHeight: event.nativeEvent.contentSize.height});
     }
     // 底部加载显示
@@ -104,14 +120,182 @@ export default class ChatWindow extends Component {
     }
     // 输入框获得焦点
     _onFocus = () => {
-        this.setState({inputFocus: true});
+        console.log('_onFocus')
+        this.setState({ sendButton: true });
     }
+    _onBlur = () => {
+        console.log('state', this.state)
+        this.setState({ sendButton: false });
+    }
+    // 输入文字
+    _inputChange = (text) => {
+        this.setState({ text });
+    }
+    // 发送消息
+    _handleSendMsg = () => {
+        const { text } = this.state;
+        if (text.length === 0) {
+            toast.toast('输入内容为空', this);
+        }
+        console.log('_handleSendMsg', text)
+    }
+    // 发送语音
+    _handleSendAudio = () => {
+        console.log('obj_handleSendAudioect')
+    }
+    _handlePressIn = () => {
+        dateInOut = new Date().valueOf();
+    }
+    _handlePressOut = () => {
+        // dateInOut = new Date().valueOf();
+        const date = (new Date().valueOf() - dateInOut) / 1000;
+        if (date > 1) {
+            this._handleSendAudio();
+            console.log('发送录音')
+        } else {
+            toast.toast('时间太短', this);
+        }
+    }
+    // 发送按钮
+    _sendButton = () => {
+        const { sendButton } = this.state;
+        if (sendButton) {
+            return (
+                <TouchableOpacity
+                    style={styles.sendbutton}
+                    onPress={this._handleSendMsg}
+                >
+                    <Text style={{color: '#29B6F6', fontSize: 16}}>发送</Text>
+                </TouchableOpacity>
+            );
+        }
+        return <Text style={[styles.iconfont, {marginRight: 0, marginLeft: 0}]} onPress={this._handleFile}>&#xe62f;</Text>;
+    }
+
+    // 语音切换
+    _auditTabInputIcon = () => {
+        const { showAudio } = this.state;
+        if (!showAudio) {
+            return <Text style={styles.iconfont} onPress={this._handleTabAudio}>&#xe63e;</Text>;            
+        }
+        return <Text style={styles.iconfont} onPress={this._handleTabAudio}>&#xe632;</Text>;
+    }
+    // 语音切换点击
+    _handleTabAudio = () => {
+        this.setState({ showAudio: !this.state.showAudio, sendButton: false, showEmoji: false, showFile: false });
+    }
+    _auditTabInput = () => {
+        const { showAudio, height, text } = this.state;
+        if (showAudio) {
+            return (
+                <TouchableOpacity
+                    style={styles.inputAudit}
+                    // onPress={this._handleSendMsg}
+                    onPressIn={this._handlePressIn}
+                    onPressOut={this._handlePressOut}
+                >
+                    <Text style={{color: '#999999'}}>按住 说话</Text>
+                </TouchableOpacity>
+            );
+        }
+        return (
+            <TextInput
+                multiline
+                maxLength={255}
+                placeholder='说点什么'
+                placeholderTextColor='#D1D1D1'
+                underlineColorAndroid='transparent'
+                style={[styles.input, {height}]}
+                onChangeText={this._inputChange}
+                value={text}
+                onContentSizeChange={this._onContentSizeChange}
+                onFocus={this._onFocus}
+                onBlur={this._onBlur}
+                ref={i => this.content = i}
+            />
+        );
+    }
+    // 表情按钮
+    _emojiButton = () => {
+        const { showEmoji } = this.state;
+        if (showEmoji) {
+            return (<Text onPress={this._hideEmoji} style={[styles.iconfont, {marginLeft: 10}]}>&#xe632;</Text>);
+        }
+        return (<Text onPress={this._showEmoji} style={[styles.iconfont, {marginLeft: 10}]}>&#xe631;</Text>);
+    }
+    _showEmoji = () => {
+        this.content.blur();
+        this.setState({ showEmoji: true, showFile: false, inputHeight: 154 });
+    }
+    _hideEmoji = () => {
+        this.content.focus();
+        this.setState({ showEmoji: false, showFile: false, inputHeight: 36  });
+    }
+    // 表情列表
+    _emojiList = () => {
+        const { showEmoji } = this.state;
+        if (showEmoji) {
+            return (
+                <View style={styles.emoji}>
+                    <Text>emoji</Text>
+                    {/* <ImageBackground style={{width: 200, height: 20}} source={require('../../image/emoji.png')}>
+                        <Text>Inside</Text>
+                    </ImageBackground> */}
+                    <Image source={{uri: 'http://cdn.zg18.com/expressions.png'}} style={{width: 200, height: 400}} />
+                </View>
+            );
+        }
+        return null;
+    }
+    // 添加附件
+    _handleFile = () => {
+        this.setState({ showFile: !this.state.showFile, showEmoji: false, inputHeight: this.state.showFile ? 36 : 154 });
+    }
+    
+    _fileList = () => {
+        const { showFile } = this.state;
+        if (showFile) {
+            return (
+                <Fujian showCamera={this.showCamera} />
+            );
+        }
+        return null;
+    }
+    // 激活相机
+    showCamera = (bool) => {
+        console.log('showCamera', bool)
+        const { navigation } = this.props;
+        // this.setState({ showCamera: bool });
+        var _that = this;
+        // NativeModules.HeadImageModule.callCamera();
+        var rnToastAndroid = NativeModules.ToastByAndroid;
+        CameraRoll.getPhotos({
+            first: 2000, //参数 获取最近五张图片
+            // groupTypes: 'All',
+            // assetType: 'Photos'
+        }).done( 
+            function (data) { //成功的回调     
+                console.log(data);    
+                const edges = data.edges;   
+                const photos = [];     
+                for (var i in edges) { 
+                    photos.push(edges[i].node);  
+                }
+                const _photos = toast.photoCategory(photos);
+                console.log('_photos', _photos)
+                navigation.navigate('SelectImage', { photos });
+            },         
+            function (error) { //失败的回调
+                console.log(error.message);
+            }
+        )
+    }
+
     _keyExtractor = (item, index) => item.key;
     render() {
-        const { inputHeight, inputFocus } = this.state;
+        const { inputHeight, inputFocus, sendButton, keyboardHeight, showCamera } = this.state;
         const height = inputHeight < 30 ? 36 : inputHeight;
         const focusFlatList = inputFocus ? ({marginBottom: 120}) : ({});
-        console.log('chatwndow', height, height + 13, this.state)
         return (
             <View style={styles.window}>
                 <FlatList
@@ -120,24 +304,28 @@ export default class ChatWindow extends Component {
                     keyExtractor={this._keyExtractor}
                     renderItem={({item}) => <Message {...item} />}
                     ListEmptyComponent={() => this._renderPullBottom()}
+                    ListFooterComponent={() => <View style={{height: 15}} />}
                     ref={i => this._chatList = i}
                 />
                 <View style={[styles.enterCard, {height: height + 13}]}>
-                    <Text style={styles.iconfont}>&#xe63e;</Text>
-                    <TextInput
-                        multiline
-                        maxLength={255}
-                        placeholder='说点什么'
-                        underlineColorAndroid='transparent'
-                        style={[styles.input, {height}]}
-                        onChangeText={(text) => this.setState({text})}
-                        value={this.state.text}
-                        // onContentSizeChange={this._onContentSizeChange.bind(this)}
-                        // onFocus={this._onFocus}
-                    />
-                    <Text style={[styles.iconfont, {marginLeft: 10}]}>&#xe631;</Text>
-                    <Text style={[styles.iconfont, {marginRight: 0, marginLeft: 0}]}>&#xe62f;</Text>
+                    <View style={styles.enterInput}>
+                        {this._auditTabInputIcon()}
+                        {this._auditTabInput()}
+                        {this._emojiButton()}
+                        {this._sendButton()}
+                    </View>
+                    {this._emojiList()}
+                    {this._fileList()}
                 </View>
+                <Toast
+                    style={{borderRadius: 20, paddingTop: 10, paddingBottom: 10}}
+                    ref={i => this.toast = i}
+                    position='bottom'
+                    positionValue={200}
+                    opacity={0.8}
+                />
+                {/* 相机 */}
+                {showCamera ? <Camera /> : null}
             </View>
         );
     }
@@ -147,6 +335,8 @@ const styles = StyleSheet.create({
     window: {
         flex: 1,
         backgroundColor: '#F6F6F6',
+        position: 'relative',
+        zIndex: 0,
     },
     chatWindow: {
         flex: 1,
@@ -168,11 +358,23 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginRight: 15,
         marginLeft: 15,
+        paddingTop: 2,
         paddingLeft: 15,
         paddingRight: 15,
         // paddingTop: 5,
         // paddingBottom: 5,
         // flex: 1,
+        flexDirection: 'column',
+        // justifyContent: 'center',
+        alignItems: 'flex-start',
+        overflow: 'hidden',
+    },
+    emoji: {
+        // flexDirection: 'row',
+        // justifyContent: 'center',
+        // alignItems: 'center',
+    },
+    enterInput: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
@@ -182,8 +384,20 @@ const styles = StyleSheet.create({
         flex: 2,
         backgroundColor: '#F6F6F6',
         borderRadius: 4,
-        paddingTop: 2,
-        paddingBottom: 2,
+        paddingTop: Platform.OS === 'ios' ? 10 : 2,
+        paddingBottom: Platform.OS === 'ios' ? 10 : 2,
+        // alignSelf: 'center'
+        alignItems: 'center',
+        
+    },
+    inputAudit: {
+        // height: 30,
+        flex: 2,
+        backgroundColor: '#F6F6F6',
+        borderRadius: 4,
+        paddingTop: Platform.OS === 'ios' ? 10 : 6,
+        paddingBottom: Platform.OS === 'ios' ? 10 : 6,
+        alignItems: 'center',
     },
     iconfont: {
         fontFamily: 'iconfont',
@@ -192,5 +406,8 @@ const styles = StyleSheet.create({
         marginRight: 15,
         alignSelf: 'flex-end',
         margin: 10,
+    },
+    sendbutton: {
+        
     },
 });
