@@ -3,6 +3,7 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
+  Animated,
   TextInput,
   TouchableHighlight,
   ScrollView,
@@ -25,7 +26,9 @@ export default class Love extends Component {
   state = {
     text: '',
     showInput: false,
-    text:'请输入姓名或电话号码'
+    text:'请输入姓名或电话号码',
+    selectedChat:{},
+    try:true,
   }
   static navigationOptions = {
     title: '联系人',
@@ -43,10 +46,10 @@ export default class Love extends Component {
   }
   _renderFlatlist(item) {
     return (
-      <View style={styles.total}>
+      <View style={styles.total} >
        {item.showType?
        <View style={styles.left}> 
-          <Text>{item.pinyin.toUpperCase()}</Text>
+          <Text ref={(i)=>this.text=i}>{item.pinyin.toUpperCase()}</Text>
        </View>
        :
        <Text style={styles.left}/>}
@@ -66,6 +69,13 @@ export default class Love extends Component {
       </View>
     )
 }
+_handleToggle = (value) => {
+  this.setState({
+      selectedChat: {
+          [value]: true,
+      },
+  });
+}
 _renderRight(data){
    return (
      <View style={styles.right}>
@@ -73,31 +83,37 @@ _renderRight(data){
           return(
             <TouchableOpacity key={index} onPress={()=>this._onChangeScrollToIndex(index)}>
               {value.showType?
-               <Text >{value.pinyin.toUpperCase()}</Text>:null}
+               <View style={this.state.selectedChat[index]?[styles.circle,{backgroundColor:'#29B6F6'}]:styles.circle}  data-index={index}>
+               <Text style={styles.wordlist}>{value.pinyin.toUpperCase()}</Text>
+               </View>
+               :null}
            </TouchableOpacity>
         )
        }):null}
      </View>
    )
 }
-_onChangeScrollToIndex = (text) => {
+_onChangeScrollToIndex = (text,e) => {
   this._listRef.scrollToIndex({viewPosition: 0, index: Number(text)});
-};
+}
+_scrollPos = new Animated.Value(0)
+_scrollSinkX = Animated.event(
+  [{nativeEvent: { contentOffset: { y: this._scrollPos } }}],
+  {useNativeDriver: true},
+)
+_onScrollIndex=(e)=>{
+ const y=e.nativeEvent.contentOffset.y
+   index=Math.floor(y/85)>-1?Math.floor(y/85):0
+ showType=this._listRef.props.data[index].showType
+ if(showType&&this.state.try){
+    this._handleToggle(index)
+ }
+}
 _captureRef = (ref) => { this._listRef = ref};
+_ki=(index)=>{this.indexlist=index}
   render() {
     const data =this.props.link.pinyinData
-    console.log(this.props.link.sortedData)
-    const datalist = this.props.link.sortedData
-    // datalist.forEach((d, i, data) => {
-    //   d.showType = false;
-    //   if (i) {
-    //       const prev = data[i - 1];
-    //       d.showType = d.pinyin !== prev.pinyin;
-    //   } else {
-    //       d.showType = true;
-    //   }
-    // });
-    console.log(datalist);
+   
     return (
       <View style={styles.container}>
         <View style={styles.search}>
@@ -109,6 +125,7 @@ _captureRef = (ref) => { this._listRef = ref};
            data={this.props.link.pinyinData}
            renderItem={({item}) => this._renderFlatlist(item)}
            ref={this._captureRef}
+           onScroll={this._onScrollIndex}
       />
           {this._renderRight(data)}
         </View>
@@ -123,7 +140,7 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
     // alignItems: 'center',
     padding:15,
-    backgroundColor: '#F5FCFF',
+    backgroundColor:'#F6F6F6',
   },
   search:{
     backgroundColor:'#fff',
@@ -180,8 +197,26 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding:5,
     paddingTop:10,
+    // flex:1,
     },
-    total:{
+   total:{
       flexDirection: 'row',
-    }
+    },
+  circle:{
+    alignItems: 'center',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    height:18,
+    width:18,
+    borderRadius:8,
+    // backgroundColor:'pink',
+    margin:4,
+    padding:2,
+  },
+  wordlist:{
+    fontSize: 12,
+    color: '#999999',
+    letterSpacing: 0,
+    padding:-2,
+  }
 });
