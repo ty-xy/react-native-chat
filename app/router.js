@@ -13,6 +13,7 @@ import Account from './view/myown/Account';
 import FixNumber from './view/myown/FixNumber';
 import FixPassWord from './view/myown/FixPassWord';
 import Aboutus from  './view/myown/Aboutus';
+import AddFriend from './view/link/AddFriend';
 
 // APP tab 配置: https://reactnavigation.org/docs/navigators/tab
 const TabNavigation = TabNavigator({
@@ -88,6 +89,9 @@ const Navigation = StackNavigator({
   },
   Aboutus: {
     screen:Aboutus,
+  },
+  AddFriend:{
+    screen:AddFriend,   
   }
 });
 
