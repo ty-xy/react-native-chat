@@ -18,7 +18,10 @@
     "react-native": "0.51.0",
     "react-native-camera": "^0.12.0",
     "react-native-easy-toast": "^1.0.9",
+<<<<<<< HEAD
     "react-native-modal": "^4.1.1",
+=======
+>>>>>>> 2e24e88c622e974d1838e3bfc4bccdd3b95da0fa
     "react-native-ui-kitten": "^2.0.1",
     "react-navigation": "^1.0.0-beta.23"
   },
