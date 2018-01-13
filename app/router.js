@@ -16,6 +16,7 @@ import Aboutus from  './view/myown/Aboutus';
 import AddFriend from './view/link/AddFriend';
 import SelectImage from './view/common/ImageSelect';
 import FriendDetail from './view/link/FriendDetail';
+import FriendApply from './view/link/FriendApply';
 
 // APP tab 配置: https://reactnavigation.org/docs/navigators/tab
 const TabNavigation = TabNavigator({
@@ -100,7 +101,10 @@ const Navigation = StackNavigator({
   },
   FriendDetail:{
     screen:FriendDetail, 
-  }
+  },
+  FriendApply:{
+    screen:FriendApply, 
+  },
 });
 
 export default Navigation;

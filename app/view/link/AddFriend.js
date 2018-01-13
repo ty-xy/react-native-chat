@@ -81,7 +81,10 @@ export default class Person extends Component {
       alignSelf: 'center',
     },
   }
-
+  _onpressButton(id){
+      const { navigation} = this.props;
+       navigation.navigate(id)
+  }
   onPressLearnMore () {
     let num = 0
     console.log(num++)
@@ -93,10 +96,12 @@ export default class Person extends Component {
           <Text style={{fontFamily:'iconfont',fontSize:16,color:'#29B6F6',marginRight:10}}>&#xe636;</Text>
             <PassWord texts={this.state.text} />
         </View>
+        <TouchableOpacity onPress={()=>this._onpressButton('FriendApply')}>
          <View style={styles.flatlist}>
          <Text style={styles.namelist}>&#xe637;</Text>
            <Text style={styles.keylist}>新的好友</Text>
          </View>
+         </TouchableOpacity>
          <View style={styles.flatlist}>
          <Text style={styles.namelist}>&#xe638;</Text>
            <Text style={styles.keylist}>扫一扫</Text>
