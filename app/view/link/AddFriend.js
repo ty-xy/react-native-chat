@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  FlatList,
+//   FlatList,
   View,
   TouchableOpacity,
   // Button,
@@ -14,11 +14,12 @@ import PassWord from '../myown/PassWord';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignContent: 'stretch',
     flexDirection: 'column',
     flexWrap: 'wrap',
     alignItems:'center',
+    padding:15,
     // backgroundColor: '#EBF8FD',
   },
   flatlist:{
@@ -26,7 +27,9 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 8, height: 8},
     shadowColor:'rgba(41,182,246,0.02)',
     borderRadius: 4,
+    // width:'100%',
     width:345,
+    // flex:1,
     height:67,
     marginTop:15,
     padding:10,
@@ -36,17 +39,17 @@ const styles = StyleSheet.create({
   keylist:{
     fontSize: 16,
     color: "#4d4d4d",
-    letterSpacing: -0.34,
+    letterSpacing: -0.39,
     // marginBottom:5,
     // height:18,
     // lineHeight:18,
   },
   namelist:{
-    fontSize: 16,
-    color: "#666",
+    fontSize: 24,
+    color: "#29B6F6",
     letterSpacing: -0.39,
-    height:22,
-    lineHeight:22,
+    fontFamily:'iconfont',
+    marginRight:13,
   },
   search:{
     backgroundColor:'#fff',
@@ -64,11 +67,7 @@ export default class Person extends Component {
   constructor(props){
     super(props);
     this.state={
-      data : [
-              {key:'新的好友',name:'林亦宣'},
-              {key:'扫一扫',name:'176 0022 4466'},
-              {key:'添加手机联系人',name:'北京市-朝阳区'}
-             ]
+        text:'手机号查找',
   }
 }
   static navigationOptions = {
@@ -82,14 +81,7 @@ export default class Person extends Component {
       alignSelf: 'center',
     },
   }
-  _renderFlatlist(item) {
-      return (
-        <View style={styles.flatlist}>
-           <Text style={styles.keylist}>{item.key}</Text>
-           <Text style={styles.namelist}>{item.name}</Text>
-        </View>
-      )
-  }
+
   onPressLearnMore () {
     let num = 0
     console.log(num++)
@@ -98,13 +90,21 @@ export default class Person extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.search}>
-          <Text style={{fontFamily:'iconfont',fontSize:16,color:'#29B6F6',marginRight:-24}}>&#xe636;</Text>
-            <PassWord texts={this.state.text}/>
+          <Text style={{fontFamily:'iconfont',fontSize:16,color:'#29B6F6',marginRight:10}}>&#xe636;</Text>
+            <PassWord texts={this.state.text} />
         </View>
-     <FlatList
-        data={this.state.data}
-        renderItem={({item}) => this._renderFlatlist(item)}
-      />
+         <View style={styles.flatlist}>
+         <Text style={styles.namelist}>&#xe637;</Text>
+           <Text style={styles.keylist}>新的好友</Text>
+         </View>
+         <View style={styles.flatlist}>
+         <Text style={styles.namelist}>&#xe638;</Text>
+           <Text style={styles.keylist}>扫一扫</Text>
+         </View>
+         <View style={styles.flatlist}>
+         <Text style={styles.namelist}>&#xe639;</Text>
+           <Text style={styles.keylist}>添加手机联系人</Text>
+         </View>
       </View>
       
     );

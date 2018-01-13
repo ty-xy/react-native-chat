@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   FlatList,
   View,
+
   Image,
 } from 'react-native';
 // import Icon from 'react-native-vector-icons/Ionicons';
@@ -30,7 +31,7 @@ export default class Love extends Component {
     selectedChat:{},
     try:true,
   }
-  static navigationOptions = {
+  static navigationOptions = ({ navigation, screenProps })=>({
     title: '联系人',
     tabBarLabel: '联系人',
     alignSelf: 'center',
@@ -41,9 +42,14 @@ export default class Love extends Component {
     headerTitleStyle: {
       alignSelf: 'center',
     },
-    headerRight: (<Text style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe637;</Text>),
+    headerRight: (
+        <TouchableOpacity onPress={() =>navigation.navigate('AddFriend')}>
+    <Text  style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe637;</Text>
+    </TouchableOpacity>
+    ),
     tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe635;</Text>),
-  }
+  })
+ 
   _renderFlatlist(item) {
     return (
       <View style={styles.total} >
@@ -54,7 +60,7 @@ export default class Love extends Component {
        :
        <Text style={styles.left}/>}
         <TouchableHighlight 
-        onPress={ () => this._onPressButton(item.route) } 
+        onPress={ () => this._onPressButton(item.key,item.num) } 
         underlayColor='transparent'
         style={{ flex:1,}}
         >
@@ -75,6 +81,10 @@ _handleToggle = (value) => {
           [value]: true,
       },
   });
+}
+_onPressButton=(name,number)=>{
+    const { navigation } = this.props;
+        navigation.navigate('FriendDetail', { id: '323', name,number,area:'北京市-海淀区',company:'万达集团股份有限公司'});
 }
 _renderRight(data){
    return (
@@ -110,10 +120,10 @@ _onScrollIndex=(e)=>{
  }
 }
 _captureRef = (ref) => { this._listRef = ref};
-_ki=(index)=>{this.indexlist=index}
+
   render() {
     const data =this.props.link.pinyinData
-   
+    console.log(this.props.navigation)
     return (
       <View style={styles.container}>
         <View style={styles.search}>
@@ -196,7 +206,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding:5,
-    paddingTop:10,
+    // paddingTop:10,
     // flex:1,
     },
    total:{

@@ -13,10 +13,9 @@ export default class PassWord extends Component {
     })
   }
   render() {
-    console.log(this.props.texts)
     return (
       <TextInput
-        style={{minHeight: 32, borderColor: 'transparent', borderWidth: 1,padding: 0,width:'100%'}}
+        style={{minHeight: 32, borderColor: 'transparent', borderWidth: 1,padding: 0,width:'100%',color:'#D1D1D1'}}
         underlineColorAndroid="transparent"
         onChangeText={(text) => this.setState({text})}
         maxLength = {326}

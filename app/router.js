@@ -14,7 +14,8 @@ import FixNumber from './view/myown/FixNumber';
 import FixPassWord from './view/myown/FixPassWord';
 import Aboutus from  './view/myown/Aboutus';
 import AddFriend from './view/link/AddFriend';
-import SelectImage from './view/common/ImageSelect'
+import SelectImage from './view/common/ImageSelect';
+import FriendDetail from './view/link/FriendDetail';
 
 // APP tab 配置: https://reactnavigation.org/docs/navigators/tab
 const TabNavigation = TabNavigator({
@@ -96,6 +97,9 @@ const Navigation = StackNavigator({
   },
   AddFriend:{
     screen:AddFriend,   
+  },
+  FriendDetail:{
+    screen:FriendDetail, 
   }
 });
 
