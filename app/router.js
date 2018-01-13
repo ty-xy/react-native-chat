@@ -13,7 +13,10 @@ import Account from './view/myown/Account';
 import FixNumber from './view/myown/FixNumber';
 import FixPassWord from './view/myown/FixPassWord';
 import Aboutus from  './view/myown/Aboutus';
-import SelectImage from './view/common/ImageSelect'
+import AddFriend from './view/link/AddFriend';
+import SelectImage from './view/common/ImageSelect';
+import FriendDetail from './view/link/FriendDetail';
+import FriendApply from './view/link/FriendApply';
 
 // APP tab 配置: https://reactnavigation.org/docs/navigators/tab
 const TabNavigation = TabNavigator({
@@ -27,7 +30,7 @@ const TabNavigation = TabNavigator({
     screen: BookPage,
   },
 }, {
-  initialRouteName: 'Home',
+  initialRouteName: 'Love',
   order: ['Home', 'Love', 'Book'],
   tabBarOptions: {
     inactiveTintColor: '#999A9B',
@@ -92,7 +95,16 @@ const Navigation = StackNavigator({
   },
   Aboutus: {
     screen:Aboutus,
-  }
+  },
+  AddFriend:{
+    screen:AddFriend,   
+  },
+  FriendDetail:{
+    screen:FriendDetail, 
+  },
+  FriendApply:{
+    screen:FriendApply, 
+  },
 });
 
 export default Navigation;

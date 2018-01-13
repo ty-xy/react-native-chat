@@ -13,10 +13,12 @@
     "babel-preset-react-native-stage-0": "^1.0.1",
     "mobx": "^3.4.1",
     "mobx-react": "^4.3.5",
+    "pinyin": "^2.8.3",
     "react": "16.0.0",
     "react-native": "0.51.0",
     "react-native-camera": "^0.12.0",
     "react-native-easy-toast": "^1.0.9",
+    "react-native-modal": "^4.1.1",
     "react-native-ui-kitten": "^2.0.1",
     "react-navigation": "^1.0.0-beta.23"
   },
