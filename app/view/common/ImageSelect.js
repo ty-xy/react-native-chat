@@ -15,9 +15,7 @@ export default class SelectImage extends PureComponent {
     static propTypes = {
         navigation: PropTypes.object,
     };
-    static navigationOptions = ({ navigation }) => {
-        console.log('navigation', navigation);
-        return {
+    static navigationOptions = ({ navigation }) => ({
         //左侧标题
         // headerTitle: '图片选择',
         title: '图片选择',
@@ -40,7 +38,7 @@ export default class SelectImage extends PureComponent {
                 <Text style={{marginRight: 10, fontSize: 18, color: '#29B6F6'}}>确定</Text>
             </TouchableOpacity> : null
         ),
-    }}
+    })
 
     constructor(props) {
         super(props);
@@ -66,7 +64,7 @@ export default class SelectImage extends PureComponent {
     }
     // 图片选择返回聊天页面
     _goChatWindow = () => {
-        console.log('_goChatWindow', this.state.selectedImg);
+        // console.log('_goChatWindow', this.state.selectedImg);
         const { selectedImg } = this.state;
         const { navigation } = this.props;
         navigation.navigate('ChatWindow', { id: '323', selectedImg });
@@ -176,7 +174,6 @@ const styles = StyleSheet.create({
         flex:1,
         position: 'relative',
     },
-
     row:{
         flexDirection: 'row'
     },
