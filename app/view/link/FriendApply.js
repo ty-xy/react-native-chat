@@ -1,5 +1,6 @@
 
 import React, { Component } from 'react';
+import { SwipeListView } from 'react-native-swipe-list-view';
 import {
   StyleSheet,
   Text,
@@ -29,7 +30,47 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
       },
-
+      backTextWhite: {
+        color: '#FFF',
+        fontFamily:'iconfont',
+        fontSize:24,
+        borderRadius:16,
+        backgroundColor: 'transparent',
+      },
+    //   rowFront: {
+    //     alignItems: 'center',
+    //     backgroundColor: '#CCC',
+    //     borderBottomColor: 'black',
+    //     borderBottomWidth: 1,
+    //     justifyContent: 'center',
+    //     height: 50,
+    //   },
+      rowBack: {
+        alignItems: 'flex-start',
+        // backgroundColor: '#DDD',
+        // flex: 1,
+        height:71,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        // paddingLeft: 15,
+        marginRight:15,
+        position:'relative',
+      },
+      backRightBtn: {
+        alignItems: 'center',
+        // bottom: 0,
+        justifyContent: 'center',
+        position: 'absolute',
+        // top: 0,
+        width:32,
+        height:32,
+        borderRadius:16,
+        backgroundColor: '#EF5350',
+        right: 0,
+      },
+      backRightBtnRight: {
+    
+      },
  
 });
 const friendList = [
@@ -47,8 +88,10 @@ export default class Person extends Component {
 }
   static navigationOptions = {
     headerTitle:'好友申请',
+    title:'返回',
     alignSelf: 'center',
-    // headerBackTitle:null,
+    headerTruncatedBackTitle:'返回',
+    headerBackTitle:'返回',
     headerStyle: {
       height: 49,
       backgroundColor: '#fff',
@@ -71,12 +114,30 @@ render() {
     return (
         <View style={styles.wrap}>
             <View style={styles.container}>
-                <FlatList
+                <SwipeListView
+                    useFlatList={true}
                     style={{paddingTop: 15, paddingBottom: 30}}
                     data={friendList}
                     keyExtractor={this._keyExtractor}
                     renderItem={this._renderItem}
                     ListFooterComponent={() => <View style={{height: 15}} />}
+                    renderHiddenItem={ (data, rowMap) => (
+                        <View style={styles.rowBack}>
+                        <TouchableOpacity
+                          style={[styles.backRightBtn, styles.backRightBtnRight]}
+                          onPress={_ => this.deleteRow(secId, rowId, rowMap)}>
+                          <Text style={styles.backTextWhite}>&#xe626;</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                    disableRightSwipe={true}
+                    rightOpenValue={-47}
+                    onRowOpen={(rowKey, rowMap) => {
+                        setTimeout(() => {
+                            rowMap[rowKey].closeRow()
+                        }, 2000)
+                    }}
+                    previewRowKey={this._keyExtractor}
                 />
             </View>
         </View>

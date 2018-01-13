@@ -45,7 +45,7 @@ export default class Card extends PureComponent {
                     <Text style={styles.lastMessage}>{lastMessage}</Text>
                     </View>
                     <View>
-                    <Text style={{fontFamily:'iconfont',FontSize:24,color:'#29B6F6'}}>&#xe63f;</Text>
+                    <Text style={{fontFamily:'iconfont',FontSize:32,color:'#29B6F6',marginRight:10}}>&#xe63f;</Text>
                     </View>
                 </View>
                 <View style={styles.avatar}>

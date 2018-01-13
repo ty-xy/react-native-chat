@@ -27,8 +27,8 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 8, height: 8},
     shadowColor:'rgba(41,182,246,0.02)',
     borderRadius: 4,
-    // width:'100%',
-    width:345,
+    width:'100%',
+    // width:345,
     // flex:1,
     height:67,
     marginTop:15,
@@ -96,7 +96,7 @@ export default class Person extends Component {
           <Text style={{fontFamily:'iconfont',fontSize:16,color:'#29B6F6',marginRight:10}}>&#xe636;</Text>
             <PassWord texts={this.state.text} />
         </View>
-        <TouchableOpacity onPress={()=>this._onpressButton('FriendApply')}>
+        <TouchableOpacity onPress={()=>this._onpressButton('FriendApply')} style={{width:'100%'}}>
          <View style={styles.flatlist}>
          <Text style={styles.namelist}>&#xe637;</Text>
            <Text style={styles.keylist}>新的好友</Text>
