@@ -8,15 +8,16 @@ import {
     ScrollView,
     TouchableOpacity,
 } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 import PhotoList from './PhotoList';
-
-
 
 export default class SelectImage extends PureComponent {
     static propTypes = {
         navigation: PropTypes.object,
     };
-    static navigationOptions = ({navigation, screenProps}) => ({
+    static navigationOptions = ({ navigation }) => {
+        console.log('navigation', navigation);
+        return {
         //左侧标题
         // headerTitle: '图片选择',
         title: '图片选择',
@@ -29,14 +30,25 @@ export default class SelectImage extends PureComponent {
             fontSize: 16,
             fontWeight: 'normal'
         },
-    });
+        headerRight: (navigation.state.params.selectedImg && navigation.state.params.selectedImg.length ?
+            <TouchableOpacity
+                activeOpacity={0.65}
+                onPress={() => {
+                    navigation.state.params.seletedImgGoChat();
+                }}
+            >
+                <Text style={{marginRight: 10, fontSize: 18, color: '#29B6F6'}}>确定</Text>
+            </TouchableOpacity> : null
+        ),
+    }}
 
     constructor(props) {
         super(props);
         this.state = {
             uris: [],
-            showOpacity: false,
+            isShowPhotoList: false,
             photos: {},
+            selectedImg: [],
         };
     }
     componentWillMount() {
@@ -45,50 +57,89 @@ export default class SelectImage extends PureComponent {
         const photos = navigation.state.params && navigation.state.params.photos || [];
         this.setState({ uris, photos });
     }
-    _handleShowPhotoList= () => {
-        this.setState({ showOpacity: true });
+    componentDidMount() {
+        const { navigation } = this.props;
+        navigation.setParams({
+            seletedImgGoChat: this._goChatWindow,
+            selectedImg: this.state.selectedImg,
+        });
     }
+    // 图片选择返回聊天页面
+    _goChatWindow = () => {
+        console.log('_goChatWindow', this.state.selectedImg);
+        const { selectedImg } = this.state;
+        const { navigation } = this.props;
+        navigation.navigate('ChatWindow', { id: '323', selectedImg });
+    }
+    // 显示相册
+    _handleShowPhotoList= () => {
+        this.setState({ isShowPhotoList: true });
+    }
+    // 隐藏相册
     _handleHidePhotoList = (name) => {
         const { photos } = this.state;
-        console.log('photos', photos)
         const uris = [];
-        for (let item in photos) {
-            if (item === name) {
+        if (name === 'all_photos') {
+            for (let item in photos) {
                 photos[item].forEach((item) => {
                     uris.push(item.image.uri);
                 });
             }
+        } else {
+            for (let item in photos) {
+                if (item === name) {
+                    photos[item].forEach((item) => {
+                        uris.push(item.image.uri);
+                    });
+                }
+            }
         }
-        this.setState({ showOpacity: false, uris });
+        this.setState({ isShowPhotoList: false, uris });
     }
     // 选中
     _handleSelect = (uri) => {
-        console.log('_handleSelect', uri, [`showSelected${uri}`])
-        this.setState({ [`showSelected${uri}`]: !this.state[`showSelected${uri}`] });
+        const selectedImg = this.state.selectedImg;
+        const { navigation } = this.props;
+        if (selectedImg.indexOf(uri) > -1) {
+            selectedImg.splice(selectedImg.indexOf(uri), 1);
+        } else {
+            selectedImg.push(uri);
+        }
+        navigation.setParams({
+            selectedImg,
+        });
+        this.setState({ [`showSelected_${uri}`]: !this.state[`showSelected_${uri}`], selectedImg, isShowPhotoList: false });
+    }
+    // 预览
+    _handlePreviewPhoto = (uri) => {
+        const { navigation } = this.props;
+        const { selectedImg } = this.state;
+        console.log('预览', selectedImg)
+        navigation.navigate('PreviewImg', { selectedImg });
     }
     render() {
-        const { uris, photos, showOpacity } = this.state;
+        const { uris, photos, isShowPhotoList, selectedImg, navigation } = this.state;
+        const { state = {} } = this.props.navigation;
         const photosView = [];
         const photoCategory = [];
-        console.log('uris', uris)
         for(var i = 0; i < uris.length ; i += 4){
             photosView.push(
                 <View key={i} style={styles.row}>
                     <TouchableOpacity style={styles.flex} onPress={this._handleSelect.bind(this, uris[i])}>
                         <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i]}}/>
-                        {uris[i] ? (this.state[`showSelected${uris[i]}`] ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />) : null}
+                        {uris[i] ? (this.state[`showSelected_${uris[i]}`] ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />) : null}
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.flex} onPress={this._handleSelect.bind(this, uris[i+1])}>
                         <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i+1]}}/>
-                        {uris[i+1] ? (this.state[`showSelected${uris[i+1]}`] ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />) : null}
+                        {uris[i+1] ? (this.state[`showSelected_${uris[i+1]}`] ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />) : null}
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.flex} onPress={this._handleSelect.bind(this, uris[i+2])}>
                         <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i+2]}}/>
-                        {uris[i+2] ? (this.state[`showSelected${uris[i+2]}`] ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />) : null}
+                        {uris[i+2] ? (this.state[`showSelected_${uris[i+2]}`] ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />) : null}
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.flex} onPress={this._handleSelect.bind(this, uris[i+3])}>
                         <Image resizeMode="stretch" style={styles.image} source={{uri:uris[i+3]}}/>
-                        {uris[i+3] ? (this.state[`showSelected${uris[i+3]}`] ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />) : null}
+                        {uris[i+3] ? (this.state[`showSelected_${uris[i+3]}`] ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />) : null}
                     </TouchableOpacity>
                 </View>
             )
@@ -98,14 +149,19 @@ export default class SelectImage extends PureComponent {
         }
         return (
             <View style={styles.container}>
-                <ScrollView >
-                    {photosView}
+                <ScrollView>
+                    { photosView }
                 </ScrollView>
                 <View style={styles.footer}>
                     <Text onPress={this._handleShowPhotoList} style={{color: '#666666'}}>所有相册</Text>
-                    <Text style={{color: '#29B6F6'}}>预览</Text>
+                    <Text style={{color: selectedImg.length ? '#29B6F6': '#999999'}} onPress={this._handlePreviewPhoto}>预览 ({selectedImg.length})</Text>
                 </View>
-                {showOpacity ? <PhotoList photoCategory={photoCategory} _handleHidePhotoList={this._handleHidePhotoList} /> : null}
+                {isShowPhotoList ? <PhotoList
+                    photoCategory={photoCategory}
+                    uris={uris}
+                    _handleHidePhotoList={this._handleHidePhotoList}
+                    allPhotos={state.params && state.params.uris || []}
+                /> : null}
             </View>
         );
     }
@@ -129,8 +185,8 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginLeft: 5,
         marginRight: 5,
-        borderWidth: 1,
-        borderColor: '#ddd'
+        // borderWidth: 1,
+        // borderColor: '#ddd'
     },
     selectCircle: {
         width: 22,

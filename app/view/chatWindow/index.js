@@ -15,7 +15,8 @@ import {
     platform,
     ImageBackground,
     CameraRoll,
-    NativeModules
+    NativeModules,
+    Button
 } from 'react-native';
 import Toast, { DURATION } from 'react-native-easy-toast'
 import { observer, inject } from 'mobx-react/native';
@@ -62,6 +63,9 @@ export default class ChatWindow extends Component {
             fontSize: 16,
             fontWeight: 'normal'
         },
+        headerLeft: (
+            <Text onPress={() => navigation.state.params._goChat()} style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe63c;</Text>
+        ),
         headerRight: (<Text style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe63a;</Text>)
     });
     static propTypes = {
@@ -84,7 +88,17 @@ export default class ChatWindow extends Component {
     //     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
     //     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
     // }
-    
+    componentDidMount() {
+        const { navigation } = this.props;
+        navigation.setParams({
+            _goChat: this._goChat,
+        });
+    }
+    // 返回首页
+    _goChat =() => {
+        const { navigation } = this.props;
+        navigation.navigate('Home');
+    }
     // componentWillUnmount () {
     //     this.keyboardDidShowListener.remove();
     //     this.keyboardDidHideListener.remove();
@@ -266,9 +280,7 @@ export default class ChatWindow extends Component {
     showCamera = (bool) => {
         console.log('showCamera', bool)
         const { navigation } = this.props;
-        // this.setState({ showCamera: bool });
         var _that = this;
-        // NativeModules.HeadImageModule.callCamera();
         var rnToastAndroid = NativeModules.ToastByAndroid;
         CameraRoll.getPhotos({
             first: 200, //参数 获取最近五张图片
@@ -302,6 +314,7 @@ export default class ChatWindow extends Component {
         const { inputHeight, inputFocus, sendButton, keyboardHeight, showCamera } = this.state;
         const height = inputHeight < 30 ? 36 : inputHeight;
         const focusFlatList = inputFocus ? ({marginBottom: 120}) : ({});
+        console.log('chatwindow-props', this.props)
         return (
             <View style={styles.window}>
                 <FlatList

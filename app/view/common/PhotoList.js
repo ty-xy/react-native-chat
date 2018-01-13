@@ -15,6 +15,8 @@ import {
 export default class PhotoList extends React.Component {
     static propTypes = {
         photoCategory: PropTypes.array,
+        uris: PropTypes.array,
+        allPhotos: PropTypes.array,
         _handleHidePhotoList: PropTypes.func,
     };
     constructor(props) {
@@ -23,24 +25,40 @@ export default class PhotoList extends React.Component {
        };
      }
     render() {
-        const { photoCategory, _handleHidePhotoList } = this.props;
+        const { photoCategory, _handleHidePhotoList, uris, allPhotos } = this.props;
+        console.log('allPhotos', allPhotos)
+        const allList = [];
+        photoCategory.forEach((item) => {
+            allList.push(
+                <TouchableOpacity
+                    style={styles.list}
+                    key={item.name}
+                    onPress={() => _handleHidePhotoList(item.name)}
+                >
+                    <View style={styles.phone}>
+                        <Image source={{uri: item.detail[0].image.uri}} style={styles.image} />
+                        <Text style={styles.text}>{item.name} ({item.detail.length})</Text>
+                    </View>
+                    <Text style={styles.arrow}>&#xe63b;</Text>
+                </TouchableOpacity>
+            );
+        })
+        allList.unshift(
+            <TouchableOpacity
+                style={styles.list}
+                key='所有图片'
+                onPress={() => _handleHidePhotoList('all_photos')}
+            >
+                <View style={styles.phone}>
+                    <Image source={{uri: allPhotos[0]}} style={styles.image} />
+                    <Text style={styles.text}>{'所有图片'} ({allPhotos.length})</Text>
+                </View>
+                <Text style={styles.arrow}>&#xe63b;</Text>
+            </TouchableOpacity>
+        );
         return (
             <ScrollView style={styles.container}>
-                {
-                    photoCategory.map(item => (
-                        <TouchableOpacity
-                            style={styles.list}
-                            key={item.name}
-                            onPress={() => _handleHidePhotoList(item.name)}
-                        >
-                            <View style={styles.phone}>
-                                <Image source={{uri: item.detail[0].image.uri}} style={styles.image} />
-                                <Text style={styles.text}>{item.name} ({item.detail.length})</Text>
-                            </View>
-                            <Text style={styles.arrow}>&#xe63b;</Text>
-                        </TouchableOpacity>
-                    ))
-                }
+                {allList}
             </ScrollView>
         );
     }

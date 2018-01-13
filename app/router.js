@@ -1,4 +1,5 @@
 import { TabNavigator, StackNavigator } from 'react-navigation';
+import CardStackStyleInterpolator from 'react-navigation/src/views/AnimatedValueSubscription';
 // import Icon from 'react-native-vector-icons/Ionicons';
 
 import Chat from './view/Chat';
@@ -13,7 +14,8 @@ import Account from './view/myown/Account';
 import FixNumber from './view/myown/FixNumber';
 import FixPassWord from './view/myown/FixPassWord';
 import Aboutus from  './view/myown/Aboutus';
-import SelectImage from './view/common/ImageSelect'
+import SelectImage from './view/common/ImageSelect';
+import PreviewImg from './view/common/PreviewImg';
 
 // APP tab 配置: https://reactnavigation.org/docs/navigators/tab
 const TabNavigation = TabNavigator({
@@ -63,36 +65,48 @@ const TabNavigation = TabNavigator({
 
 // 路由配置
 const Navigation = StackNavigator({
-  HomeScreen: {
-    screen: TabNavigation,
-  },
-  Detail: {
-    screen: Panels,
-  },
-  ChatWindow: {
-    screen: ChatWindow,
-  },
-  SelectImage: {
-    screen: SelectImage,
-  },
-  Person: {
-    screen: Person,
-  },
-  System:{
-    screen: System,
-  },
-  Account:{
-    screen: Account,
-  },
-  FixNumber:{
-    screen:FixNumber,
-  },
-  FixPassWord:{
-    screen:FixPassWord,
-  },
-  Aboutus: {
-    screen:Aboutus,
-  }
-});
+    HomeScreen: {
+        screen: TabNavigation,
+    },
+    Detail: {
+        screen: Panels,
+    },
+    ChatWindow: {
+        screen: ChatWindow,
+    },
+    // 相册列表
+    SelectImage: {
+        screen: SelectImage,
+    },
+    // 图片预览
+    PreviewImg: {
+        screen: PreviewImg,
+    },
+    Person: {
+        screen: Person,
+    },
+    System:{
+        screen: System,
+    },
+    Account:{
+        screen: Account,
+    },
+    FixNumber:{
+        screen:FixNumber,
+    },
+    FixPassWord:{
+        screen:FixPassWord,
+    },
+    Aboutus: {
+        screen:Aboutus,
+    }
+    },{
+        // mode:'modal',
+        headerMode: 'screen',
+        transitionConfig:()=>({
+            // 只要修改最后的forVertical就可以实现不同的动画了。
+            // screenInterpolator:CardStackStyleInterpolator.forHorizontal,
+    }),
+})
 
 export default Navigation;
