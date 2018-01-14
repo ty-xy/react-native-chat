@@ -19,6 +19,9 @@ import PreviewImg from './view/common/PreviewImg';
 import Camera from './view/common/Camera';
 import Geolocation from './view/common/Geolocation';
 
+import AddFriend from './view/link/AddFriend';
+import FriendDetail from './view/link/FriendDetail';
+import FriendApply from './view/link/FriendApply';
 
 // APP tab 配置: https://reactnavigation.org/docs/navigators/tab
 const TabNavigation = TabNavigator({
@@ -95,13 +98,22 @@ const Navigation = StackNavigator({
         screen: Account,
     },
     FixNumber:{
-        screen: FixNumber,
+        screen:FixNumber,
     },
     FixPassWord:{
-        screen: FixPassWord,
+        screen:FixPassWord,
     },
     Aboutus: {
-        screen: Aboutus,
+        screen:Aboutus,
+    },
+    AddFriend:{
+        screen:AddFriend,   
+    },
+    FriendDetail:{
+        screen:FriendDetail, 
+    },
+    FriendApply:{
+        screen:FriendApply, 
     },
     Camera: {
         screen: Camera,
@@ -109,13 +121,6 @@ const Navigation = StackNavigator({
     Geolocation: {
         screen: Geolocation,
     },
-    },{
-        // mode:'modal',
-        headerMode: 'screen',
-        transitionConfig:()=>({
-            // 只要修改最后的forVertical就可以实现不同的动画了。
-            // screenInterpolator:CardStackStyleInterpolator.forHorizontal,
-    }),
-})
+});
 
 export default Navigation;

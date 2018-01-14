@@ -45,6 +45,10 @@
 	<key>NSPhotoLibraryUsageDescription</key>
     <!-- <key>NSLocationWhenInUseUsageDescription</key> -->
 	<string></string>
+	<key>NSCameraUsageDescription</key>
+	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string></string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
