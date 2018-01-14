@@ -17,6 +17,7 @@ import Aboutus from  './view/myown/Aboutus';
 import SelectImage from './view/common/ImageSelect';
 import PreviewImg from './view/common/PreviewImg';
 import Camera from './view/common/Camera';
+import Geolocation from './view/common/Geolocation';
 
 
 // APP tab 配置: https://reactnavigation.org/docs/navigators/tab
@@ -104,6 +105,9 @@ const Navigation = StackNavigator({
     },
     Camera: {
         screen: Camera,
+    },
+    Geolocation: {
+        screen: Geolocation,
     },
     },{
         // mode:'modal',

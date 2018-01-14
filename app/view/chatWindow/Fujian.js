@@ -10,14 +10,17 @@ import {
 
 export default class Fujian extends Component {
     static propTypes = {
-        showCamera: PropTypes.func
+        showCamera: PropTypes.func,
     };
 
     constructor(props) {
         super(props);
-
         this.state = {
         };
+    }
+    // 地理位置
+    _showGeolocation = () => {
+        this.props.navigation.navigate('Geolocation');
     }
     render() {
         console.log('fujian', this.props)
@@ -32,10 +35,15 @@ export default class Fujian extends Component {
                         <Text style={styles.text}>照片</Text>
                     </View>
                 </TouchableHighlight>
-                <View style={styles.fujian}>
-                    <Image source={require('../../image/location.png')} style={{width: 44, height: 44}} />
-                    <Text style={styles.text}>位置</Text>
-                </View>
+                <TouchableHighlight
+                    onPress={this._showGeolocation}
+                    underlayColor="#ffffff"
+                >
+                    <View style={styles.fujian}>
+                        <Image source={require('../../image/location.png')} style={{width: 44, height: 44}} />
+                        <Text style={styles.text}>位置</Text>
+                    </View>
+                </TouchableHighlight>
                 <View style={styles.fujian}>
                     <Image source={require('../../image/cardcase.png')} style={{width: 44, height: 44}} />
                     <Text style={styles.text}>名片</Text>

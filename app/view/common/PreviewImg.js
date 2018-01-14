@@ -28,6 +28,7 @@ export default class PreviewImg extends React.Component {
        this.state = {
             comfirmImg: [],
             show: true,
+            index: 1
        };
     }
     componentWillMount() {
@@ -71,6 +72,7 @@ export default class PreviewImg extends React.Component {
         const { comfirmImg } = this.state;
         this.setState({
             footerSelect: comfirmImg[index].uri,
+            index
         });
     }
     // 图片选择返回聊天页面
@@ -90,8 +92,8 @@ export default class PreviewImg extends React.Component {
         this.props.navigation.goBack()
     }
     render() {
-        const { show, selected_, comfirmImg, footerSelect } = this.state;
-        console.log('propsImg', comfirmImg)
+        const { show, selected_, comfirmImg, footerSelect, index } = this.state;
+        // console.log('propsImg', comfirmImg)
         let isSeleted = '';
         let seleteNum = 0;
         for(let i = 0; i < comfirmImg.length; i ++) {
@@ -110,7 +112,7 @@ export default class PreviewImg extends React.Component {
                     style={styles.header}
                 >
                     <Text style={[styles.arrow, { fontFamily: 'iconfont', fontSize: 18 }]} onPress={this._goBack}>&#xe63c;</Text>
-                    <Text style={styles.arrow}>{seleteNum} / {comfirmImg.length}</Text>
+                    <Text style={styles.arrow}>{index} / {comfirmImg.length}</Text>
                     <Text onPress={this._handleImgSelected} style={styles.button} onPress={this._goChatWindow}>确定{seleteNum} / 9</Text>
                 </View> : null}
                 <Swiper

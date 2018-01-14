@@ -275,7 +275,7 @@ export default class ChatWindow extends Component {
         const { showFile } = this.state;
         if (showFile) {
             return (
-                <Fujian showCamera={this._showAlertSelected} />
+                <Fujian showCamera={this._showAlertSelected} {...this.props} />
             );
         }
         return null;
@@ -286,7 +286,6 @@ export default class ChatWindow extends Component {
     }
     // 激活相册
     _showPhotoList = (bool) => {
-        console.log('showCamera', bool)
         const { navigation } = this.props;
         var _that = this;
         var rnToastAndroid = NativeModules.ToastByAndroid;
