@@ -16,7 +16,8 @@ import {
     ImageBackground,
     CameraRoll,
     NativeModules,
-    Button
+    Button,
+    Dimensions
 } from 'react-native';
 import Toast, { DURATION } from 'react-native-easy-toast'
 import { observer, inject } from 'mobx-react/native';
@@ -24,9 +25,8 @@ import { observer, inject } from 'mobx-react/native';
 import Message from './Message';
 import Fujian from './Fujian';
 import toast from '../../util/util'
-import Camera from '../../component/Camera';
 import Emoji from './emoji';
-
+import AertSelecte from './AertSelecte';
 
 
 const messageList = [
@@ -45,7 +45,10 @@ const messageList = [
     {key: 'sdg67322eds4f8sk', name: '小刘', chatType: 'mee'},
     {key: 'sdghj15sdfsd2sk', name: '小郭', chatType: 'me'},  
 ];
+
 let dateInOut = 0;
+const selectedArr = ["拍照", "图库"];
+
 
 
 
@@ -82,6 +85,7 @@ export default class ChatWindow extends Component {
             showEmoji: false, // 表情
             showFile: false, // 附件
             text: '',
+            selectCamera: false,  // 相册选择
         };
     }
     // componentWillMount () {
@@ -271,13 +275,17 @@ export default class ChatWindow extends Component {
         const { showFile } = this.state;
         if (showFile) {
             return (
-                <Fujian showCamera={this.showCamera} />
+                <Fujian showCamera={this._showAlertSelected} />
             );
         }
         return null;
     }
-    // 激活相机
-    showCamera = (bool) => {
+    // 选择相机还是相册select
+    _handleSelectCamera = () => {
+        this.setState({ selectCamera: true });
+    }
+    // 激活相册
+    _showPhotoList = (bool) => {
         console.log('showCamera', bool)
         const { navigation } = this.props;
         var _that = this;
@@ -305,10 +313,30 @@ export default class ChatWindow extends Component {
             }
         )
     }
+    // 激活相机
+    _showCamera = () => {
+        this.props.navigation.navigate('Camera');
+    }
     // 点击其他地方关闭附件
-    closeFujian = () => {
+    _closeFujian = () => {
         console.log('closeFujian')
     }
+    // 选择照相
+    _showAlertSelected = () => {
+        this.dialog.show("请选择照片", selectedArr, '#333333', this.callbackSelected);
+    }
+    // 选择相册后的回调
+    callbackSelected = (i) => {
+        switch (i){
+            case 0: // 拍照
+                this._showCamera();
+                break;
+            case 1: // 图库
+                this._showPhotoList();
+                break;
+        }
+    }
+
     _keyExtractor = (item, index) => item.key;
     render() {
         const { inputHeight, inputFocus, sendButton, keyboardHeight, showCamera } = this.state;
@@ -343,8 +371,7 @@ export default class ChatWindow extends Component {
                     positionValue={200}
                     opacity={0.8}
                 />
-                {/* 相机 */}
-                {showCamera ? <Camera /> : null}
+                <AertSelecte ref={ i => this.dialog = i } />
             </View>
         );
     }
@@ -428,5 +455,28 @@ const styles = StyleSheet.create({
     },
     sendbutton: {
         
+    },
+    selectPhoto: {
+        // position: 'absolute',
+        // left: 0,
+        // right: 0,
+        // bottom: 0,
+        flex: 1,
+        backgroundColor: '#ECF7FC',
+    },
+    selectTouch: {
+        // justifyContent: 'center',
+        // flexDirection: 'row',
+        // flex: 1,
+        // textAlign: 'center',
+    },
+    selectText: {
+        textAlign: 'center',
+        color: '#666666',
+        fontSize: 18,
+        borderTopColor: '#efefef',
+        borderTopWidth: 1,
+        paddingTop: 20,
+        paddingBottom: 20,
     },
 });

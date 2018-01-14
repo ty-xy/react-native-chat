@@ -16,6 +16,8 @@ import FixPassWord from './view/myown/FixPassWord';
 import Aboutus from  './view/myown/Aboutus';
 import SelectImage from './view/common/ImageSelect';
 import PreviewImg from './view/common/PreviewImg';
+import Camera from './view/common/Camera';
+
 
 // APP tab 配置: https://reactnavigation.org/docs/navigators/tab
 const TabNavigation = TabNavigator({
@@ -92,14 +94,17 @@ const Navigation = StackNavigator({
         screen: Account,
     },
     FixNumber:{
-        screen:FixNumber,
+        screen: FixNumber,
     },
     FixPassWord:{
-        screen:FixPassWord,
+        screen: FixPassWord,
     },
     Aboutus: {
-        screen:Aboutus,
-    }
+        screen: Aboutus,
+    },
+    Camera: {
+        screen: Camera,
+    },
     },{
         // mode:'modal',
         headerMode: 'screen',

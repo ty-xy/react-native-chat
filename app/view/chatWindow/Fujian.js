@@ -29,20 +29,20 @@ export default class Fujian extends Component {
                 >
                     <View style={styles.fujian}>
                         <Image source={require('../../image/photo.png')} style={{width: 44, height: 44}} />
-                        <Text>照片</Text>
+                        <Text style={styles.text}>照片</Text>
                     </View>
                 </TouchableHighlight>
                 <View style={styles.fujian}>
                     <Image source={require('../../image/location.png')} style={{width: 44, height: 44}} />
-                    <Text>位置</Text>
+                    <Text style={styles.text}>位置</Text>
                 </View>
                 <View style={styles.fujian}>
                     <Image source={require('../../image/cardcase.png')} style={{width: 44, height: 44}} />
-                    <Text>名片</Text>
+                    <Text style={styles.text}>名片</Text>
                 </View>
                 <View style={styles.fujian}>
                     <Image source={require('../../image/file.png')} style={{width: 44, height: 44}} />
-                    <Text>文件</Text>
+                    <Text style={styles.text}>文件</Text>
                 </View>        
             </View>
         );
@@ -62,5 +62,10 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         // justifyContent: 'space-around',
         alignItems: 'center'
+    },
+    text: {
+        fontSize: 16,
+        color: '#666',
+        marginTop: 5
     }
 });
