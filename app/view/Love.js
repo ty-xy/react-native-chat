@@ -19,10 +19,11 @@ import hostUser from '../store/mobx';
 import PassWord from './myown/PassWord';
 import pinyin from 'pinyin'
 
-@observer
+
 @inject('mobx')
 @inject('list')  
 @inject('link')
+@observer
 export default class Love extends Component {
   state = {
     text: '',
@@ -44,8 +45,8 @@ export default class Love extends Component {
     },
     headerRight: (
         <TouchableOpacity onPress={() =>navigation.navigate('AddFriend')}>
-    <Text  style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe637;</Text>
-    </TouchableOpacity>
+            <Text  style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe637;</Text>
+        </TouchableOpacity>
     ),
     tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe635;</Text>),
   })
@@ -60,9 +61,9 @@ export default class Love extends Component {
        :
        <Text style={styles.left}/>}
         <TouchableHighlight 
-        onPress={ () => this._onPressButton(item.key,item.num) } 
-        underlayColor='transparent'
-        style={{ flex:1,}}
+            onPress={ () => this._onPressButton(item.key,item.num) } 
+            underlayColor='transparent'
+            style={{ flex:1 }}
         >
           <View style={styles.flatlist}>
             <Image source={require('../image/beautiful.png')} style={styles.img} />
@@ -82,9 +83,13 @@ _handleToggle = (value) => {
       },
   });
 }
-_onPressButton=(name,number)=>{
+_onPressButton=(name, number)=>{
     const { navigation } = this.props;
-        navigation.navigate('FriendDetail', { id: '323', name,number,area:'北京市-海淀区',company:'万达集团股份有限公司'});
+    if (navigation.state.params && navigation.state.params.cardCase) {
+        navigation.navigate('ChatWindow', { id: '323', name, number, cardCase: true, avatar: '../image/beautiful.png' });
+    } else {
+        navigation.navigate('FriendDetail', { id: '323', name, number, area: '北京市-海淀区', company:'万达集团股份有限公司' });
+    }
 }
 _renderRight(data){
    return (
@@ -94,7 +99,7 @@ _renderRight(data){
             <TouchableOpacity key={index} onPress={()=>this._onChangeScrollToIndex(index)}>
               {value.showType?
                <View style={this.state.selectedChat[index]?[styles.circle,{backgroundColor:'#29B6F6'}]:styles.circle}  data-index={index}>
-               <Text style={styles.wordlist}>{value.pinyin.toUpperCase()}</Text>
+                <Text style={styles.wordlist}>{value.pinyin.toUpperCase()}</Text>
                </View>
                :null}
            </TouchableOpacity>
@@ -128,7 +133,7 @@ _captureRef = (ref) => { this._listRef = ref};
       <View style={styles.container}>
         <View style={styles.search}>
             <PassWord texts={this.state.text}/>
-           <Text style={{fontFamily:'iconfont',fontSize:16,color:'#29B6F6',marginRight:-24}}>&#xe636;</Text>
+            <Text style={{fontFamily:'iconfont',fontSize:16,color:'#29B6F6',marginRight:-24}}>&#xe636;</Text>
         </View>
         <View style={styles.body}>
            <FlatList

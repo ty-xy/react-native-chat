@@ -16,8 +16,7 @@ import {
     ImageBackground,
     CameraRoll,
     NativeModules,
-    Button,
-    Dimensions
+    Dimensions,
 } from 'react-native';
 import Toast, { DURATION } from 'react-native-easy-toast'
 import { observer, inject } from 'mobx-react/native';
@@ -26,7 +25,8 @@ import Message from './Message';
 import Fujian from './Fujian';
 import toast from '../../util/util'
 import Emoji from './emoji';
-import AertSelecte from './AertSelecte';
+import AertSelecte from '../../component/AertSelecte';
+import Modal from '../../component/Modal';
 
 
 const messageList = [
@@ -57,12 +57,13 @@ const selectedArr = ["拍照", "图库"];
 export default class ChatWindow extends Component {
     static navigationOptions = ({ navigation }) => ({
         title: '李冰',
+        // tabBarLabel: '联系人',
         headerStyle: {
             height: 49,
             backgroundColor: '#fff',
         },
         headerTitleStyle: {
-            // alignSelf: 'center',
+            alignSelf: 'center',
             fontSize: 16,
             fontWeight: 'normal'
         },
@@ -86,6 +87,9 @@ export default class ChatWindow extends Component {
             showFile: false, // 附件
             text: '',
             selectCamera: false,  // 相册选择
+            cardcaseVisible: false,
+            animationType: false,
+            transparent: true,
         };
     }
     // componentWillMount () {
@@ -94,9 +98,13 @@ export default class ChatWindow extends Component {
     // }
     componentDidMount() {
         const { navigation } = this.props;
+        console.log('navigation', navigation)
         navigation.setParams({
             _goChat: this._goChat,
         });
+        if (navigation.state.params && navigation.state.params.cardCase) {
+            this.setState({ cardcaseVisible: true });
+        }
     }
     // 返回首页
     _goChat =() => {
@@ -287,30 +295,7 @@ export default class ChatWindow extends Component {
     // 激活相册
     _showPhotoList = (bool) => {
         const { navigation } = this.props;
-        var _that = this;
-        var rnToastAndroid = NativeModules.ToastByAndroid;
-        CameraRoll.getPhotos({
-            first: 200, //参数 获取最近五张图片
-            // groupTypes: 'All',
-            // assetType: 'Photos'
-        }).done( 
-            function (data) { //成功的回调     
-                console.log(data);    
-                const edges = data.edges;   
-                const photos = [];  
-                const uris = [];
-                for (var i in edges) { 
-                    photos.push(edges[i].node);  
-                    uris.push(edges[i].node.image.uri);
-                }
-                const _photos = toast.photoCategory(photos);
-                console.log('_photos', _photos, uris)
-                navigation.navigate('SelectImage', { photos: _photos || {}, uris });
-            },         
-            function (error) { //失败的回调
-                console.log(error.message);
-            }
-        )
+        navigation.navigate('SelectImage');
     }
     // 激活相机
     _showCamera = () => {
@@ -336,11 +321,48 @@ export default class ChatWindow extends Component {
         }
     }
 
+    // 名片发送
+    _handleSendCardcase = () => {
+        console.log('发送名片')
+    }
+    // model关闭
+    _setModalVisible = (cardcaseVisible) => {
+        this.props.navigation.setParams({
+            cardCase: false,
+        });
+        this.setState({ cardcaseVisible });
+    }
+    _modalCardcase = () => {
+        const { cardcaseVisible, animationType, transparent } = this.state;
+        const { params } = this.props.navigation.state;
+        console.log('params.avatar', params.avatar)
+        // cardcaseVisible, footer, headerText, headerTextAlign, _handleSend, _setModalVisible
+        return (
+            <Modal
+                cardcaseVisible={cardcaseVisible}
+                footer={null}
+                headerText='发送该名片：'
+                headerTextAlign='flex-start'
+                _handleSend={this._handleSendCardcase}
+                _setModalVisible={this._setModalVisible}
+            >
+                <View style={styles.modalBodyContent}>
+                    <View style={styles.avatar}>
+                        {params.avatar && <Image source={require('../../image/beautiful.png')} style={{ height: 42, width: 42 }} />}
+                        <Text style={{ color: '#4a4a4a', paddingLeft: 10 }}>{params.name}</Text>
+                    </View>
+                </View>
+            </Modal>
+        );
+    }
+
+
     _keyExtractor = (item, index) => item.key;
     render() {
         const { inputHeight, inputFocus, sendButton, keyboardHeight, showCamera } = this.state;
         const height = inputHeight < 30 ? 36 : inputHeight;
-        const focusFlatList = inputFocus ? ({marginBottom: 120}) : ({});
+        const focusFlatList = inputFocus ? ({ marginBottom: 120 }) : ({});
+        
         console.log('chatwindow-props', this.props)
         return (
             <View style={styles.window}>
@@ -371,6 +393,7 @@ export default class ChatWindow extends Component {
                     opacity={0.8}
                 />
                 <AertSelecte ref={ i => this.dialog = i } />
+                {this._modalCardcase()}
             </View>
         );
     }
@@ -406,11 +429,7 @@ const styles = StyleSheet.create({
         paddingTop: 2,
         paddingLeft: 15,
         paddingRight: 15,
-        // paddingTop: 5,
-        // paddingBottom: 5,
-        // flex: 1,
         flexDirection: 'column',
-        // justifyContent: 'center',
         alignItems: 'flex-start',
         overflow: 'hidden',
     },
@@ -456,18 +475,11 @@ const styles = StyleSheet.create({
         
     },
     selectPhoto: {
-        // position: 'absolute',
-        // left: 0,
-        // right: 0,
-        // bottom: 0,
         flex: 1,
         backgroundColor: '#ECF7FC',
     },
     selectTouch: {
-        // justifyContent: 'center',
-        // flexDirection: 'row',
-        // flex: 1,
-        // textAlign: 'center',
+
     },
     selectText: {
         textAlign: 'center',
@@ -478,4 +490,12 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         paddingBottom: 20,
     },
+    modalBodyContent: {
+        // flexDirection: 'row',
+        // justifyContent: 'flex-start',
+    },
+    avatar: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    }
 });

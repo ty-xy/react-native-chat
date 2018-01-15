@@ -112,7 +112,7 @@ export default class PreviewImg extends React.Component {
                     style={styles.header}
                 >
                     <Text style={[styles.arrow, { fontFamily: 'iconfont', fontSize: 18 }]} onPress={this._goBack}>&#xe63c;</Text>
-                    <Text style={styles.arrow}>{index} / {comfirmImg.length}</Text>
+                    <Text style={styles.arrow}>{index + 1} / {comfirmImg.length}</Text>
                     <Text onPress={this._handleImgSelected} style={styles.button} onPress={this._goChatWindow}>确定{seleteNum} / 9</Text>
                 </View> : null}
                 <Swiper
