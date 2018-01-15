@@ -73,7 +73,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         marginTop: 20,
-        height: 60
+        marginBottom: 20,
+        // height: 60
     },
     fujian: {
         flexDirection: 'column',
