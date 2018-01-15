@@ -28,6 +28,7 @@ export default class Home extends Component {
             height: 49,
             backgroundColor: '#fff',
         },
+        headerLeft: null,
         headerTitleStyle: {
             alignSelf: 'center',
             fontSize: 16,

@@ -1,4 +1,5 @@
 import { TabNavigator, StackNavigator } from 'react-navigation';
+import CardStackStyleInterpolator from 'react-navigation/src/views/AnimatedValueSubscription';
 // import Icon from 'react-native-vector-icons/Ionicons';
 
 import Chat from './view/Chat';
@@ -13,8 +14,12 @@ import Account from './view/myown/Account';
 import FixNumber from './view/myown/FixNumber';
 import FixPassWord from './view/myown/FixPassWord';
 import Aboutus from  './view/myown/Aboutus';
-import AddFriend from './view/link/AddFriend';
 import SelectImage from './view/common/ImageSelect';
+import PreviewImg from './view/common/PreviewImg';
+import Camera from './view/common/Camera';
+import Geolocation from './view/common/Geolocation';
+
+import AddFriend from './view/link/AddFriend';
 import FriendDetail from './view/link/FriendDetail';
 import FriendApply from './view/link/FriendApply';
 
@@ -30,7 +35,7 @@ const TabNavigation = TabNavigator({
     screen: BookPage,
   },
 }, {
-  initialRouteName: 'Love',
+  initialRouteName: 'Home',
   order: ['Home', 'Love', 'Book'],
   tabBarOptions: {
     inactiveTintColor: '#999A9B',
@@ -66,45 +71,56 @@ const TabNavigation = TabNavigator({
 
 // 路由配置
 const Navigation = StackNavigator({
-  HomeScreen: {
-    screen: TabNavigation,
-  },
-  Detail: {
-    screen: Panels,
-  },
-  ChatWindow: {
-    screen: ChatWindow,
-  },
-  SelectImage: {
-    screen: SelectImage,
-  },
-  Person: {
-    screen: Person,
-  },
-  System:{
-    screen: System,
-  },
-  Account:{
-    screen: Account,
-  },
-  FixNumber:{
-    screen:FixNumber,
-  },
-  FixPassWord:{
-    screen:FixPassWord,
-  },
-  Aboutus: {
-    screen:Aboutus,
-  },
-  AddFriend:{
-    screen:AddFriend,   
-  },
-  FriendDetail:{
-    screen:FriendDetail, 
-  },
-  FriendApply:{
-    screen:FriendApply, 
-  },
+    HomeScreen: {
+        screen: TabNavigation,
+    },
+    Detail: {
+        screen: Panels,
+    },
+    ChatWindow: {
+        screen: ChatWindow,
+    },
+    // 相册列表
+    SelectImage: {
+        screen: SelectImage,
+    },
+    // 图片预览
+    PreviewImg: {
+        screen: PreviewImg,
+    },
+    Person: {
+        screen: Person,
+    },
+    System:{
+        screen: System,
+    },
+    Account:{
+        screen: Account,
+    },
+    FixNumber:{
+        screen:FixNumber,
+    },
+    FixPassWord:{
+        screen:FixPassWord,
+    },
+    Aboutus: {
+        screen:Aboutus,
+    },
+    AddFriend:{
+        screen:AddFriend,   
+    },
+    FriendDetail:{
+        screen:FriendDetail, 
+    },
+    FriendApply:{
+        screen:FriendApply, 
+    },
+    Camera: {
+        screen: Camera,
+    },
+    Geolocation: {
+        screen: Geolocation,
+    },
 });
 
 export default Navigation;
