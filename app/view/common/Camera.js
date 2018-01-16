@@ -5,13 +5,18 @@ import {
     StyleSheet,
     Text,
     View,
-    TouchableHighlight
+    TouchableHighlight,
+    StatusBar
 } from 'react-native';
 import Camera from 'react-native-camera';
 
 
 
 export default class MyCamera extends PureComponent {
+    static navigationOptions = {
+        header: null,
+        headerLeft: null,
+    }
     static propTypes = {
         style: PropTypes.object,
         _id: PropTypes.any,
@@ -38,7 +43,9 @@ export default class MyCamera extends PureComponent {
         }
         this.setState(state);
     }
-
+    _goBack = () => {
+        this.props.navigation.goBack()
+    }
     //拍摄照片
     takePicture() {
         this.camera.capture()
@@ -52,6 +59,8 @@ export default class MyCamera extends PureComponent {
 
         return (
             <View style={styles.container}>
+                <StatusBar hidden={true} />
+                <Text style={styles.cancel} onPress={this._goBack}>取消</Text>
                 <Camera
                     ref={(cam) => {
                         this.camera = cam;
@@ -60,8 +69,8 @@ export default class MyCamera extends PureComponent {
                     type={this.state.cameraType}
                     aspect={Camera.constants.Aspect.fill}
                 >
-                    <Text style={styles.button} onPress={this.switchCamera.bind(this)}>[切换摄像头]</Text>
                     <Text style={styles.button} onPress={this.takePicture.bind(this)}>[拍照]</Text>
+                    <Text style={styles.button} onPress={this.switchCamera.bind(this)}>[切换摄像头]</Text>
                 </Camera>
             </View> 
         );
@@ -78,6 +87,14 @@ const styles = StyleSheet.create({
         zIndex: 1,
         flex: 1,
         flexDirection: 'row',
+    },
+    cancel: {
+        color: '#fff',
+        fontSize: 20,
+        position: 'absolute',
+        top: 15,
+        left: 15,
+        zIndex: 2
     },
     preview: {
         flex: 1,

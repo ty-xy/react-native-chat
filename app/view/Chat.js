@@ -8,6 +8,7 @@ import {
   Image,
   ImageBackground,
   FlatList,
+  Keyboard,
 } from 'react-native';
 // import { RkButton, RkCard } from 'react-native-ui-kitten';
 // import Icon from 'react-native-vector-icons/Ionicons';
@@ -28,6 +29,7 @@ export default class Home extends Component {
             height: 49,
             backgroundColor: '#fff',
         },
+        headerLeft: null,
         headerTitleStyle: {
             alignSelf: 'center',
             fontSize: 16,
@@ -38,7 +40,9 @@ export default class Home extends Component {
     constructor() {
         super();
     }
-    
+    componentDidMount() {
+        Keyboard.dismiss();
+    }
     _goChatWindow = () => {
         const { navigation } = this.props;
         navigation.navigate('ChatWindow', { id: '323' });

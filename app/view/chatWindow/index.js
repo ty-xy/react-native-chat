@@ -15,7 +15,8 @@ import {
     platform,
     ImageBackground,
     CameraRoll,
-    NativeModules
+    NativeModules,
+    Dimensions,
 } from 'react-native';
 import Toast, { DURATION } from 'react-native-easy-toast'
 import { observer, inject } from 'mobx-react/native';
@@ -23,9 +24,9 @@ import { observer, inject } from 'mobx-react/native';
 import Message from './Message';
 import Fujian from './Fujian';
 import toast from '../../util/util'
-import Camera from '../../component/Camera';
 import Emoji from './emoji';
-
+import AertSelecte from '../../component/AertSelecte';
+import Modal from '../../component/Modal';
 
 
 const messageList = [
@@ -44,7 +45,10 @@ const messageList = [
     {key: 'sdg67322eds4f8sk', name: '小刘', chatType: 'mee'},
     {key: 'sdghj15sdfsd2sk', name: '小郭', chatType: 'me'},  
 ];
+
 let dateInOut = 0;
+const selectedArr = ["拍照", "图库"];
+
 
 
 
@@ -53,15 +57,19 @@ let dateInOut = 0;
 export default class ChatWindow extends Component {
     static navigationOptions = ({ navigation }) => ({
         title: '李冰',
+        // tabBarLabel: '联系人',
         headerStyle: {
             height: 49,
             backgroundColor: '#fff',
         },
         headerTitleStyle: {
-            // alignSelf: 'center',
+            alignSelf: 'center',
             fontSize: 16,
             fontWeight: 'normal'
         },
+        headerLeft: (
+            <Text onPress={() => navigation.state.params._goChat()} style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6', padding: 15}}>&#xe63c;</Text>
+        ),
         headerRight: (<Text style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe63a;</Text>)
     });
     static propTypes = {
@@ -78,13 +86,31 @@ export default class ChatWindow extends Component {
             showEmoji: false, // 表情
             showFile: false, // 附件
             text: '',
+            selectCamera: false,  // 相册选择
+            cardcaseVisible: false,
+            animationType: false,
+            transparent: true,
         };
     }
     // componentWillMount () {
     //     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
     //     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
     // }
-    
+    componentDidMount() {
+        const { navigation } = this.props;
+        console.log('navigation', navigation)
+        navigation.setParams({
+            _goChat: this._goChat,
+        });
+        if (navigation.state.params && navigation.state.params.cardCase) {
+            this.setState({ cardcaseVisible: true });
+        }
+    }
+    // 返回首页
+    _goChat =() => {
+        const { navigation } = this.props;
+        navigation.navigate('Home');
+    }
     // componentWillUnmount () {
     //     this.keyboardDidShowListener.remove();
     //     this.keyboardDidHideListener.remove();
@@ -102,7 +128,7 @@ export default class ChatWindow extends Component {
     //         this.setState({
     //             keyboardHeight: 0,
     //             sendButton: false,
-    //             inputHeight: 154
+    //             inputHeight: 300
     //         })
     //     } else {
     //         this.setState({
@@ -112,7 +138,7 @@ export default class ChatWindow extends Component {
     //     }
     // }
     _onContentSizeChange = (event) => {
-        this.setState({inputHeight: event.nativeEvent.contentSize.height});
+        this.setState({inputHeight: event.nativeEvent.contentSize.height + 146});
     }
     // 底部加载显示
     _renderPullBottom = () => {
@@ -160,13 +186,14 @@ export default class ChatWindow extends Component {
     // 发送按钮
     _sendButton = () => {
         const { sendButton } = this.state;
+        const marginBottom = Platform.OS === 'ios' ? { marginBottom: 12 } : { marginBottom: 8 };
         if (sendButton) {
             return (
                 <TouchableOpacity
                     style={styles.sendbutton}
                     onPress={this._handleSendMsg}
                 >
-                    <Text style={{color: '#29B6F6', fontSize: 16}}>发送</Text>
+                    <Text style={[marginBottom, {color: '#29B6F6', fontSize: 16 }]}>发送</Text>
                 </TouchableOpacity>
             );
         }
@@ -226,7 +253,7 @@ export default class ChatWindow extends Component {
     }
     _showEmoji = () => {
         this.content.blur();
-        this.setState({ showEmoji: true, showFile: false, inputHeight: 154 });
+        this.setState({ showEmoji: true, showFile: false, inputHeight: 300 });
     }
     _hideEmoji = () => {
         this.content.focus();
@@ -250,70 +277,106 @@ export default class ChatWindow extends Component {
     }
     // 添加附件
     _handleFile = () => {
-        this.setState({ showFile: !this.state.showFile, showEmoji: false, inputHeight: this.state.showFile ? 36 : 154 });
+        this.setState({ showFile: !this.state.showFile, showEmoji: false, inputHeight: this.state.showFile ? 36 : 300 });
     }
     
     _fileList = () => {
         const { showFile } = this.state;
         if (showFile) {
             return (
-                <Fujian showCamera={this.showCamera} />
+                <Fujian showCamera={this._showAlertSelected} {...this.props} />
             );
         }
         return null;
     }
-    // 激活相机
-    showCamera = (bool) => {
-        console.log('showCamera', bool)
+    // 选择相机还是相册select
+    _handleSelectCamera = () => {
+        this.setState({ selectCamera: true });
+    }
+    // 激活相册
+    _showPhotoList = (bool) => {
         const { navigation } = this.props;
-        // this.setState({ showCamera: bool });
-        var _that = this;
-        // NativeModules.HeadImageModule.callCamera();
-        var rnToastAndroid = NativeModules.ToastByAndroid;
-        CameraRoll.getPhotos({
-            first: 6, //参数 获取最近五张图片
-            // groupTypes: 'All',
-            // assetType: 'Photos'
-        }).done( 
-            function (data) { //成功的回调     
-                console.log(data);    
-                const edges = data.edges;   
-                const photos = [];  
-                const uris = [];
-                for (var i in edges) { 
-                    photos.push(edges[i].node);  
-                    uris.push(edges[i].node.image.uri);
-                }
-                const _photos = toast.photoCategory(photos);
-                console.log('_photos', _photos)
-                navigation.navigate('SelectImage', { photos: _photos, uris });
-            },         
-            function (error) { //失败的回调
-                console.log(error.message);
-            }
-        )
+        navigation.navigate('SelectImage');
+    }
+    // 激活相机
+    _showCamera = () => {
+        this.props.navigation.navigate('Camera');
     }
     // 点击其他地方关闭附件
-    closeFujian = () => {
+    _closeFujian = () => {
         console.log('closeFujian')
     }
+    // 选择照相
+    _showAlertSelected = () => {
+        this.dialog.show("请选择照片", selectedArr, '#333333', this.callbackSelected);
+    }
+    // 选择相册后的回调
+    callbackSelected = (i) => {
+        switch (i){
+            case 0: // 拍照
+                this._showCamera();
+                break;
+            case 1: // 图库
+                this._showPhotoList();
+                break;
+        }
+    }
+
+    // 名片发送
+    _handleSendCardcase = () => {
+        console.log('发送名片')
+    }
+    // model关闭
+    _setModalVisible = (cardcaseVisible) => {
+        this.props.navigation.setParams({
+            cardCase: false,
+        });
+        this.setState({ cardcaseVisible });
+    }
+    _modalCardcase = () => {
+        const { cardcaseVisible, animationType, transparent } = this.state;
+        const { params } = this.props.navigation.state;
+        console.log('params.avatar', params.avatar)
+        // cardcaseVisible, footer, headerText, headerTextAlign, _handleSend, _setModalVisible
+        return (
+            <Modal
+                cardcaseVisible={cardcaseVisible}
+                footer={null}
+                headerText='发送该名片：'
+                headerTextAlign='flex-start'
+                _handleSend={this._handleSendCardcase}
+                _setModalVisible={this._setModalVisible}
+            >
+                <View style={styles.modalBodyContent}>
+                    <View style={styles.avatar}>
+                        {params.avatar && <Image source={require('../../image/beautiful.png')} style={{ height: 42, width: 42 }} />}
+                        <Text style={{ color: '#4a4a4a', paddingLeft: 10 }}>{params.name}</Text>
+                    </View>
+                </View>
+            </Modal>
+        );
+    }
+
+
     _keyExtractor = (item, index) => item.key;
     render() {
         const { inputHeight, inputFocus, sendButton, keyboardHeight, showCamera } = this.state;
         const height = inputHeight < 30 ? 36 : inputHeight;
-        const focusFlatList = inputFocus ? ({marginBottom: 120}) : ({});
+        const footerHeight = { height: 70 };
+        
+        console.log('chatwindow-props', this.props)
         return (
             <View style={styles.window}>
                 <FlatList
-                    style={[styles.chatWindow, focusFlatList]}
+                    style={[styles.chatWindow]}
                     data={messageList}
                     keyExtractor={this._keyExtractor}
                     renderItem={({item}) => <Message {...item} />}
                     ListEmptyComponent={() => this._renderPullBottom()}
-                    ListFooterComponent={() => <View style={{height: 15}} />}
+                    ListFooterComponent={() => <View style={footerHeight} />}
                     ref={i => this._chatList = i}
                 />
-                <View style={[styles.enterCard, {height: height + 13}]}>
+                <View style={[styles.enterCard]}>
                     <View style={styles.enterInput}>
                         {this._auditTabInputIcon()}
                         {this._auditTabInput()}
@@ -327,11 +390,11 @@ export default class ChatWindow extends Component {
                     style={{borderRadius: 20, paddingTop: 10, paddingBottom: 10}}
                     ref={i => this.toast = i}
                     position='bottom'
-                    positionValue={200}
+                    positionValue={300}
                     opacity={0.8}
                 />
-                {/* 相机 */}
-                {showCamera ? <Camera /> : null}
+                <AertSelecte ref={ i => this.dialog = i } />
+                {this._modalCardcase()}
             </View>
         );
     }
@@ -346,7 +409,7 @@ const styles = StyleSheet.create({
     },
     chatWindow: {
         flex: 1,
-        backgroundColor: '#F6F6F6',
+        backgroundColor: '#f6f6f6',
     },
     pullUp: {
         flex: 1,
@@ -358,25 +421,30 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
     },
     enterCard: {
-        maxHeight: 150,
+        position: 'absolute',
+        bottom: 10,
+        left: 0,
+        right: 0,
+        zIndex: 1,
+        flex: 1,
         borderRadius: 25,
         backgroundColor: '#ffffff',
-        marginBottom: 10,
         marginRight: 15,
         marginLeft: 15,
-        paddingTop: 2,
         paddingLeft: 15,
         paddingRight: 15,
-        // paddingTop: 5,
-        // paddingBottom: 5,
-        // flex: 1,
         flexDirection: 'column',
-        // justifyContent: 'center',
         alignItems: 'flex-start',
         overflow: 'hidden',
+        shadowOffset: { width: 0, height: 20 },
+        shadowColor:'black',
+        shadowOpacity: 0.8,
+        shadowRadius: 30,
+        elevation: 2.5
     },
     emoji: {
-        // flexDirection: 'row',
+        flex: 1,
+        flexDirection: 'row',
         // justifyContent: 'center',
         // alignItems: 'center',
     },
@@ -384,14 +452,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        padding: 4
     },
     input: {
         maxHeight: 127,
         flex: 2,
         backgroundColor: '#F6F6F6',
         borderRadius: 4,
-        paddingTop: Platform.OS === 'ios' ? 10 : 2,
-        paddingBottom: Platform.OS === 'ios' ? 10 : 2,
+        paddingTop: Platform.OS === 'ios' ? 12 : 6,
+        paddingBottom: Platform.OS === 'ios' ? 12 : 6,
+        paddingLeft: 4,
+        paddingRight: 4,
         // alignSelf: 'center'
         alignItems: 'center',
         
@@ -409,11 +480,35 @@ const styles = StyleSheet.create({
         fontFamily: 'iconfont',
         color: '#29B6F6',
         fontSize: 24,
-        marginRight: 15,
+        marginRight: 10,
         alignSelf: 'flex-end',
-        margin: 10,
+        marginBottom: 7,
     },
     sendbutton: {
-        
+        alignSelf: 'flex-end',
     },
+    selectPhoto: {
+        flex: 1,
+        backgroundColor: '#ECF7FC',
+    },
+    selectTouch: {
+
+    },
+    selectText: {
+        textAlign: 'center',
+        color: '#666666',
+        fontSize: 18,
+        borderTopColor: '#efefef',
+        borderTopWidth: 1,
+        paddingTop: 20,
+        paddingBottom: 20,
+    },
+    modalBodyContent: {
+        // flexDirection: 'row',
+        // justifyContent: 'flex-start',
+    },
+    avatar: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    }
 });
