@@ -138,6 +138,7 @@ export default class ChatWindow extends Component {
     //     }
     // }
     _onContentSizeChange = (event) => {
+        console.log('_onContentSizeChange')
         this.setState({inputHeight: event.nativeEvent.contentSize.height + 146});
     }
     // 底部加载显示
@@ -264,9 +265,7 @@ export default class ChatWindow extends Component {
         const { showEmoji } = this.state;
         if (showEmoji) {
             return (
-                <View style={styles.emoji}>
-                    <Emoji sendEmoji={this.sendEmoji} />
-                </View>
+                <Emoji sendEmoji={this.sendEmoji} />
             );
         }
         return null;
@@ -336,7 +335,7 @@ export default class ChatWindow extends Component {
     _modalCardcase = () => {
         const { cardcaseVisible, animationType, transparent } = this.state;
         const { params } = this.props.navigation.state;
-        console.log('params.avatar', params.avatar)
+        // console.log('params.avatar', params.avatar)
         // cardcaseVisible, footer, headerText, headerTextAlign, _handleSend, _setModalVisible
         return (
             <Modal
@@ -361,10 +360,11 @@ export default class ChatWindow extends Component {
     _keyExtractor = (item, index) => item.key;
     render() {
         const { inputHeight, inputFocus, sendButton, keyboardHeight, showCamera } = this.state;
-        const height = inputHeight < 30 ? 36 : inputHeight;
+        console.log('height', inputHeight);
+        const height = (inputHeight < 51) ? 50 : inputHeight;
         const footerHeight = { height: 70 };
         
-        console.log('chatwindow-props', this.props)
+        // console.log('chatwindow-props', this.props)
         return (
             <View style={styles.window}>
                 <FlatList
@@ -394,7 +394,7 @@ export default class ChatWindow extends Component {
                     opacity={0.8}
                 />
                 <AertSelecte ref={ i => this.dialog = i } />
-                {this._modalCardcase()}
+                {/* {this._modalCardcase()} */}
             </View>
         );
     }
@@ -405,7 +405,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F6F6F6',
         position: 'relative',
-        zIndex: 0,
+        // zIndex: -1,
     },
     chatWindow: {
         flex: 1,
@@ -421,16 +421,19 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
     },
     enterCard: {
-        position: 'absolute',
-        bottom: 10,
-        left: 0,
-        right: 0,
-        zIndex: 1,
-        flex: 1,
+        // position: 'absolute',
+        // bottom: 10,
+        // left: 0,
+        // right: 0,
+        // zIndex: 0,
+        // flex: 1,
+        minHeight: 49,
         borderRadius: 25,
         backgroundColor: '#ffffff',
         marginRight: 15,
         marginLeft: 15,
+        marginBottom: 10,
+        marginTop: 1,
         paddingLeft: 15,
         paddingRight: 15,
         flexDirection: 'column',
@@ -441,12 +444,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.8,
         shadowRadius: 30,
         elevation: 2.5
-    },
-    emoji: {
-        flex: 1,
-        flexDirection: 'row',
-        // justifyContent: 'center',
-        // alignItems: 'center',
     },
     enterInput: {
         flexDirection: 'row',

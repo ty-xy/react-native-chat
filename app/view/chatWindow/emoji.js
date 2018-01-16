@@ -110,7 +110,7 @@ export default class Emoji extends Component {
 
 const styles = StyleSheet.create({
     files: {
-        flex: 1,
+        height: 200,
         flexDirection: 'column',
         paddingBottom: 5,
     },
