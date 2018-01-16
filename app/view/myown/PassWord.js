@@ -22,7 +22,7 @@ export default class PassWord extends Component {
         multiline = {true}
         // numberOfLines = {4}
         value={this.state.text}
-        autoFocus={true}
+        // autoFocus={true}
       />
     );
   }

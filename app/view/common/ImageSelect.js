@@ -7,9 +7,11 @@ import {
     View,
     ScrollView,
     TouchableOpacity,
+    CameraRoll,
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import PhotoList from './PhotoList';
+import toast from '../../util/util'
 
 export default class SelectImage extends PureComponent {
     static propTypes = {
@@ -28,7 +30,7 @@ export default class SelectImage extends PureComponent {
             fontSize: 16,
             fontWeight: 'normal'
         },
-        headerRight: (navigation.state.params.selectedImg && navigation.state.params.selectedImg.length ?
+        headerRight: (navigation.state.params && navigation.state.params.selectedImg && navigation.state.params.selectedImg.length ?
             <TouchableOpacity
                 activeOpacity={0.65}
                 onPress={() => {
@@ -50,10 +52,7 @@ export default class SelectImage extends PureComponent {
         };
     }
     componentWillMount() {
-        const { navigation } = this.props;
-        const uris = navigation.state.params && navigation.state.params.uris || [];
-        const photos = navigation.state.params && navigation.state.params.photos || [];
-        this.setState({ uris, photos });
+        this._showPhotoList()
     }
     componentDidMount() {
         const { navigation } = this.props;
@@ -61,6 +60,32 @@ export default class SelectImage extends PureComponent {
             seletedImgGoChat: this._goChatWindow,
             selectedImg: this.state.selectedImg,
         });
+    }
+    // 激活相册
+    _showPhotoList = () => {
+        const { navigation } = this.props;
+        const _that = this;
+        CameraRoll.getPhotos({
+            first: 200, //参数 获取最近五张图片
+            // groupTypes: 'All',
+            // assetType: 'Photos'
+        }).done( 
+            (data) => { //成功的回调     
+                const edges = data.edges;   
+                const photos = [];  
+                const uris = [];
+                for (var i in edges) { 
+                    photos.push(edges[i].node);  
+                    uris.push(edges[i].node.image.uri);
+                }
+                const _photos = toast.photoCategory(photos);
+                // navigation.navigate('SelectImage', { photos: _photos || {}, uris: uris.slice(0, 5) });
+                this.setState({ uris: uris.slice(0, 5), photos: _photos });
+            },         
+            (error) => { //失败的回调
+                console.log(error.message);
+            }
+        )
     }
     // 图片选择返回聊天页面
     _goChatWindow = () => {

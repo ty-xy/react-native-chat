@@ -22,6 +22,10 @@ export default class Fujian extends Component {
     _showGeolocation = () => {
         this.props.navigation.navigate('Geolocation');
     }
+    // 发送名片
+    _sendCardcase = () => {
+        this.props.navigation.navigate('Love', { cardCase: true });
+    }
     render() {
         console.log('fujian', this.props)
         return (
@@ -44,10 +48,15 @@ export default class Fujian extends Component {
                         <Text style={styles.text}>位置</Text>
                     </View>
                 </TouchableHighlight>
-                <View style={styles.fujian}>
-                    <Image source={require('../../image/cardcase.png')} style={{width: 44, height: 44}} />
-                    <Text style={styles.text}>名片</Text>
-                </View>
+                <TouchableHighlight
+                    onPress={this._sendCardcase}
+                    underlayColor="#ffffff"
+                >
+                    <View style={styles.fujian}>
+                        <Image source={require('../../image/cardcase.png')} style={{width: 44, height: 44}} />
+                        <Text style={styles.text}>名片</Text>
+                    </View>
+                </TouchableHighlight>
                 <View style={styles.fujian}>
                     <Image source={require('../../image/file.png')} style={{width: 44, height: 44}} />
                     <Text style={styles.text}>文件</Text>
@@ -64,7 +73,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         marginTop: 20,
-        height: 60
+        marginBottom: 20,
+        // height: 60
     },
     fujian: {
         flexDirection: 'column',

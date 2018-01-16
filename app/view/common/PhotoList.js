@@ -28,6 +28,7 @@ export default class PhotoList extends React.Component {
         const { photoCategory, _handleHidePhotoList, uris, allPhotos } = this.props;
         console.log('allPhotos', allPhotos)
         const allList = [];
+        let allNum = 0;
         photoCategory.forEach((item) => {
             allList.push(
                 <TouchableOpacity
@@ -42,6 +43,7 @@ export default class PhotoList extends React.Component {
                     <Text style={styles.arrow}>&#xe63b;</Text>
                 </TouchableOpacity>
             );
+            allNum += item.detail.length;
         })
         allList.unshift(
             <TouchableOpacity
@@ -51,7 +53,7 @@ export default class PhotoList extends React.Component {
             >
                 <View style={styles.phone}>
                     <Image source={{uri: allPhotos[0]}} style={styles.image} />
-                    <Text style={styles.text}>{'所有图片'} ({allPhotos.length})</Text>
+                    <Text style={styles.text}>{'所有图片'} ({allNum})</Text>
                 </View>
                 <Text style={styles.arrow}>&#xe63b;</Text>
             </TouchableOpacity>
