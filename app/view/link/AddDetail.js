@@ -99,9 +99,6 @@ const styles = StyleSheet.create({
 export default class Person extends Component {
   constructor(props){
     super(props);
-    this.state={
-        text:'手机号查找',
-  }
 }
   static navigationOptions = {
     title:'详细资料',
@@ -113,11 +110,11 @@ export default class Person extends Component {
     headerTitleStyle: {
       alignSelf: 'center',
     },
-    headerRight: (
-        <TouchableOpacity onPress={() =>navigation.navigate('AddFriend')}>
-    <Text  style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>更多</Text>
-    </TouchableOpacity>
-    ),
+    // headerRight: (
+    //     <TouchableOpacity onPress={() =>navigation.navigate('AddFriend')}>
+    // <Text  style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>更多</Text>
+    // </TouchableOpacity>
+    // ),
   }
 
   onPressLearnMore () {
@@ -146,22 +143,10 @@ export default class Person extends Component {
          <Text style={styles.namelist}>账号信息</Text>
            <Text style={styles.keylist}>{number}</Text>
          </View>
-         <View style={styles.flatlist}>
-         <Text style={styles.namelist}>地区</Text>
-           <Text style={styles.keylist}>{area}</Text>
-         </View>
-         <View style={styles.flatlist}>
-         <Text style={styles.namelist}>公司</Text>
-           <Text style={styles.keylist}>{company}</Text>
-         </View>
          <View style={styles.buttonList}>
              <TouchableOpacity
               style={[styles.button,{backgroundColor:'#22B1FF'}]}>
-              <Text style={styles.buttonText}>发送消息</Text>  
-             </TouchableOpacity>
-             <TouchableOpacity
-              style={[styles.button,{backgroundColor:'#F74144'}]}>
-              <Text style={styles.buttonText}>删除好友</Text>  
+              <Text style={styles.buttonText}>添加到联系人</Text>  
              </TouchableOpacity>
          </View>
          </View>

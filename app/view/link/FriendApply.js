@@ -74,9 +74,9 @@ const styles = StyleSheet.create({
  
 });
 const friendList = [
-    {_id: 'sdghjdsk', name: '林亦宣', lastMessage: '你好，我是Vanke林亦宣'},
-    {_id: 'sdg678sk', name: '风四娘', lastMessage: '你好，我是Vanke风四娘'},
-    {_id: 'sdghj12sk', name: '袁毅', lastMessage: '你好，我是weChat风四娘'},   
+    {_id: 'sdghjdsk', name: '林亦宣', lastMessage: '你好，我是Vanke林亦宣',number:'188 0022 4466'},
+    {_id: 'sdg678sk', name: '风四娘', lastMessage: '你好，我是Vanke风四娘',number:'188 0022 4466'},
+    {_id: 'sdghj12sk', name: '袁毅', lastMessage: '你好，我是weChat风四娘',number:'188 0022 4466'},   
   
 ]
 export default class Person extends Component {
@@ -84,6 +84,7 @@ export default class Person extends Component {
     super(props);
     this.state={
         text:'手机号查找',
+        // status:true,
   }
 }
   static navigationOptions = {
@@ -101,16 +102,28 @@ export default class Person extends Component {
     },
   }
 
-  _goChatWindow = () => {
+  _goChatWindow = (name,number) => {
     const { navigation } = this.props;
-    navigation.navigate('ChatWindow', { id: '323' });
+    navigation.navigate('AddDetail', {name,number });
+}
+_onChangeStatus=(id)=>{
+    this.setState({
+      status:false,
+      [`status${id}`]:false
+    })
+    console.log(1111)
 }
 _renderItem = ({item}) => {
-    return (<AddCard {...item} key={item._id} _goChatWindow={this._goChatWindow} />);
+    return (<AddCard
+         {...item} 
+         key={item._id} 
+         _goChatWindow={this._goChatWindow} 
+         _onChangeStatus={()=>this._onChangeStatus(item._id)}
+         status={this.state[`status${item._id}`]}
+           />);
 }
 _keyExtractor = (item, index) => item._id;
 render() {
-    const { home } = this.props;
     return (
         <View style={styles.wrap}>
             <View style={styles.container}>
@@ -137,7 +150,7 @@ render() {
                             rowMap[rowKey].closeRow()
                         }, 2000)
                     }}
-                    previewRowKey={this._keyExtractor}
+                    // previewRowKey={this._keyExtractor}
                 />
             </View>
         </View>
