@@ -79,7 +79,7 @@ export default class ChatWindow extends Component {
         super(props);
 
         this.state = {
-            inputHeight: 36,
+            footerHeight: 70,
             keyboardHeight:0,
             sendButton: false, // 发送按钮显示
             showAudio: false, // 语音输入切换
@@ -254,11 +254,11 @@ export default class ChatWindow extends Component {
     }
     _showEmoji = () => {
         this.content.blur();
-        this.setState({ showEmoji: true, showFile: false, inputHeight: 300 });
+        this.setState({ showEmoji: true, showFile: false, footerHeight: 270 });
     }
     _hideEmoji = () => {
         this.content.focus();
-        this.setState({ showEmoji: false, showFile: false, inputHeight: 36  });
+        this.setState({ showEmoji: false, showFile: false, footerHeight: 70  });
     }
     // 表情列表
     _emojiList = () => {
@@ -276,7 +276,7 @@ export default class ChatWindow extends Component {
     }
     // 添加附件
     _handleFile = () => {
-        this.setState({ showFile: !this.state.showFile, showEmoji: false, inputHeight: this.state.showFile ? 36 : 300 });
+        this.setState({ showFile: !this.state.showFile, showEmoji: false, footerHeight: this.state.showFile ? 70 : 180 });
     }
     
     _fileList = () => {
@@ -359,10 +359,10 @@ export default class ChatWindow extends Component {
 
     _keyExtractor = (item, index) => item.key;
     render() {
-        const { inputHeight, inputFocus, sendButton, keyboardHeight, showCamera } = this.state;
-        console.log('height', inputHeight);
+        const { inputHeight, inputFocus, sendButton, keyboardHeight, showCamera, footerHeight } = this.state;
+        console.log('height', footerHeight);
         const height = (inputHeight < 51) ? 50 : inputHeight;
-        const footerHeight = { height: 70 };
+        const flatListfooterStyle = { height: 10 };
         
         // console.log('chatwindow-props', this.props)
         return (
@@ -373,7 +373,7 @@ export default class ChatWindow extends Component {
                     keyExtractor={this._keyExtractor}
                     renderItem={({item}) => <Message {...item} />}
                     ListEmptyComponent={() => this._renderPullBottom()}
-                    ListFooterComponent={() => <View style={footerHeight} />}
+                    ListFooterComponent={() => <View style={flatListfooterStyle} />}
                     ref={i => this._chatList = i}
                 />
                 <View style={[styles.enterCard]}>
@@ -432,18 +432,18 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         marginRight: 15,
         marginLeft: 15,
-        marginBottom: 10,
         marginTop: 1,
+        marginBottom: 10,
         paddingLeft: 15,
         paddingRight: 15,
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        // alignItems: 'flex-start',
         overflow: 'hidden',
         shadowOffset: { width: 0, height: 20 },
         shadowColor:'black',
         shadowOpacity: 0.8,
         shadowRadius: 30,
-        elevation: 2.5
+        // elevation: 2.5  // 导致zIndex错乱
     },
     enterInput: {
         flexDirection: 'row',
