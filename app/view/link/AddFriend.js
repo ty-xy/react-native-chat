@@ -102,10 +102,12 @@ export default class Person extends Component {
            <Text style={styles.keylist}>新的好友</Text>
          </View>
          </TouchableOpacity>
+         <TouchableOpacity onPress={()=>this._onpressButton('wChat')} style={{width:'100%'}}>
          <View style={styles.flatlist}>
          <Text style={styles.namelist}>&#xe638;</Text>
            <Text style={styles.keylist}>扫一扫</Text>
          </View>
+         </TouchableOpacity>
          <View style={styles.flatlist}>
          <Text style={styles.namelist}>&#xe639;</Text>
            <Text style={styles.keylist}>添加手机联系人</Text>
