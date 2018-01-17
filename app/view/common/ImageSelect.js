@@ -137,7 +137,6 @@ export default class SelectImage extends PureComponent {
     _handlePreviewPhoto = (uri) => {
         const { navigation } = this.props;
         const { selectedImg } = this.state;
-        console.log('预览', selectedImg)
         navigation.navigate('PreviewImg', { selectedImg });
     }
     render() {
@@ -229,7 +228,7 @@ const styles = StyleSheet.create({
         zIndex: 1,
         right: 10,
         top: 15,
-        backgroundColor: '#ffffff',
+        backgroundColor: 'transparent',
         borderRadius: 11,
     },
     footer: {

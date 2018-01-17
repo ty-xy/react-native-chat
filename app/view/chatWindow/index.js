@@ -79,7 +79,7 @@ export default class ChatWindow extends Component {
         super(props);
 
         this.state = {
-            inputHeight: 36,
+            footerHeight: 70,
             keyboardHeight:0,
             sendButton: false, // 发送按钮显示
             showAudio: false, // 语音输入切换
@@ -138,6 +138,7 @@ export default class ChatWindow extends Component {
     //     }
     // }
     _onContentSizeChange = (event) => {
+        console.log('_onContentSizeChange')
         this.setState({inputHeight: event.nativeEvent.contentSize.height + 146});
     }
     // 底部加载显示
@@ -253,20 +254,18 @@ export default class ChatWindow extends Component {
     }
     _showEmoji = () => {
         this.content.blur();
-        this.setState({ showEmoji: true, showFile: false, inputHeight: 300 });
+        this.setState({ showEmoji: true, showFile: false, footerHeight: 270 });
     }
     _hideEmoji = () => {
         this.content.focus();
-        this.setState({ showEmoji: false, showFile: false, inputHeight: 36  });
+        this.setState({ showEmoji: false, showFile: false, footerHeight: 70  });
     }
     // 表情列表
     _emojiList = () => {
         const { showEmoji } = this.state;
         if (showEmoji) {
             return (
-                <View style={styles.emoji}>
-                    <Emoji sendEmoji={this.sendEmoji} />
-                </View>
+                <Emoji sendEmoji={this.sendEmoji} />
             );
         }
         return null;
@@ -277,7 +276,7 @@ export default class ChatWindow extends Component {
     }
     // 添加附件
     _handleFile = () => {
-        this.setState({ showFile: !this.state.showFile, showEmoji: false, inputHeight: this.state.showFile ? 36 : 300 });
+        this.setState({ showFile: !this.state.showFile, showEmoji: false, footerHeight: this.state.showFile ? 70 : 180 });
     }
     
     _fileList = () => {
@@ -336,7 +335,7 @@ export default class ChatWindow extends Component {
     _modalCardcase = () => {
         const { cardcaseVisible, animationType, transparent } = this.state;
         const { params } = this.props.navigation.state;
-        console.log('params.avatar', params.avatar)
+        // console.log('params.avatar', params.avatar)
         // cardcaseVisible, footer, headerText, headerTextAlign, _handleSend, _setModalVisible
         return (
             <Modal
@@ -360,11 +359,12 @@ export default class ChatWindow extends Component {
 
     _keyExtractor = (item, index) => item.key;
     render() {
-        const { inputHeight, inputFocus, sendButton, keyboardHeight, showCamera } = this.state;
-        const height = inputHeight < 30 ? 36 : inputHeight;
-        const footerHeight = { height: 70 };
+        const { inputHeight, inputFocus, sendButton, keyboardHeight, showCamera, footerHeight } = this.state;
+        console.log('height', footerHeight);
+        const height = (inputHeight < 51) ? 50 : inputHeight;
+        const flatListfooterStyle = { height: 10 };
         
-        console.log('chatwindow-props', this.props)
+        // console.log('chatwindow-props', this.props)
         return (
             <View style={styles.window}>
                 <FlatList
@@ -373,7 +373,7 @@ export default class ChatWindow extends Component {
                     keyExtractor={this._keyExtractor}
                     renderItem={({item}) => <Message {...item} />}
                     ListEmptyComponent={() => this._renderPullBottom()}
-                    ListFooterComponent={() => <View style={footerHeight} />}
+                    ListFooterComponent={() => <View style={flatListfooterStyle} />}
                     ref={i => this._chatList = i}
                 />
                 <View style={[styles.enterCard]}>
@@ -405,7 +405,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F6F6F6',
         position: 'relative',
-        zIndex: 0,
+        // zIndex: -1,
     },
     chatWindow: {
         flex: 1,
@@ -421,32 +421,29 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
     },
     enterCard: {
-        position: 'absolute',
-        bottom: 10,
-        left: 0,
-        right: 0,
-        zIndex: 1,
-        flex: 1,
+        // position: 'absolute',
+        // bottom: 10,
+        // left: 0,
+        // right: 0,
+        // zIndex: 0,
+        // flex: 1,
+        minHeight: 49,
         borderRadius: 25,
         backgroundColor: '#ffffff',
         marginRight: 15,
         marginLeft: 15,
+        marginTop: 1,
+        marginBottom: 10,
         paddingLeft: 15,
         paddingRight: 15,
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        // alignItems: 'flex-start',
         overflow: 'hidden',
         shadowOffset: { width: 0, height: 20 },
         shadowColor:'black',
         shadowOpacity: 0.8,
         shadowRadius: 30,
-        elevation: 2.5
-    },
-    emoji: {
-        flex: 1,
-        flexDirection: 'row',
-        // justifyContent: 'center',
-        // alignItems: 'center',
+        // elevation: 2.5  // 导致zIndex错乱
     },
     enterInput: {
         flexDirection: 'row',
