@@ -10,6 +10,14 @@ import {
 } from 'react-native';
 import Book from '../Item';
 import PassWord from '../myown/PassWord';
+import Contacts from 'react-native-contacts';
+// Contacts.getAll((err, contacts) => {
+//     if(err === 'denied'){
+//       // error
+//     } else {
+//       // contacts returned in []
+//     }
+//   })
 
 const styles = StyleSheet.create({
   container: {
@@ -89,6 +97,16 @@ export default class Person extends Component {
     let num = 0
     console.log(num++)
   }
+  _onpressB=()=>{
+  Contacts.getAll((err, contacts) => {
+    if(err === 'denied'){
+     console.log(21,err)
+    } else {
+      console.log(1221312321312,contacts)
+    }
+  })
+  console.log('press')
+}
   render() {
     return (
       <View style={styles.container}>
@@ -108,10 +126,12 @@ export default class Person extends Component {
            <Text style={styles.keylist}>扫一扫</Text>
          </View>
          </TouchableOpacity>
+         <TouchableOpacity onPress={this._onpressB} style={{width:'100%'}}>
          <View style={styles.flatlist}>
          <Text style={styles.namelist}>&#xe639;</Text>
            <Text style={styles.keylist}>添加手机联系人</Text>
          </View>
+         </TouchableOpacity>
       </View>
       
     );

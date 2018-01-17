@@ -37,14 +37,7 @@ const styles = StyleSheet.create({
         borderRadius:16,
         backgroundColor: 'transparent',
       },
-    //   rowFront: {
-    //     alignItems: 'center',
-    //     backgroundColor: '#CCC',
-    //     borderBottomColor: 'black',
-    //     borderBottomWidth: 1,
-    //     justifyContent: 'center',
-    //     height: 50,
-    //   },
+ 
       rowBack: {
         alignItems: 'flex-start',
         // backgroundColor: '#DDD',
