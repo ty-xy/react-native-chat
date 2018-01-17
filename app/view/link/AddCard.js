@@ -5,7 +5,8 @@ import {
     StyleSheet,
     Text,
     View,
-    TouchableHighlight
+    TouchableHighlight,
+    TouchableOpacity
 } from 'react-native';
 
 
@@ -21,21 +22,29 @@ export default class Card extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+        status:true,
+    };
   }
-
+  _onChangeStatus=(id)=>{
+    this.setState({
+      status:false,
+    //   [`status${id}`]:false
+    })
+    console.log(1111)
+}
   componentDidMount() {
 
-  }
+  } 
   render() {
-    const { style = {}, lastMessage, _id, name } = this.props;
-
+    const { style = {}, lastMessage, _id, name,status,number } = this.props;
+   console.log(status)
     return (
         <TouchableHighlight
             style={styles.card}
             underlayColor={'rgba(100,100,100,0.2)'}
             onPress={() => {
-                this.props._goChatWindow();
+                this.props._goChatWindow(name,number);
             }}
         >
             <View style={styles.chatList}>
@@ -45,7 +54,10 @@ export default class Card extends PureComponent {
                     <Text style={styles.lastMessage}>{lastMessage}</Text>
                     </View>
                     <View>
-                    <Text style={{fontFamily:'iconfont',FontSize:24,color:'#29B6F6'}}>&#xe63f;</Text>
+                    {this.state.status?
+                    <TouchableOpacity onPress={this._onChangeStatus}>
+                    <Text style={{fontFamily:'iconfont',fontSize:24,color:'#29B6F6',marginRight:10}}>&#xe63f;</Text>
+                    </TouchableOpacity>:<Text>已经同意</Text>}
                     </View>
                 </View>
                 <View style={styles.avatar}>

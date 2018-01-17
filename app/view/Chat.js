@@ -24,7 +24,7 @@ class Home extends Component {
     }
     static navigationOptions = {
         title: '消息(14)',
-        tabBarLabel: '消息11',
+        // tabBarLabel: '消息11',
         alignSelf: 'center',
         headerStyle: {
             height: 49,

@@ -22,7 +22,8 @@ import Geolocation from './view/common/Geolocation';
 import AddFriend from './view/link/AddFriend';
 import FriendDetail from './view/link/FriendDetail';
 import FriendApply from './view/link/FriendApply';
-
+import AddDetail from './view/link/AddDetail';
+import wChat from './view/link/wChat'
 // APP tab 配置: https://reactnavigation.org/docs/navigators/tab
 const TabNavigation = TabNavigator({
   Home: {
@@ -121,6 +122,9 @@ const Navigation = StackNavigator({
     Geolocation: {
         screen: Geolocation,
     },
+    wChat:{
+        screen: wChat,
+    }
 });
 
 export default Navigation;
