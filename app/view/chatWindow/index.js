@@ -394,7 +394,7 @@ export default class ChatWindow extends Component {
                     opacity={0.8}
                 />
                 <AertSelecte ref={ i => this.dialog = i } />
-                {/* {this._modalCardcase()} */}
+                {this._modalCardcase()}
             </View>
         );
     }

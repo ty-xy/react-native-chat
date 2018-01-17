@@ -59,7 +59,6 @@ export default class PreviewImg extends React.Component {
         // } else {
         //     comfirmImg.push(footerSelect);
         // }
-        console.log('newComfirmImg', newComfirmImg, footerSelect)
         this.setState({ comfirmImg: newComfirmImg });
     }
     // 选中提交
