@@ -27,7 +27,6 @@ export default class Fujian extends Component {
         this.props.navigation.navigate('Love', { cardCase: true });
     }
     render() {
-        console.log('fujian', this.props)
         return (
             <View style={styles.files}>
                 <TouchableHighlight
