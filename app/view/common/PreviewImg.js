@@ -135,14 +135,20 @@ export default class PreviewImg extends React.Component {
                         ))
                     }
                 </Swiper>
-                {show ? <TouchableOpacity
-                    activeOpacity={1}
-                    style={styles.footer}
-                    onPress={this._isSelectedImg}
-                >
-                    <Text style={styles.text}>选择</Text>
-                    {isSeleted ? <Text style={styles.selectedIcon}>&#xe63f;</Text> : <View style={styles.selectCircle} />}
-                </TouchableOpacity> : null}
+                
+                {show ? 
+                <View style={styles.footer}>
+                    <TouchableOpacity
+                        activeOpacity={1}
+                        style={styles.footerChoose}
+                        onPress={this._isSelectedImg}
+                    >
+                        <Text style={styles.text}>选择</Text>
+                        {isSeleted ?
+                            <View style={styles.selectedIconView}><Text style={styles.selectedIcon}>&#xe63f;</Text></View>
+                            : <View style={styles.selectCircle} />}
+                    </TouchableOpacity>
+                </View> : null}
             </View>
         );
     }
@@ -209,23 +215,30 @@ export default class PreviewImg extends React.Component {
         paddingTop: 15,
         paddingBottom: 15,
         backgroundColor: '#282828',
+    },
+    footerChoose: {
         flexDirection: 'row-reverse',
-        alignItems: 'center'
+        alignItems: 'center',
+
     },
     selectCircle: {
-        width: 22,
-        height: 22,
-        borderRadius: 11,
         borderColor: '#ffffff',
         borderWidth: 1,
         marginTop: 4,
+        width: 22,
+        height: 22,
+        borderRadius: 11,
+    },
+    selectedIconView: {
+        backgroundColor: 'transparent',
+        height: 22, 
+        width: 22,
+        borderRadius: 11,
     },
     selectedIcon: {
         color: '#29B6F6',
         fontFamily: 'iconfont',
         fontSize: 22,
-        backgroundColor: '#ffffff',
-        borderRadius: 11,
     },
     text: {
         fontSize: 20,
