@@ -68,7 +68,7 @@ export default class ChatWindow extends Component {
             fontWeight: 'normal'
         },
         headerLeft: (
-            <Text onPress={() => navigation.state.params._goChat()} style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6', padding: 15}}>&#xe63c;</Text>
+            <Text onPress={navigation.state.params._goChat} style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6', padding: 15}}>&#xe63c;</Text>
         ),
         headerRight: (<Text style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe63a;</Text>)
     });

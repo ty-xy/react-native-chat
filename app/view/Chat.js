@@ -14,16 +14,17 @@ import {
 // import Icon from 'react-native-vector-icons/Ionicons';
 import { observer, inject } from 'mobx-react/native';
 import Card from '../component/Card';
+import Meteor, { createContainer, MeteorListView } from 'react-native-meteor';
 
 @inject('home')
 @observer
-export default class Home extends Component {
+class Home extends Component {
     static propTypes = {
         navigation: PropTypes.object,
     }
     static navigationOptions = {
         title: '消息(14)',
-        tabBarLabel: '消息',
+        tabBarLabel: '消息11',
         alignSelf: 'center',
         headerStyle: {
             height: 49,
@@ -53,6 +54,7 @@ export default class Home extends Component {
     _keyExtractor = (item, index) => item._id;
     render() {
         const { home } = this.props;
+        console.log('chat', this.props)
         return (
             <View style={styles.wrap}>
                 <View style={styles.container}>
@@ -68,6 +70,14 @@ export default class Home extends Component {
         );
     }
 }
+
+export default createContainer(params=>{
+    Meteor.subscribe('group');
+    return {
+      groups: Meteor.collection('group').find({}),
+    };
+  }, Home)
+
 
 const styles = StyleSheet.create({
   wrap: {
