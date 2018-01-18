@@ -6,7 +6,6 @@ import Router from './router';
 // 获取到所有的 stores 并注入到对应的组件中
 class App extends Component {
     componentWillMount() {
-        console.log('app-componentWillMount')
         require('./lib/server.js');
     }
     render() {

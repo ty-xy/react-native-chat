@@ -16,15 +16,12 @@ import { observer, inject } from 'mobx-react/native';
 import Card from '../component/Card';
 import Meteor, { createContainer, MeteorListView } from 'react-native-meteor';
 
-@inject('home')
-@observer
+// @inject('home')
+// @observer
 class Home extends Component {
-    static propTypes = {
-        navigation: PropTypes.object,
-    }
     static navigationOptions = {
         title: '消息(14)',
-        // tabBarLabel: '消息11',
+        tabBarLabel: '消息11',
         alignSelf: 'center',
         headerStyle: {
             height: 49,
@@ -36,13 +33,16 @@ class Home extends Component {
             fontSize: 16,
             fontWeight: 'normal'
         },
-        tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont', color: tintColor, fontSize: 24}}>&#xe63d;</Text>),
+        tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont', color: tintColor, fontSize: 24}}>&#xe62e;</Text>),
+    }
+    static propTypes = {
+        navigation: PropTypes.object,
     }
     constructor() {
         super();
     }
-    componentDidMount() {
-        Keyboard.dismiss();
+    componentWillReceiveProps() {
+        console.log('componentWillReciveProps', this.props)
     }
     _goChatWindow = () => {
         const { navigation } = this.props;
@@ -53,14 +53,25 @@ class Home extends Component {
     }
     _keyExtractor = (item, index) => item._id;
     render() {
-        const { home } = this.props;
+        const { home, groups } = this.props;
         console.log('chat', this.props)
+        const chatList = [
+            {_id: 'sdghjdsk', name: '小明', lastMessage: 'jjjHi，很高心认识你，我是易永平 🙂'},
+            {_id: 'sdg678sk', name: '小刘', lastMessage: '瓜分1000000000红包！快领！复…'},
+            {_id: 'sdghj12sk', name: '小白', lastMessage: '好的， 五分钟后沟通'},   
+            {_id: 'sd23ghjdsk', name: '小明', lastMessage: 'Hi，很高心认识你，我是易永平 🙂'},
+            {_id: 'sd21g678sk', name: '小刘', lastMessage: '瓜分1000000000红包！快领！复…'},
+            {_id: '2sdghj12sk', name: '小白', lastMessage: '好的， 五分钟后沟通'},     
+            {_id: 'sdghcvjdsk', name: '小明', lastMessage: 'Hi，很高心认识你，我是易永平 🙂'},
+            {_id: 'sdg673224f8sk', name: '小刘', lastMessage: '瓜分1000000000红包！快领！复…'},
+            {_id: 'sdghj152sk', name: '小白', lastMessage: '好的， 五分钟后沟通'},
+        ];
         return (
             <View style={styles.wrap}>
                 <View style={styles.container}>
                     <FlatList
                         style={{paddingTop: 15, paddingBottom: 30}}
-                        data={home.chatList}
+                        data={groups}
                         keyExtractor={this._keyExtractor}
                         renderItem={this._renderItem}
                         ListFooterComponent={() => <View style={{height: 15}} />}
@@ -71,12 +82,12 @@ class Home extends Component {
     }
 }
 
-export default createContainer(params=>{
+export default createContainer(params => {
     Meteor.subscribe('group');
     return {
-      groups: Meteor.collection('group').find({}),
+        groups: Meteor.collection('group').find(),
     };
-  }, Home)
+}, Home)
 
 
 const styles = StyleSheet.create({
