@@ -10,31 +10,23 @@ import {
   FlatList,
   Keyboard,
 } from 'react-native';
-// import { RkButton, RkCard } from 'react-native-ui-kitten';
-// import Icon from 'react-native-vector-icons/Ionicons';
 import { observer, inject } from 'mobx-react/native';
 import Card from '../component/Card';
-import Meteor, { createContainer, MeteorListView } from 'react-native-meteor';
+import Meteor from 'react-native-meteor';
+import MeteorContainer from '../component/MeteorContainer';
+
+const tabBar = (tintColor) => (<Text style={{fontFamily:'iconfont', color: tintColor, fontSize: 24}}>&#xe63d;</Text>);
+const subCollection = () => () => {
+    Meteor.subscribe('group');
+    return {
+        groups: Meteor.collection('group').find(),
+    };
+};
 
 // @inject('home')
 // @observer
 class Home extends Component {
-    static navigationOptions = {
-        title: '消息(14)',
-        tabBarLabel: '消息11',
-        alignSelf: 'center',
-        headerStyle: {
-            height: 49,
-            backgroundColor: '#fff',
-        },
-        headerLeft: null,
-        headerTitleStyle: {
-            alignSelf: 'center',
-            fontSize: 16,
-            fontWeight: 'normal'
-        },
-        tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont', color: tintColor, fontSize: 24}}>&#xe62e;</Text>),
-    }
+    
     static propTypes = {
         navigation: PropTypes.object,
     }
@@ -42,7 +34,10 @@ class Home extends Component {
         super();
     }
     componentWillReceiveProps() {
-        console.log('componentWillReciveProps', this.props)
+        console.log('componentWillReciveProps', this.props);
+        // const { addItem } = this.props.home
+        // this.props.home.chatList = this.props.groups;
+        // addItem(this.props.groups);
     }
     _goChatWindow = () => {
         const { navigation } = this.props;
@@ -82,12 +77,7 @@ class Home extends Component {
     }
 }
 
-export default createContainer(params => {
-    Meteor.subscribe('group');
-    return {
-        groups: Meteor.collection('group').find(),
-    };
-}, Home)
+export default MeteorContainer('消息(14)', '消息', tabBar, subCollection())(Home);
 
 
 const styles = StyleSheet.create({
