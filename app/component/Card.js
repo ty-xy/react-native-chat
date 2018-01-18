@@ -28,7 +28,7 @@ export default class Card extends PureComponent {
 
   }
   render() {
-    const { style = {}, lastMessage, _id, name } = this.props;
+    const { style = {}, avatar, _id, name } = this.props;
 
     return (
         <TouchableHighlight
@@ -43,7 +43,7 @@ export default class Card extends PureComponent {
                     <Text style={styles.chatContent}>{name}</Text>
                     <Text style={styles.chatDate}>下午3：23</Text>
                 </View>
-                <Text style={styles.lastMessage}>{lastMessage}</Text>
+                <Text style={styles.lastMessage}>{avatar}</Text>
                 <View style={styles.avatar}>
                     <Image
                         style={{width: 42, height: 42, borderRadius: 21}}

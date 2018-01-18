@@ -57,7 +57,7 @@ const selectedArr = ["拍照", "图库"];
 export default class ChatWindow extends Component {
     static navigationOptions = ({ navigation }) => ({
         title: '李冰',
-        // tabBarLabel: '联系人',
+        tabBarLabel: '联系人',
         headerStyle: {
             height: 49,
             backgroundColor: '#fff',
@@ -67,9 +67,9 @@ export default class ChatWindow extends Component {
             fontSize: 16,
             fontWeight: 'normal'
         },
-        headerLeft: (
-            <Text onPress={() => navigation.state.params._goChat()} style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6', padding: 15}}>&#xe63c;</Text>
-        ),
+        // headerLeft: (
+        //     <Text onPress={() => { navigation.navigate('Home'); }} style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6', padding: 15}}>&#xe63c;</Text>
+        // ),
         headerRight: (<Text style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe63a;</Text>)
     });
     static propTypes = {
@@ -100,7 +100,7 @@ export default class ChatWindow extends Component {
         const { navigation } = this.props;
         console.log('navigation', navigation)
         navigation.setParams({
-            _goChat: this._goChat,
+            _goChat: () => this._goChat(),
         });
         if (navigation.state.params && navigation.state.params.cardCase) {
             this.setState({ cardcaseVisible: true });
