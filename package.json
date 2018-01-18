@@ -11,6 +11,7 @@
     },
     "dependencies": {
         "babel-preset-react-native-stage-0": "^1.0.1",
+        "date-format": "^1.2.0",
         "mobx": "^3.4.1",
         "mobx-react": "^4.3.5",
         "pinyin": "^2.8.3",

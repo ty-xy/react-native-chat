@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Provider } from 'mobx-react/native';
+import Meteor from 'react-native-meteor';
+
 import stores from './store';
 import Router from './router';
 
@@ -10,11 +12,18 @@ class App extends Component {
     componentWillMount() {
         server();
     }
+    componentDidMount() {
+        Meteor.loginWithPassword('18501999638', '123456', (error) => {
+            if (error) {
+                console.log('Home', error.reason)
+            }
+        });
+    }
     render() {
         return (
-        <Provider {...stores}>
-            <Router />
-        </Provider>
+            <Provider {...stores}>
+                <Router />
+            </Provider>
         );
     }
 }
