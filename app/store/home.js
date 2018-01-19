@@ -29,12 +29,8 @@ class chatListStore {
       return l.index !== item.index
     })
   }
-  addItem = (item, name) => {
-    this.chatList.forEach((l) => {
-      if (l.index === item.index) {
-        l.items.push(name)
-      }
-    })
+  addItem = (addItem) => {
+    this.chatList = addItem;
   }
 }
 
