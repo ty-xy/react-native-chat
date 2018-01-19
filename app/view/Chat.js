@@ -18,23 +18,7 @@ import Meteor, { createContainer, MeteorListView } from 'react-native-meteor';
 
 // @inject('home')
 // @observer
-class Home extends Component {
-    static navigationOptions = {
-        title: '消息(14)',
-        tabBarLabel: '消息11',
-        alignSelf: 'center',
-        headerStyle: {
-            height: 49,
-            backgroundColor: '#fff',
-        },
-        headerLeft: null,
-        headerTitleStyle: {
-            alignSelf: 'center',
-            fontSize: 16,
-            fontWeight: 'normal'
-        },
-        tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont', color: tintColor, fontSize: 24}}>&#xe62e;</Text>),
-    }
+class Homes extends Component {
     static propTypes = {
         navigation: PropTypes.object,
     }
@@ -87,7 +71,7 @@ export default createContainer(params => {
     return {
         groups: Meteor.collection('group').find(),
     };
-}, Home)
+}, Homes)
 
 
 const styles = StyleSheet.create({

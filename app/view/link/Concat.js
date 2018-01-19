@@ -10,21 +10,12 @@ import {
   TouchableOpacity,
   FlatList,
   View,
-
   Image,
 } from 'react-native';
-// import Icon from 'react-native-vector-icons/Ionicons';
-import { observer, inject } from 'mobx-react/native';
-import hostUser from '../store/mobx';
-import PassWord from './myown/PassWord';
+
+import PassWord from '../myown/PassWord';
 import pinyin from 'pinyin'
-
-
-@inject('mobx')
-@inject('list')  
-@inject('link')
-@observer
-export default class Love extends Component {
+export default class Concat extends Component {
   state = {
     text: '',
     showInput: false,
@@ -32,25 +23,19 @@ export default class Love extends Component {
     selectedChat:{},
     try:true,
   }
-  static navigationOptions = ({ navigation, screenProps })=>({
-    title: '联系人',
-    tabBarLabel: '联系人',
-    alignSelf: 'center',
-    headerStyle: {
-      height: 49,
-      backgroundColor: '#fff',
-    },
-    headerTitleStyle: {
-      alignSelf: 'center',
-    },
-    headerRight: (
-        <TouchableOpacity onPress={() =>navigation.navigate('AddFriend')}>
-            <Text  style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe637;</Text>
-        </TouchableOpacity>
-    ),
-    tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe635;</Text>),
-  })
- 
+  _addPeople(item){
+      if(item.name !==name && status !==1){
+           return (
+           <TouchableOpacity onPress={ () => {console.log(11111)} }>
+                 <Text>添加</Text>
+            </TouchableOpacity>
+           )
+      } else if(tem.name===name){
+            <Text>已添加</Text>
+      }else{
+           <Text>已发送</Text>
+      }
+  }
   _renderFlatlist(item) {
     return (
       <View style={styles.total} >
@@ -61,16 +46,22 @@ export default class Love extends Component {
        :
        <Text style={styles.left}/>}
         <TouchableHighlight 
-            onPress={ () => this._onPressButton(item.key,item.num) } 
+            onPress={ () => this.props._onPressButton(item.key,item.num) } 
             underlayColor='transparent'
             style={{ flex:1 }}
         >
           <View style={styles.flatlist}>
-            <Image source={require('../image/beautiful.png')} style={styles.img} />
+            <View style={styles.flatleft} >
+            <Image source={require('../../image/beautiful.png')} style={styles.img} />
             <View>
               <Text style={styles.keylist}>{item.key}</Text>
               <Text style={styles.keylist}>{item.num}</Text>
             </View>
+            </View>
+            {this.props.add?
+            <View >
+               {this._addPeople(item)}
+               </View>:null}
           </View>
       </TouchableHighlight>
       </View>
@@ -82,14 +73,6 @@ _handleToggle = (value) => {
           [value]: true,
       },
   });
-}
-_onPressButton=(name, number)=>{
-    const { navigation } = this.props;
-    if (navigation.state.params && navigation.state.params.cardCase) {
-        navigation.navigate('ChatWindow', { id: '323', name, number, cardCase: true, avatar: '../image/beautiful.png' });
-    } else {
-        navigation.navigate('FriendDetail', { id: '323', name, number, area: '北京市-海淀区', company:'万达集团股份有限公司' });
-    }
 }
 _renderRight(data){
    return (
@@ -127,8 +110,8 @@ _onScrollIndex=(e)=>{
 _captureRef = (ref) => { this._listRef = ref};
 
   render() {
-    const data =this.props.link.pinyinData
-    console.log(this.props.navigation)
+    // const data =this.props.link.pinyinData
+    console.log(this.props.navigation,this.props.datalist)
     return (
       <View style={styles.container}>
         <View style={styles.search}>
@@ -137,12 +120,12 @@ _captureRef = (ref) => { this._listRef = ref};
         </View>
         <View style={styles.body}>
            <FlatList
-           data={this.props.link.pinyinData}
+           data={this.props.datalist}
            renderItem={({item}) => this._renderFlatlist(item)}
            ref={this._captureRef}
            onScroll={this._onScrollIndex}
       />
-          {this._renderRight(data)}
+          {this._renderRight(this.props.datalist)}
         </View>
       </View>
     );
@@ -152,8 +135,6 @@ _captureRef = (ref) => { this._listRef = ref};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
     padding:15,
     backgroundColor:'#F6F6F6',
   },
@@ -175,11 +156,15 @@ const styles = StyleSheet.create({
     height:70,
     padding:10,
     marginTop:15,
-    flexBasis:'auto',
+    // flexBasis:'auto',
     flexDirection: 'row',
     alignItems:'center',
-    justifyContent: 'flex-start', 
-    alignSelf:'stretch',
+    justifyContent: 'space-between', 
+    // alignSelf:'stretch',
+    // backgroundColor: 'red',
+  },
+  flatleft:{
+    flexDirection: 'row',
   },
   img:{
     width: 42, 

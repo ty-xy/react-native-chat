@@ -1,10 +1,14 @@
 import { TabNavigator, StackNavigator } from 'react-navigation';
+import React, { Component } from 'react';
+import {
+    Text,
+  } from 'react-native';
 import CardStackStyleInterpolator from 'react-navigation/src/views/AnimatedValueSubscription';
 // import Icon from 'react-native-vector-icons/Ionicons';
 
 import Chat from './view/Chat';
 import ChatWindow from './view/chatWindow';
-import LovePage from './view/Love';
+import LovePage from './view/Link';
 import BookPage from './view/Book';
 import DetailPage from './view/Detail';
 import Panels from './view/Panel';
@@ -20,6 +24,7 @@ import Camera from './view/common/Camera';
 import Geolocation from './view/common/Geolocation';
 
 import AddFriend from './view/link/AddFriend';
+import AddPhone from './view/link/AddPhone'
 import FriendDetail from './view/link/FriendDetail';
 import FriendApply from './view/link/FriendApply';
 import AddDetail from './view/link/AddDetail';
@@ -29,7 +34,7 @@ const TabNavigation = TabNavigator({
   Home: {
     screen: Chat,
   },
-  Love: {
+  Link: {  
     screen: LovePage,
   },
   Book: {
@@ -37,7 +42,7 @@ const TabNavigation = TabNavigator({
   },
 }, {
   initialRouteName: 'Home',
-  order: ['Home', 'Love', 'Book'],
+  order: ['Home', 'Link', 'Book'],
   tabBarOptions: {
     inactiveTintColor: '#999A9B',
     activeTintColor: '#218DF4',
@@ -124,6 +129,9 @@ const Navigation = StackNavigator({
     },
     wChat:{
         screen: wChat,
+    },
+    AddPhone:{
+        screen: AddPhone,
     }
 });
 
