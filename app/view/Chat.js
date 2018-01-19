@@ -35,9 +35,6 @@ class Home extends Component {
     }
     componentWillReceiveProps() {
         console.log('componentWillReciveProps', this.props);
-        // const { addItem } = this.props.home
-        // this.props.home.chatList = this.props.groups;
-        // addItem(this.props.groups);
     }
     _goChatWindow = () => {
         const { navigation } = this.props;

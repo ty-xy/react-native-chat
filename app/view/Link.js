@@ -18,10 +18,21 @@ import hostUser from '../store/mobx';
 import PassWord from './myown/PassWord';
 import pinyin from 'pinyin';
 import Concat from './link/Concat';
+import Meteor from 'react-native-meteor';
+import MeteorContainer from '../component/MeteorContainer';
+
+const tabBar = (tintColor) => (<Text style={{fontFamily:'iconfont', color: tintColor, fontSize: 24}}>&#xe63d;</Text>);
+const subCollection = () => () => {
+    Meteor.subscribe('group');
+    return {
+        groups: Meteor.collection('group').find(),
+    };
+};
+
  
 @inject('link')
 @observer
-export default class Love extends Component {
+ class Link extends Component {
   state = {
     text: '',
     showInput: false,
@@ -29,24 +40,24 @@ export default class Love extends Component {
     selectedChat:{},
     try:true,
   }
-  static navigationOptions = ({ navigation, screenProps })=>({
-    title: '联系人',
-    tabBarLabel: '联系人',
-    alignSelf: 'center',
-    headerStyle: {
-      height: 49,
-      backgroundColor: '#fff',
-    },
-    headerTitleStyle: {
-      alignSelf: 'center',
-    },
-    headerRight: (
-        <TouchableOpacity onPress={() =>navigation.navigate('AddFriend')}>
-            <Text  style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe637;</Text>
-        </TouchableOpacity>
-    ),
-    tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe635;</Text>),
-  })
+//   static navigationOptions = ({ navigation, screenProps })=>({
+//     title: '联系人',
+//     tabBarLabel: '联系人',
+//     alignSelf: 'center',
+//     headerStyle: {
+//       height: 49,
+//       backgroundColor: '#fff',
+//     },
+//     headerTitleStyle: {
+//       alignSelf: 'center',
+//     },
+//     headerRight: (
+//         <TouchableOpacity onPress={() =>navigation.navigate('AddFriend')}>
+//             <Text  style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe637;</Text>
+//         </TouchableOpacity>
+//     ),
+//     tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe635;</Text>),
+//   })
  _onPressButton=(name, number)=>{
     const { navigation } = this.props;
     if (navigation.state.params && navigation.state.params.cardCase) {
@@ -63,3 +74,4 @@ export default class Love extends Component {
   }
 }
 
+export default MeteorContainer('联系人', '联系人', tabBar, subCollection())(Link);
