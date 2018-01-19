@@ -6,7 +6,7 @@ import {
 import CardStackStyleInterpolator from 'react-navigation/src/views/AnimatedValueSubscription';
 // import Icon from 'react-native-vector-icons/Ionicons';
 
-import Chat from './view/Chat';
+import Chat from './view/chatList';
 import ChatWindow from './view/chatWindow';
 import LovePage from './view/Link';
 import BookPage from './view/Book';
