@@ -27,6 +27,7 @@ export default class Love extends Component {
     text:'请输入姓名或电话号码',
     selectedChat:{},
     try:true,
+    status:2
   }
   static navigationOptions = ({ navigation, screenProps })=>({
     title: '联系人',
@@ -42,6 +43,21 @@ export default class Love extends Component {
   
     tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe635;</Text>),
   })
+  _onPressButtonAdd=(id)=>{
+    const { navigation } = this.props;
+    navigation.navigate('SendApply', { id: '323', name:"taotao"});
+    this.setState({
+             status:1
+      })
+  }
+  _onPressButton=(name, number)=>{
+    const { navigation } = this.props;
+    if (this.state.status===2) {
+        navigation.navigate('AddDetail', { id: '323', name, number, cardCase: true, avatar: '../../image/beautiful.png' });
+    } else {
+        navigation.navigate('FriendDetail', { id: '323', name, number, area: '北京市-海淀区', company:'万达集团股份有限公司' });
+    }
+}
   render() {
     const data = this.props.navigation.state.params;
     const datalist = data.map((v)=>{
@@ -90,8 +106,19 @@ export default class Love extends Component {
         }
        
       });
+//    const datalisty={
+//         datalist:pinyinData,
+//         add:true,
+//         status:1
+//     }
    return (
-    <Concat datalist={pinyinData}  add={true} />   
+    <Concat 
+    datalist={pinyinData} 
+    add={true}
+    status={this.state.status}
+      _onPressAdd={this._onPressButtonAdd} 
+      _onPressButton={this._onPressButton}
+      />   
    )
   }
 }

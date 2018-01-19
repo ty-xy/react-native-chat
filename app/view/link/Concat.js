@@ -24,16 +24,16 @@ export default class Concat extends Component {
     try:true,
   }
   _addPeople(item){
-      if(item.name !==name && status !==1){
+      if(item.name !=="淘淘" && this.props.status !==1){
            return (
-           <TouchableOpacity onPress={ () => {console.log(11111)} }>
-                 <Text>添加</Text>
+           <TouchableOpacity onPress={this.props._onPressAdd}>
+                 <Text style={{color:'#29B6F6'}}>添加</Text>
             </TouchableOpacity>
            )
-      } else if(tem.name===name){
-            <Text>已添加</Text>
+      }else if(item.name !=="淘淘" &&this.props.status ===1 ){
+         return(<Text>已发送</Text>)
       }else{
-           <Text>已发送</Text>
+        return( <Text>已添加</Text>)
       }
   }
   _renderFlatlist(item) {

@@ -24,6 +24,7 @@ import Camera from './view/common/Camera';
 import Geolocation from './view/common/Geolocation';
 
 import AddFriend from './view/link/AddFriend';
+import SendApply from './view/link/SendApply';
 import AddPhone from './view/link/AddPhone'
 import FriendDetail from './view/link/FriendDetail';
 import FriendApply from './view/link/FriendApply';
@@ -132,6 +133,12 @@ const Navigation = StackNavigator({
     },
     AddPhone:{
         screen: AddPhone,
+    },
+    SendApply:{
+        screen: SendApply,
+    },
+    AddDetail:{  
+        screen: AddDetail,
     }
 });
 
