@@ -127,6 +127,7 @@ class Home extends Component {
         } else {
             res = chatList;
         }
+        console.log('res', res)
         return (
             <View style={styles.wrap}>
                 <View style={styles.container}>
@@ -136,6 +137,7 @@ class Home extends Component {
                         data={res}
                         keyExtractor={this._keyExtractor}
                         renderItem={this._renderItem}
+                        previewOpenValue={0}
                         renderHiddenItem={(data, rowMap) => (
                             <View style={styles.rowBack}>
                                 <TouchableOpacity
@@ -206,6 +208,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row-reverse',
       paddingLeft: 16,
       alignItems: 'center',
+      marginTop: 10,
   },
   delete: {
       fontFamily: 'iconfont',
