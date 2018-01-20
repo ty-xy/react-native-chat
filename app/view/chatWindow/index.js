@@ -29,6 +29,8 @@ import Emoji from './emoji';
 import AertSelecte from '../../component/AertSelecte';
 import Modal from '../../component/Modal';
 import MeteorContainer from '../../component/MeteorContainer';
+import PopulateUtil from '../../util/populate';
+
 
 
 
@@ -67,12 +69,46 @@ const navigationOptions = (navigation) => ({
     headerRight: (<Text style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe63a;</Text>)
 });
 
-const subCollection = () => () => {
-    Meteor.subscribe('users');
+const subCollection = () => (navigation) => {
+    Meteor.subscribe('message');
     Meteor.subscribe('group');
-    Meteor.subscribe('notice');
+    Meteor.subscribe('files');
+    Meteor.subscribe('user');
+    const { to } = navigation.state.params || {};
+    const chatGroup = Meteor.collection('group').findOne({ _id: to }) || {};
+    console.log('subCollection', navigation, to)
+    const files =  Meteor.collection('messages').find({ groupId: to, type: 'file' }, { sort: { createdAt: -1 } }).map(msg => PopulateUtil.file(msg.content));
+    if (files[0]) {
+        files.forEach((d, i, data) => {
+            d.showYearMonth = false;
+            d.fileFrom = PopulateUtil.user(d.from).profile.name;
+            if (i) {
+                const prev = data[i - 1];
+                d.showYearMonth = format('yyyy-MM', d.createdAt) !== format('yyyy-MM', prev.createdAt);
+            } else {
+                d.showYearMonth = true;
+            }
+        });
+    }
+    const messages =  Meteor.collection('messages').find({ groupId: to }, { sort: { createdAt: -1 }, limit: 20 }).reverse();
+    messages.forEach((d, i, data) => {
+        d.readed = d.readedMembers && d.readedMembers.includes(Meteor.userId());
+        d.showYearMonth = false;
+
+        if (i) {
+            const prev = data[i - 1];
+            d.showYearMonth = (prev.createdAt.getTime() - d.createdAt.getTime()) > 2 * 60 * 1000;
+        } else {
+            d.showYearMonth = true;
+        }
+    });
     return {
-        messages: [],
+        messages,
+        to,
+        chatUser:  Meteor.collection('users').findOne({ _id: Meteor.userId() }) || {},
+        chatGroup,
+        files,
+        users: Meteor.collection('users').find(),
     };
 }
 
@@ -94,7 +130,7 @@ class ChatWindow extends Component {
             showAudio: false, // 语音输入切换
             showEmoji: false, // 表情
             showFile: false, // 附件
-            text: '',
+            content: '',
             selectCamera: false,  // 相册选择
             cardcaseVisible: false,
             animationType: false,
@@ -165,16 +201,43 @@ class ChatWindow extends Component {
         this.setState({ sendButton: false });
     }
     // 输入文字
-    _inputChange = (text) => {
-        this.setState({ text });
+    _inputChange = (content) => {
+        this.setState({ content });
     }
     // 发送消息
     _handleSendMsg = () => {
-        const { text } = this.state;
-        if (text.length === 0) {
+        const { content } = this.state;
+        if (content.length === 0) {
             toast.toast('输入内容为空', this);
+        } else {
+            const { chatGroup } = this.props;
+            const { members = [], type } = chatGroup;
+            const resMes = { content, chatType: type, type: 'text', to: [] };
+            resMes.groupId = chatGroup._id;
+            members.forEach((userId) => {
+                const user = { userId };
+                if (userId === Meteor.userId()) {
+                    user.isRead = true;
+                }
+                resMes.to.push(user);
+            });
+            Meteor.call('addChatlist', chatGroup._id, members.filter(value => value !== Meteor.userId())[0], (err) => {
+                // toast.toast(err, this);
+            });
+            Meteor.call(
+                'insertMessage',
+                {
+                    ...resMes,
+                },
+                (err, res) => {
+                    if (err) {
+                        toast.toast(err, this);
+                    } else {
+                        this.setState({ content: '' });
+                        this.content.focus();
+                    }
+                });
         }
-        console.log('_handleSendMsg', text)
     }
     // 发送语音
     _handleSendAudio = () => {
@@ -223,7 +286,7 @@ class ChatWindow extends Component {
         this.setState({ showAudio: !this.state.showAudio, sendButton: false, showEmoji: false, showFile: false });
     }
     _auditTabInput = () => {
-        const { showAudio, height, text } = this.state;
+        const { showAudio, height, content } = this.state;
         if (showAudio) {
             return (
                 <TouchableOpacity
@@ -245,8 +308,8 @@ class ChatWindow extends Component {
                 underlineColorAndroid='transparent'
                 style={[styles.input, {height}]}
                 onChangeText={this._inputChange}
-                value={text}
-                onContentSizeChange={this._onContentSizeChange}
+                value={content}
+                // onContentSizeChange={this._onContentSizeChange}
                 onFocus={this._onFocus}
                 onBlur={this._onBlur}
                 ref={i => this.content = i}
@@ -365,22 +428,19 @@ class ChatWindow extends Component {
         );
     }
 
-
-    _keyExtractor = (item, index) => item.key;
     render() {
         const { inputHeight, inputFocus, sendButton, keyboardHeight, showCamera, footerHeight } = this.state;
-        console.log('height', footerHeight);
         const height = (inputHeight < 51) ? 50 : inputHeight;
         const flatListfooterStyle = { height: 10 };
-        
-        // console.log('chatwindow-props', this.props)
+        const { messages } = this.props;
+        console.log('chatwindow-props', this.props, this.content)
         return (
             <View style={styles.window}>
                 <FlatList
                     style={[styles.chatWindow]}
-                    data={messageList}
-                    keyExtractor={this._keyExtractor}
-                    renderItem={({item}) => <Message {...item} />}
+                    data={messages}
+                    keyExtractor={(item) => (item._id)}
+                    renderItem={({item}) => <Message {...item} {...this.props} />}
                     ListEmptyComponent={() => this._renderPullBottom()}
                     ListFooterComponent={() => <View style={flatListfooterStyle} />}
                     ref={i => this._chatList = i}

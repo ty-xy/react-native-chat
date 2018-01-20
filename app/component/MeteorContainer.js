@@ -2,7 +2,7 @@
  * @Author: toringo 
  * @Date: 2018-01-18 14:28:40 
  * @Last Modified by: tori
- * @Last Modified time: 2018-01-20 13:44:36
+ * @Last Modified time: 2018-01-20 14:12:08
  */
 import React, { Component } from 'react';
 import Meteor, { createContainer } from 'react-native-meteor';
@@ -18,7 +18,7 @@ const Create = (navigationOptions, subCollection) => WrappedComponent =>
         static navigationOptions = ({navigation}) => navigationOptions(navigation)
         render () {
             const Container = createContainer(params => {
-                return subCollection();
+                return subCollection(this.props.navigation);
             }, WrappedComponent);
             return <Container {...this.props} />;
         }

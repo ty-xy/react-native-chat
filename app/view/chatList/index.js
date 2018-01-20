@@ -47,7 +47,7 @@ const subCollection = () => () => {
     Meteor.subscribe('notice');
     Meteor.subscribe('message');
     const chatList = UserUtil.getChatList();
-    console.log('withTracker', chatList, Meteor.userId(), Meteor.collection('users'));
+    // console.log('withTracker', chatList, Meteor.userId(), Meteor.collection('users'));
     chatList.forEach((item, index) => {
         Object.assign(item, Meteor.collection('group').findOne({ _id: item.groupId }));
         const allNum = Meteor.collection('messages').find({ 'to.userId': Meteor.userId(), groupId: item.groupId }) || [];
@@ -81,25 +81,18 @@ const subCollection = () => () => {
 // @inject('home')
 // @observer
 class Home extends Component {
-    
     static propTypes = {
         navigation: PropTypes.object,
     }
     constructor() {
         super();
     }
-    componentWillReceiveProps() {
-        // console.log('componentWillReciveProps', this.props);
-        // const { addItem } = this.props.home
-        // this.props.home.chatList = this.props.groups;
-        // addItem(this.props.groups);
-    }
-    _goChatWindow = () => {
+    _goChatWindow = (to) => {
         const { navigation } = this.props;
-        navigation.navigate('ChatWindow', { id: '323' });
+        navigation.navigate('ChatWindow', { to });
     }
     _renderItem = ({item}) => {
-        return (<Card {...item} key={item._id} _goChatWindow={this._goChatWindow} />);
+        return (<Card {...item} key={item._id} _goChatWindow={() => this._goChatWindow(item.groupId)} />);
     }
     _keyExtractor = (item, index) => item._id;
     _compare = property => (a, b) => b[property] - a[property];
@@ -143,7 +136,7 @@ class Home extends Component {
         } else {
             res = chatList;
         }
-        console.log('res', res)
+        console.log('res', res, Meteor.user())
         return (
             <View style={styles.wrap}>
                 <View style={styles.container}>
