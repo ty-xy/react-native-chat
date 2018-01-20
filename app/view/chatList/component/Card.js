@@ -5,7 +5,7 @@ import {
     StyleSheet,
     Text,
     View,
-    TouchableHighlight
+    TouchableOpacity
 } from 'react-native';
 import Meteor from 'react-native-meteor';
 import formatDate from '../../../util/formatDate';
@@ -106,21 +106,21 @@ export default class Card extends PureComponent {
     )
   _renderUser = (user, lastMessage, time, type, unreadMessage, id) => {
       return (
-        <TouchableHighlight
+        <TouchableOpacity
             key={id}
             style={styles.card}
-            underlayColor={'rgba(100,100,100,0.2)'}
+            activeOpacity={1}
             onPress={() => {
                 this.props._goChatWindow();
             }}
         >
+            <View style={styles.avatar}>
+                <Image
+                    style={styles.image}
+                    source={{uri: user.profile.avatar || ''}}
+                />
+            </View>
             <View style={styles.chatList}>
-                <View style={styles.avatar}>
-                    <Image
-                        style={styles.image}
-                        source={{uri: user.profile.avatar || ''}}
-                    />
-                </View>
                 <View style={styles.chatlistContent}>
                     <View style={styles.chatTitle}>
                         <Text style={styles.chatContent}>{user.profile.name}</Text>
@@ -128,10 +128,9 @@ export default class Card extends PureComponent {
                     </View>
                     <Text style={styles.lastMessage}>{lastMessage.content}</Text>
                 </View>
-                <View style={styles.badge}><Text style={{fontSize: 12, color: '#fff'}}>{unreadMessage}</Text></View>
-                <View style={styles.mark} />
             </View>
-        </TouchableHighlight>
+            <View style={styles.badge}><Text style={{fontSize: 12, color: '#fff'}}>{unreadMessage}</Text></View>
+        </TouchableOpacity>
     );
   }
   _renderChatListItem = (item) => {
@@ -155,37 +154,24 @@ export default class Card extends PureComponent {
 
 const styles = StyleSheet.create({
     card: {
-        // backgroundColor: '#ffffff',
-        // paddingBottom: 14,
-        marginBottom: 15,
-        marginRight: 15,
+        backgroundColor: 'transparent',
+        paddingBottom: 20,       
         marginLeft: 15,
-        height: 71,
+        height: 81,
         borderColor: 'transparent',
         borderRadius: 4,
-    },
-    chatList: {
-        height: 71,
-        paddingRight: 10,
-        flexDirection: 'column',
-        justifyContent: 'center',
         position: "relative",
         zIndex: 0,
-        backgroundColor: 'transparent',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center'
+        
     },
-    mark: {
-        flex: 1,
+    chatList: {
+        padding: 15,
         position: "absolute",
+        zIndex: 1,
         backgroundColor: '#fff',
-        left: 15,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        zIndex: -1,
-        borderRadius: 4,
+        left: 21,
+        top: 11,
+        right: 15,
     },
     chatlistContent: {
         flex: 1,
@@ -223,6 +209,10 @@ const styles = StyleSheet.create({
         shadowOffset:{  width: 0,  height: 3 },
         shadowColor: '#29B6F6',
         shadowOpacity: 0.2,
+        position: 'absolute',
+        zIndex: 3,
+        left: 0,
+        top: 25,
     },
     image: {
         width: 42,
@@ -235,8 +225,9 @@ const styles = StyleSheet.create({
         width: 22,
         borderRadius: 11,
         position: "absolute",
-        top: -8,
-        right: -8,
+        zIndex: 5,
+        top: 0,
+        right: 4,
         flexDirection: 'row', 
         alignItems: 'center', 
         justifyContent: 'center',
