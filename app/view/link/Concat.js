@@ -10,21 +10,12 @@ import {
   TouchableOpacity,
   FlatList,
   View,
-
   Image,
 } from 'react-native';
-// import Icon from 'react-native-vector-icons/Ionicons';
-import { observer, inject } from 'mobx-react/native';
-import hostUser from '../store/mobx';
-import PassWord from './myown/PassWord';
+
+import PassWord from '../myown/PassWord';
 import pinyin from 'pinyin'
-
-
-@inject('mobx')
-@inject('list')  
-@inject('link')
-@observer
-export default class Love extends Component {
+export default class Concat extends Component {
   state = {
     text: '',
     showInput: false,
@@ -32,45 +23,47 @@ export default class Love extends Component {
     selectedChat:{},
     try:true,
   }
-  static navigationOptions = ({ navigation, screenProps })=>({
-    title: '联系人',
-    tabBarLabel: '联系人',
-    alignSelf: 'center',
-    headerStyle: {
-      height: 49,
-      backgroundColor: '#fff',
-    },
-    headerTitleStyle: {
-      alignSelf: 'center',
-    },
-    headerRight: (
-        <TouchableOpacity onPress={() =>navigation.navigate('AddFriend')}>
-            <Text  style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe637;</Text>
-        </TouchableOpacity>
-    ),
-    tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe635;</Text>),
-  })
- 
+  _addPeople(item){
+      if(item.name !=="淘淘" && this.props.status !==1){
+           return (
+           <TouchableOpacity onPress={this.props._onPressAdd}>
+                 <Text style={{color:'#29B6F6'}}>添加</Text>
+            </TouchableOpacity>
+           )
+      }else if(item.name !=="淘淘" &&this.props.status ===1 ){
+         return(<Text>已发送</Text>)
+      }else{
+        return( <Text>已添加</Text>)
+      }
+  }
   _renderFlatlist(item) {
+      const {profile={},username}=item.user
+      const {name,avatar}=profile
     return (
       <View style={styles.total} >
        {item.showType?
        <View style={styles.left}> 
-          <Text ref={(i)=>this.text=i}>{item.pinyin.toUpperCase()}</Text>
+            <Text ref={(i)=>this.text=i}>{item.pinyin.toUpperCase()}</Text>
        </View>
        :
        <Text style={styles.left}/>}
         <TouchableHighlight 
-            onPress={ () => this._onPressButton(item.key,item.num) } 
-            underlayColor='transparent'
-            style={{ flex:1 }}
+             onPress={ () => this.props._onPressButton(name,username) } 
+             underlayColor='transparent'
+             style={{ flex:1 }}
         >
           <View style={styles.flatlist}>
-            <Image source={require('../image/beautiful.png')} style={styles.img} />
-            <View>
-              <Text style={styles.keylist}>{item.key}</Text>
-              <Text style={styles.keylist}>{item.num}</Text>
+             <View style={styles.flatleft} >
+             <Image source={{uri : avatar}} style={styles.img} />
+             <View style={styles.imgRight}>
+               <Text style={styles.keylist}>{name}</Text>
+               <Text style={styles.numlist}>{username}</Text>
             </View>
+            </View>
+            {this.props.add?
+            <View >
+               {this._addPeople(item)}
+               </View>:null}
           </View>
       </TouchableHighlight>
       </View>
@@ -83,14 +76,6 @@ _handleToggle = (value) => {
       },
   });
 }
-_onPressButton=(name, number)=>{
-    const { navigation } = this.props;
-    if (navigation.state.params && navigation.state.params.cardCase) {
-        navigation.navigate('ChatWindow', { id: '323', name, number, cardCase: true, avatar: '../image/beautiful.png' });
-    } else {
-        navigation.navigate('FriendDetail', { id: '323', name, number, area: '北京市-海淀区', company:'万达集团股份有限公司' });
-    }
-}
 _renderRight(data){
    return (
      <View style={styles.right}>
@@ -98,7 +83,7 @@ _renderRight(data){
           return(
             <TouchableOpacity key={index} onPress={()=>this._onChangeScrollToIndex(index)}>
               {value.showType?
-               <View style={this.state.selectedChat[index]?[styles.circle,{backgroundColor:'#29B6F6'}]:styles.circle}  data-index={index}>
+                <View style={this.state.selectedChat[index]?[styles.circle,{backgroundColor:'#29B6F6'}]:styles.circle}  data-index={index}>
                 <Text style={styles.wordlist}>{value.pinyin.toUpperCase()}</Text>
                </View>
                :null}
@@ -109,40 +94,40 @@ _renderRight(data){
    )
 }
 _onChangeScrollToIndex = (text,e) => {
-  this._listRef.scrollToIndex({viewPosition: 0, index: Number(text)});
+    this._listRef.scrollToIndex({viewPosition: 0, index: Number(text)});
 }
 _scrollPos = new Animated.Value(0)
 _scrollSinkX = Animated.event(
-  [{nativeEvent: { contentOffset: { y: this._scrollPos } }}],
-  {useNativeDriver: true},
+     [{nativeEvent: { contentOffset: { y: this._scrollPos } }}],
+     {useNativeDriver: true},
 )
 _onScrollIndex=(e)=>{
- const y=e.nativeEvent.contentOffset.y
-   index=Math.floor(y/85)>-1?Math.floor(y/85):0
- showType=this._listRef.props.data[index].showType
- if(showType&&this.state.try){
-    this._handleToggle(index)
- }
+    const y=e.nativeEvent.contentOffset.y
+    index=Math.floor(y/85)>-1?Math.floor(y/85):0
+    showType=this._listRef.props.data[index].showType
+    if(showType&&this.state.try){
+        this._handleToggle(index)
+    }
 }
 _captureRef = (ref) => { this._listRef = ref};
 
   render() {
-    const data =this.props.link.pinyinData
-    console.log(this.props.navigation)
+    // const data =this.props.link.pinyinData
+    console.log(this.props.navigation,this.props.datalist)
     return (
       <View style={styles.container}>
-        <View style={styles.search}>
-            <PassWord texts={this.state.text}/>
-            <Text style={{fontFamily:'iconfont',fontSize:16,color:'#29B6F6',marginRight:-24}}>&#xe636;</Text>
+             <View style={styles.search}>
+                 <PassWord texts={this.state.text}/>
+                <Text style={{fontFamily:'iconfont',fontSize:16,color:'#29B6F6',marginRight:-24}}>&#xe636;</Text>
         </View>
         <View style={styles.body}>
            <FlatList
-           data={this.props.link.pinyinData}
+           data={this.props.datalist}
            renderItem={({item}) => this._renderFlatlist(item)}
            ref={this._captureRef}
            onScroll={this._onScrollIndex}
       />
-          {this._renderRight(data)}
+          {this._renderRight(this.props.datalist)}
         </View>
       </View>
     );
@@ -152,8 +137,6 @@ _captureRef = (ref) => { this._listRef = ref};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
     padding:15,
     backgroundColor:'#F6F6F6',
   },
@@ -175,15 +158,20 @@ const styles = StyleSheet.create({
     height:70,
     padding:10,
     marginTop:15,
-    flexBasis:'auto',
+    // flexBasis:'auto',
     flexDirection: 'row',
     alignItems:'center',
-    justifyContent: 'flex-start', 
-    alignSelf:'stretch',
+    justifyContent: 'space-between', 
+    // alignSelf:'stretch',
+    // backgroundColor: 'red',
+  },
+  flatleft:{
+    flexDirection: 'row',
   },
   img:{
     width: 42, 
     height: 42,
+    borderRadius:21
   },
   body:{
     width:'100%',
@@ -211,11 +199,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding:5,
-    // paddingTop:10,
-    // flex:1,
+    },
+    keylist:{
+        fontSize: 14,
+        color:'#4A4A4A',
+        height:20,
+        lineHeight:20,
     },
    total:{
       flexDirection: 'row',
+    },
+    numlist:{
+        fontSize: 14,
+        color: '#999999',
+        letterSpacing: 0,
+        height:20,
+        lineHeight:20,
     },
   circle:{
     alignItems: 'center',
@@ -233,5 +232,8 @@ const styles = StyleSheet.create({
     color: '#999999',
     letterSpacing: 0,
     padding:-2,
+  },
+  imgRight:{
+    marginLeft:10,
   }
 });

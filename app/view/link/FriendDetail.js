@@ -8,7 +8,7 @@ ImageBackground ,
 ScrollView,
   View,
   TouchableOpacity,
-  // Button,
+
   Image
 } from 'react-native';
 import Book from '../Item';
@@ -101,9 +101,10 @@ export default class Person extends Component {
     super(props);
     this.state={
         text:'手机号查找',
+        modalVisible: false,
   }
 }
-  static navigationOptions = {
+  static navigationOptions=({navigation})=>({
     title:'详细资料',
     alignSelf: 'center',
     headerStyle: {
@@ -114,15 +115,19 @@ export default class Person extends Component {
       alignSelf: 'center',
     },
     headerRight: (
-        <TouchableOpacity onPress={() =>navigation.navigate('AddFriend')}>
+        <TouchableOpacity onPress={() =>navigation.navigate('More',{name:navigation.state.params.name})}>
     <Text  style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>更多</Text>
-    </TouchableOpacity>
+      </TouchableOpacity>
     ),
-  }
+  })
 
   onPressLearnMore () {
     let num = 0
     console.log(num++)
+  }
+  _onPressSend =(name,number)=>{
+      const {navigation}=this.props
+      navigation.navigate('ChatWindow', { id: '323', name, number, avatar: '../../image/beautiful.png' });
   }
   render() {
     const {name,number,area,company}=this.props.navigation.state.params
@@ -156,6 +161,7 @@ export default class Person extends Component {
          </View>
          <View style={styles.buttonList}>
              <TouchableOpacity
+              onPress={()=>this._onPressSend(name,number)}
               style={[styles.button,{backgroundColor:'#22B1FF'}]}>
               <Text style={styles.buttonText}>发送消息</Text>  
              </TouchableOpacity>

@@ -89,7 +89,7 @@ export default class Person extends Component {
       alignSelf: 'center',
     },
   }
-  _onpressButton(id){
+  _onpressButton=(id)=>{
       const { navigation} = this.props;
        navigation.navigate(id)
   }
@@ -98,14 +98,16 @@ export default class Person extends Component {
     console.log(num++)
   }
   _onpressB=()=>{
-  Contacts.getAll((err, contacts) => {
+   Contacts.getAll((err, contacts) => {
     if(err === 'denied'){
      console.log(21,err)
     } else {
-      console.log(1221312321312,contacts)
+        const { navigation} = this.props;
+        navigation.navigate('AddPhone',contacts)
     }
   })
-  console.log('press')
+
+
 }
   render() {
     return (

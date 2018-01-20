@@ -13,7 +13,7 @@ class App extends Component {
         server();
     }
     componentDidMount() {
-        Meteor.loginWithPassword('18501999638', '123456', (error) => {
+        Meteor.loginWithPassword('18685046518', 'xyty1314', (error) => {
             if (error) {
                 console.log('Home', error.reason)
             }
