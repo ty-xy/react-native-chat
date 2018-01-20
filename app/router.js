@@ -29,7 +29,8 @@ import AddPhone from './view/link/AddPhone'
 import FriendDetail from './view/link/FriendDetail';
 import FriendApply from './view/link/FriendApply';
 import AddDetail from './view/link/AddDetail';
-import wChat from './view/link/wChat'
+import wChat from './view/link/wChat';
+import More from  './view/link/More';
 // APP tab 配置: https://reactnavigation.org/docs/navigators/tab
 const TabNavigation = TabNavigator({
   Home: {
@@ -139,6 +140,9 @@ const Navigation = StackNavigator({
     },
     AddDetail:{  
         screen: AddDetail,
+    },
+    More:{
+        screen:More,
     }
 });
 

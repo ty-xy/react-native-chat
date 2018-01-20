@@ -103,7 +103,7 @@ export default class Person extends Component {
         text:'手机号查找',
   }
 }
-  static navigationOptions = {
+  static navigationOptions=({navigation})=>({
     title:'详细资料',
     alignSelf: 'center',
     headerStyle: {
@@ -114,15 +114,19 @@ export default class Person extends Component {
       alignSelf: 'center',
     },
     headerRight: (
-        <TouchableOpacity onPress={() =>navigation.navigate('AddFriend')}>
+        <TouchableOpacity onPress={() =>navigation.navigate('More')}>
     <Text  style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>更多</Text>
     </TouchableOpacity>
     ),
-  }
+  })
 
   onPressLearnMore () {
     let num = 0
     console.log(num++)
+  }
+  _onPressSend =(name,number)=>{
+      const {navigation}=this.props
+      navigation.navigate('ChatWindow', { id: '323', name, number, avatar: '../../image/beautiful.png' });
   }
   render() {
     const {name,number,area,company}=this.props.navigation.state.params
@@ -156,6 +160,7 @@ export default class Person extends Component {
          </View>
          <View style={styles.buttonList}>
              <TouchableOpacity
+              onPress={()=>this._onPressSend(name,number)}
               style={[styles.button,{backgroundColor:'#22B1FF'}]}>
               <Text style={styles.buttonText}>发送消息</Text>  
              </TouchableOpacity>

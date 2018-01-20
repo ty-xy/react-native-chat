@@ -37,25 +37,27 @@ export default class Concat extends Component {
       }
   }
   _renderFlatlist(item) {
+      const {profile={},username}=item.user
+      const {name,avatar}=profile
     return (
       <View style={styles.total} >
        {item.showType?
        <View style={styles.left}> 
-          <Text ref={(i)=>this.text=i}>{item.pinyin.toUpperCase()}</Text>
+            <Text ref={(i)=>this.text=i}>{item.pinyin.toUpperCase()}</Text>
        </View>
        :
        <Text style={styles.left}/>}
         <TouchableHighlight 
-            onPress={ () => this.props._onPressButton(item.key,item.num) } 
-            underlayColor='transparent'
-            style={{ flex:1 }}
+             onPress={ () => this.props._onPressButton(name,username) } 
+             underlayColor='transparent'
+             style={{ flex:1 }}
         >
           <View style={styles.flatlist}>
-            <View style={styles.flatleft} >
-            <Image source={require('../../image/beautiful.png')} style={styles.img} />
-            <View>
-              <Text style={styles.keylist}>{item.key}</Text>
-              <Text style={styles.keylist}>{item.num}</Text>
+             <View style={styles.flatleft} >
+             <Image source={{uri : avatar}} style={styles.img} />
+             <View style={styles.imgRight}>
+               <Text style={styles.keylist}>{name}</Text>
+               <Text style={styles.numlist}>{username}</Text>
             </View>
             </View>
             {this.props.add?
@@ -81,7 +83,7 @@ _renderRight(data){
           return(
             <TouchableOpacity key={index} onPress={()=>this._onChangeScrollToIndex(index)}>
               {value.showType?
-               <View style={this.state.selectedChat[index]?[styles.circle,{backgroundColor:'#29B6F6'}]:styles.circle}  data-index={index}>
+                <View style={this.state.selectedChat[index]?[styles.circle,{backgroundColor:'#29B6F6'}]:styles.circle}  data-index={index}>
                 <Text style={styles.wordlist}>{value.pinyin.toUpperCase()}</Text>
                </View>
                :null}
@@ -92,20 +94,20 @@ _renderRight(data){
    )
 }
 _onChangeScrollToIndex = (text,e) => {
-  this._listRef.scrollToIndex({viewPosition: 0, index: Number(text)});
+    this._listRef.scrollToIndex({viewPosition: 0, index: Number(text)});
 }
 _scrollPos = new Animated.Value(0)
 _scrollSinkX = Animated.event(
-  [{nativeEvent: { contentOffset: { y: this._scrollPos } }}],
-  {useNativeDriver: true},
+     [{nativeEvent: { contentOffset: { y: this._scrollPos } }}],
+     {useNativeDriver: true},
 )
 _onScrollIndex=(e)=>{
- const y=e.nativeEvent.contentOffset.y
-   index=Math.floor(y/85)>-1?Math.floor(y/85):0
- showType=this._listRef.props.data[index].showType
- if(showType&&this.state.try){
-    this._handleToggle(index)
- }
+    const y=e.nativeEvent.contentOffset.y
+    index=Math.floor(y/85)>-1?Math.floor(y/85):0
+    showType=this._listRef.props.data[index].showType
+    if(showType&&this.state.try){
+        this._handleToggle(index)
+    }
 }
 _captureRef = (ref) => { this._listRef = ref};
 
@@ -114,9 +116,9 @@ _captureRef = (ref) => { this._listRef = ref};
     console.log(this.props.navigation,this.props.datalist)
     return (
       <View style={styles.container}>
-        <View style={styles.search}>
-            <PassWord texts={this.state.text}/>
-            <Text style={{fontFamily:'iconfont',fontSize:16,color:'#29B6F6',marginRight:-24}}>&#xe636;</Text>
+             <View style={styles.search}>
+                 <PassWord texts={this.state.text}/>
+                <Text style={{fontFamily:'iconfont',fontSize:16,color:'#29B6F6',marginRight:-24}}>&#xe636;</Text>
         </View>
         <View style={styles.body}>
            <FlatList
@@ -169,6 +171,7 @@ const styles = StyleSheet.create({
   img:{
     width: 42, 
     height: 42,
+    borderRadius:21
   },
   body:{
     width:'100%',
@@ -196,11 +199,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding:5,
-    // paddingTop:10,
-    // flex:1,
+    },
+    keylist:{
+        fontSize: 14,
+        color:'#4A4A4A',
+        height:20,
+        lineHeight:20,
     },
    total:{
       flexDirection: 'row',
+    },
+    numlist:{
+        fontSize: 14,
+        color: '#999999',
+        letterSpacing: 0,
+        height:20,
+        lineHeight:20,
     },
   circle:{
     alignItems: 'center',
@@ -218,5 +232,8 @@ const styles = StyleSheet.create({
     color: '#999999',
     letterSpacing: 0,
     padding:-2,
+  },
+  imgRight:{
+    marginLeft:10,
   }
 });
