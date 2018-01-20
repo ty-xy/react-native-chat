@@ -159,7 +159,7 @@ class Home extends Component {
                                     style={[styles.opacityView, { backgroundColor: '#29B6F6', marginRight: 10 }]}
                                     onPress={this._handleSendMsg}
                                 >
-                                    <Text style={styles.topUp}>&#xe63b;</Text>
+                                    <Text style={styles.topUp}>&#xe644;</Text>
                                 </TouchableOpacity>
                             </View>
                         )}
