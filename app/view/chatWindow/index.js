@@ -20,6 +20,7 @@ import {
 } from 'react-native';
 import Toast, { DURATION } from 'react-native-easy-toast'
 import { observer, inject } from 'mobx-react/native';
+import Meteor from 'react-native-meteor';
 
 import Message from './Message';
 import Fujian from './Fujian';
@@ -27,6 +28,8 @@ import toast from '../../util/util'
 import Emoji from './emoji';
 import AertSelecte from '../../component/AertSelecte';
 import Modal from '../../component/Modal';
+import MeteorContainer from '../../component/MeteorContainer';
+
 
 
 const messageList = [
@@ -49,29 +52,35 @@ const messageList = [
 let dateInOut = 0;
 const selectedArr = ["拍照", "图库"];
 
+const navigationOptions = (navigation) => ({
+    title: '李冰',
+    tabBarLabel: '联系人',
+    headerStyle: {
+        height: 49,
+        backgroundColor: '#fff',
+    },
+    headerTitleStyle: {
+        alignSelf: 'center',
+        fontSize: 16,
+        fontWeight: 'normal'
+    },
+    headerRight: (<Text style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe63a;</Text>)
+});
+
+const subCollection = () => () => {
+    Meteor.subscribe('users');
+    Meteor.subscribe('group');
+    Meteor.subscribe('notice');
+    return {
+        messages: [],
+    };
+}
 
 
+// @inject('message')
+// @observer
+class ChatWindow extends Component {
 
-@inject('message')
-@observer
-export default class ChatWindow extends Component {
-    static navigationOptions = ({ navigation }) => ({
-        title: '李冰',
-        tabBarLabel: '联系人',
-        headerStyle: {
-            height: 49,
-            backgroundColor: '#fff',
-        },
-        headerTitleStyle: {
-            alignSelf: 'center',
-            fontSize: 16,
-            fontWeight: 'normal'
-        },
-        // headerLeft: (
-        //     <Text onPress={() => { navigation.navigate('Home'); }} style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6', padding: 15}}>&#xe63c;</Text>
-        // ),
-        headerRight: (<Text style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe63a;</Text>)
-    });
     static propTypes = {
     };
 
@@ -99,9 +108,9 @@ export default class ChatWindow extends Component {
     componentDidMount() {
         const { navigation } = this.props;
         console.log('navigation', navigation)
-        navigation.setParams({
-            _goChat: () => this._goChat(),
-        });
+        // navigation.setParams({
+        //     _goChat: () => this._goChat(),
+        // });
         if (navigation.state.params && navigation.state.params.cardCase) {
             this.setState({ cardcaseVisible: true });
         }
@@ -399,6 +408,9 @@ export default class ChatWindow extends Component {
         );
     }
 }
+
+export default MeteorContainer(navigationOptions, subCollection())(ChatWindow);
+
 
 const styles = StyleSheet.create({
     window: {

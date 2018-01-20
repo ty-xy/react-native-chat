@@ -24,7 +24,23 @@ import UserUtil from '../../util/user';
 // import NoticeSound from '../util/sound';
 // import avatarUrl from '../util/avatarUrl';
 
-const tabBar = (tintColor) => (<Text style={{fontFamily:'iconfont', color: tintColor, fontSize: 24}}>&#xe63d;</Text>);
+const navigationOptions = (navigation) => ({
+    title: '消息（12）',
+    tabBarLabel: '消息',
+    alignSelf: 'center',
+    headerStyle: {
+        height: 49,
+        backgroundColor: '#fff',
+    },
+    headerLeft: null,
+    headerTitleStyle: {
+        alignSelf: 'center',
+        fontSize: 16,
+        fontWeight: 'normal'
+    },
+    tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont', color: tintColor, fontSize: 24}}>&#xe63d;</Text>),
+});
+
 const subCollection = () => () => {
     Meteor.subscribe('users');
     Meteor.subscribe('group');
@@ -127,6 +143,7 @@ class Home extends Component {
         } else {
             res = chatList;
         }
+        console.log('res', res)
         return (
             <View style={styles.wrap}>
                 <View style={styles.container}>
@@ -136,6 +153,7 @@ class Home extends Component {
                         data={res}
                         keyExtractor={this._keyExtractor}
                         renderItem={this._renderItem}
+                        previewOpenValue={0}
                         renderHiddenItem={(data, rowMap) => (
                             <View style={styles.rowBack}>
                                 <TouchableOpacity
@@ -161,7 +179,7 @@ class Home extends Component {
     }
 }
 
-export default MeteorContainer('消息(14)', '消息', tabBar, subCollection())(Home);
+export default MeteorContainer(navigationOptions, subCollection())(Home);
 
 
 const styles = StyleSheet.create({
@@ -206,6 +224,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row-reverse',
       paddingLeft: 16,
       alignItems: 'center',
+      marginTop: 10,
   },
   delete: {
       fontFamily: 'iconfont',
