@@ -8,7 +8,7 @@ ImageBackground ,
 ScrollView,
   View,
   TouchableOpacity,
-  // Button,
+
   Image
 } from 'react-native';
 import Book from '../Item';
@@ -101,6 +101,7 @@ export default class Person extends Component {
     super(props);
     this.state={
         text:'手机号查找',
+        modalVisible: false,
   }
 }
   static navigationOptions=({navigation})=>({
@@ -114,9 +115,9 @@ export default class Person extends Component {
       alignSelf: 'center',
     },
     headerRight: (
-        <TouchableOpacity onPress={() =>navigation.navigate('More')}>
+        <TouchableOpacity onPress={() =>navigation.navigate('More',{name:navigation.state.params.name})}>
     <Text  style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>更多</Text>
-    </TouchableOpacity>
+      </TouchableOpacity>
     ),
   })
 

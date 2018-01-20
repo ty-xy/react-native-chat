@@ -22,8 +22,26 @@ import Meteor from 'react-native-meteor';
 import MeteorContainer from '../component/MeteorContainer';
 
 import UserUtil from '../util/user';
+const navigationOptions = (navigation) => ({
+    title: '联系人',
+    tabBarLabel: '联系人',
+    headerStyle: {
+        height: 49,
+        backgroundColor: '#fff',
+    },
+    headerTitleStyle: {
+        alignSelf: 'center',
+        fontSize: 16,
+        fontWeight: 'normal'
+    },
+     tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe635;</Text>),
+     headerRight:   (
+        <TouchableOpacity onPress={() =>navigation.navigate('AddFriend')}>
+            <Text  style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>&#xe637;</Text>
+        </TouchableOpacity>
+    ),
+});
 
-const tabBar = (tintColor) => (<Text style={{fontFamily:'iconfont', color: tintColor, fontSize: 24}}>&#xe635;</Text>);
 const subCollection = () => () => {
     Meteor.subscribe('users');
     const friendIds = UserUtil.getFriends();
@@ -77,4 +95,4 @@ class Link extends PureComponent {
   }
 }
 
-export default MeteorContainer('联系人', '联系人', tabBar, subCollection())(Link);
+export default MeteorContainer(navigationOptions, subCollection())(Link);
