@@ -6,6 +6,10 @@ import {
     Text,
     View,
 } from 'react-native';
+import userinfo, { userIdToInfo } from '../../util/user';
+import Meteor from 'react-native-meteor';
+
+
 
 
 export default class Message extends PureComponent {
@@ -17,39 +21,47 @@ export default class Message extends PureComponent {
 
         this.state = {};
     }
-    messageLeft = (name) => {
+    messageLeft = () => {
+        const { from, content, chatType, users } = this.props;
+        const uri = userIdToInfo.getAvatar(users, from);  
+        
         return (
             <View style={styles.message}>
                 <Image
                     style={styles.avatar}
-                    source={require('../../image/bg.png')}
+                    source={uri ? { uri } : require('../../image/defaultAvatar.png') }                    
                 />
                 <View style={styles.content}>
-                    <View style={styles.contentDiv}>
-                        <Text style={styles.text}>节食减肥建设大街, 节食减肥建设大===={name}</Text>
+                    {chatType !== 'user' && <View style={[styles.contentLeftName, { justifyContent: 'flex-start' }]}><Text style={styles.text}>{userIdToInfo.getName(users, from)}</Text></View>}
+                    <View style={[styles.contentDiv, {marginTop: chatType === 'user' ? 21 : 0}]}>
+                        <Text style={styles.text}>{content}</Text>
                     </View>
                 </View>
             </View>
         );
     }
-    messageRight = (name) => {
+    messageRight = () => {
+        const { from, content, chatType, users } = this.props;      
+        const uri = userIdToInfo.getAvatar(users, from);  
         return (
             <View style={styles.messageRight}>
                 <View style={styles.contentRight}>
-                    <View style={styles.contentDivRight}>
-                        <Text style={styles.textRight}>节食减肥建设大街节食减肥建设大街, 节食减肥建设大街 ===> {name}</Text>
+                    {chatType !== 'user' && <View style={[styles.contentLeftName, { justifyContent: 'flex-end' }]}><Text style={styles.text}>{userIdToInfo.getName(users, from)}</Text></View>}
+                    <View style={[styles.contentDivRight, {marginTop: chatType === 'user' ? 21 : 0}]}>
+                        <Text style={styles.textRight}>{content}</Text>
                     </View>
                 </View>
                 <Image
                     style={styles.avatar}
-                    source={require('../../image/bg.png')}
+                    source={uri ? { uri } : require('../../image/defaultAvatar.png') }
                 />
             </View>
         );
     }
     render() {
-        const { chatType, name } = this.props;
-        return (chatType !== 'me' ? this.messageLeft(name) : this.messageRight(name));
+        const { from } = this.props;
+        console.log('this.props', this.props)
+        return (from !== Meteor.userId() ? this.messageLeft() : this.messageRight());
     }
 }
 
@@ -82,7 +94,7 @@ const styles = StyleSheet.create({
         maxWidth: '70%',
     },
     contentDiv: {
-        marginTop: 21,
+        // marginTop: 21,
         marginLeft: 15,
         paddingLeft: 10,
         paddingTop: 6,
@@ -93,8 +105,15 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 16,
         borderTopRightRadius: 16,
     },
+    contentLeftName: {
+        flex: 1,
+        flexDirection: 'row',
+        marginRight: 15,
+        marginTop: 15,
+        marginBottom: 5,
+    },
     contentDivRight: {
-        marginTop: 21,
+        // marginTop: 21,
         marginRight: 15,
         paddingLeft: 10,
         paddingTop: 6,

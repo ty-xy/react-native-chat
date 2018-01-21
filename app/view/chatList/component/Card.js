@@ -5,7 +5,8 @@ import {
     StyleSheet,
     Text,
     View,
-    TouchableOpacity
+    TouchableOpacity,
+    Dimensions
 } from 'react-native';
 import Meteor from 'react-native-meteor';
 import formatDate from '../../../util/formatDate';
@@ -104,6 +105,21 @@ export default class Card extends PureComponent {
             </div>
         </div>
     )
+    _textOnLayout = (e) => {
+        const layout = e.nativeEvent.layout;
+        const devicesWidth = Dimensions.get('window').width;
+        if(layout.height > 20){  //行高是20然后把text的高度设置为60就能保证行数控制在3行了
+            this.refs.text.setNativeProps({  
+                style:{  
+                   height: 20,
+                   width: devicesWidth - 100,
+                }  
+            });  
+            this.setState({
+               tag: 1,
+            });
+        }
+    }
   _renderUser = (user, lastMessage, time, type, unreadMessage, id) => {
       return (
         <TouchableOpacity
@@ -126,7 +142,16 @@ export default class Card extends PureComponent {
                         <Text style={styles.chatContent}>{user.profile.name}</Text>
                         <Text style={styles.chatDate}>{formatDate.renderDate(time)}</Text>
                     </View>
-                    <Text style={styles.lastMessage}>{lastMessage.content}</Text>
+                    <View style={styles.contentNoBreak}>
+                        <Text 
+                            ref="text"
+                            style={styles.lastMessage}
+                            onLayout={this._textOnLayout}
+                        >
+                            {lastMessage.content}
+                        </Text>
+                        {this.state.tag === 1 && (<Text style={{ fontSize:15, lineHeight:20, color: '#999999' }}>...</Text>)}
+                    </View>
                 </View>
             </View>
             <View style={styles.badge}><Text style={{fontSize: 12, color: '#fff'}}>{unreadMessage}</Text></View>
@@ -157,12 +182,12 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         paddingBottom: 20,       
         marginLeft: 15,
-        height: 81,
+        height: 80,
         borderColor: 'transparent',
         borderRadius: 4,
         position: "relative",
         zIndex: 0,
-        
+        marginBottom: 5,
     },
     chatList: {
         padding: 15,
@@ -172,11 +197,17 @@ const styles = StyleSheet.create({
         left: 21,
         top: 11,
         right: 15,
+        borderRadius: 4,
     },
     chatlistContent: {
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center',
+    },
+    contentNoBreak: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
     },
     chatTitle: {
         flexDirection: 'row',
@@ -186,21 +217,19 @@ const styles = StyleSheet.create({
     chatContent: {
         fontSize: 14,
         color: '#4A4A4A',
-        // zIndex: 2,
-        
     },
     chatDate: {
         fontSize: 12,
         color: '#999999',
-        // position: "relative",
     },
     lastMessage: {
         marginTop: 5,
         fontSize: 14,
         color: '#999999',
         paddingLeft: 10,
-        // position: "relative",
-        // zIndex: 0,
+        lineHeight:20,
+        maxHeight: 20,
+        overflow: 'hidden',
     },
     avatar: {
         width: 42,
