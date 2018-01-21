@@ -99,15 +99,9 @@ export default class Person extends Component {
   }
   _setModalVisible=()=>{
     this.setState({modalVisible: true});
-    // const _this=this;
-    // setTimeout(_this.setState({modalVisible:false}), 5000)
   }
   componentDidMount(){  
-    //在static中使用this方法  
     this.props.navigation.setParams({ navigatePress:this._setModalVisible }) ;
-    // this.listener = DeviceEventEmitter.addListener('Modal',this.setState({
-    //     modalVisible: false,
-    // }));
 }  
   render() {
     const {name}=this.props.navigation.state.params
