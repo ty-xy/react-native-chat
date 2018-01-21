@@ -18,6 +18,7 @@ import Card from './component/Card';
 import MeteorContainer from '../../component/MeteorContainer';
 import IdUtil from '../../util/id';
 import UserUtil from '../../util/user';
+import localStorage from '../../util/storage'
 // import feedback from '../util/feedback';
 // import formatDate from '../util/formatDate';
 // import PopulateUtil from '../util/populate';
@@ -47,7 +48,7 @@ const subCollection = () => () => {
     Meteor.subscribe('notice');
     Meteor.subscribe('message');
     const chatList = UserUtil.getChatList();
-    // console.log('withTracker', chatList, Meteor.userId(), Meteor.collection('users'));
+    console.log('withTracker', chatList, Meteor.userId(), Meteor.collection('users'));
     chatList.forEach((item, index) => {
         Object.assign(item, Meteor.collection('group').findOne({ _id: item.groupId }));
         const allNum = Meteor.collection('messages').find({ 'to.userId': Meteor.userId(), groupId: item.groupId }) || [];
@@ -72,9 +73,9 @@ const subCollection = () => () => {
         x.sortTime = x.createdAt;
     });
     return {
-        chatList,
-        allUnRead,
-        newFriendNotice,
+        chatList: [],
+        allUnRead: [],
+        newFriendNotice: [],
     };
 };
 
@@ -87,6 +88,20 @@ class Home extends Component {
     constructor() {
         super();
     }
+    componentWillMount() {
+        const loginstatus = this._getLoginStorage();
+        loginstatus.then((res) => {
+            if (!res) {
+                this.props.navigation.navigate('Login');
+            }
+        });
+    }
+
+    // 恢复聊天记录
+    _getLoginStorage = async () => {
+        const res = await localStorage('login').get();
+        return res;
+    }
     _goChatWindow = (to) => {
         const { navigation } = this.props;
         navigation.navigate('ChatWindow', { to });
@@ -97,7 +112,7 @@ class Home extends Component {
     _keyExtractor = (item, index) => item._id;
     _compare = property => (a, b) => b[property] - a[property];
     render() {
-        const chatList = this.props.chatList;
+        const { newFriendNotice = [], chatList = [] } = this.props;
         // 设置置顶的聊天列表
         const stickTopChat = chatList.filter(x => x.group && x.group.stickTop.find(s => s.userId && s.userId === Meteor.userId()));
         stickTopChat.forEach((x) => {
@@ -107,10 +122,10 @@ class Home extends Component {
         // 剩下没有设置置顶的聊天列表
         const defaultTopChat = chatList.filter(x => x.user || (x.group && !x.group.stickTop.find(s => s.userId && s.userId === Meteor.userId())));
         // 找出最新的好友通知
-        if (this.props.newFriendNotice.length > 0) {
-            const lastNewFriendNotice = this.props.newFriendNotice.sort(this._compare('sortTime'))[0];
+        if (newFriendNotice.length > 0) {
+            const lastNewFriendNotice = newFriendNotice.sort(this._compare('sortTime'))[0];
             defaultTopChat.push(lastNewFriendNotice);
-            Object.assign(chatList, this.props.newFriendNotice);
+            Object.assign(chatList, newFriendNotice);
         }
         const newDefaultTopChat = defaultTopChat.sort(this._compare('sortTime'));
         const sortedChatList = [...newStickTopChat, ...newDefaultTopChat];
@@ -136,7 +151,7 @@ class Home extends Component {
         } else {
             res = chatList;
         }
-        console.log('res', res, Meteor.user())
+        // console.log('res', res, Meteor.user())
         return (
             <View style={styles.wrap}>
                 <View style={styles.container}>

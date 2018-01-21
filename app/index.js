@@ -12,13 +12,13 @@ class App extends Component {
     componentWillMount() {
         server();
     }
-    componentDidMount() {
-        Meteor.loginWithPassword('18685046518', 'xyty1314', (error) => {
-            if (error) {
-                console.log('Home', error.reason)
-            }
-        });
-    }
+    // componentDidMount() {
+    //     Meteor.loginWithPassword('18685046518', 'xyty1314', (error) => {
+    //         if (error) {
+    //             console.log('Home', error.reason)
+    //         }
+    //     });
+    // }
     render() {
         return (
             <Provider {...stores}>
