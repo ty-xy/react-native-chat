@@ -44,3 +44,23 @@ static navigationOptions = ({navigation, screenProps}) => ({
   { url: 'stun:stun.l.google.com:19302'},
   { url: 'turn:creek.xin:3478', 'username':'zg','credential':'hp@817'}
    ] };
+   //const socket = io.connect('https://react-native-webrtc.herokuapp.com', {transports: ['websocket']});
+const socket = io.connect('https://creek.xin:13229', {transports: ['websocket']});
+
+
+ import {
+    RTCPeerConnection,
+    RTCMediaStream,
+    RTCIceCandidate,
+    RTCSessionDescription,
+    RTCView,
+    MediaStreamTrack,
+    getUserMedia,
+} from 'react-native-webrtc';
+
+var configuration = {"iceServers": [
+   { url: 'stun:creek.xin:3478' },
+   { url: 'stun:stun.l.google.com:19302'},
+   { url: 'turn:creek.xin:3478', 'username':'zg','credential':'hp@817'}
+] };
+// const configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};

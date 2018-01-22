@@ -121,10 +121,10 @@ class Login extends Component {
                             </View>
                             <View style={styles.qq}>
                                 <TouchableOpacity style={styles.qqTouch}>
-                                    <Text sytle={styles.qqIcon}>&#xe62d;</Text>
+                                    <Text style={styles.qqIcon}>&#xe62d;</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.qqTouch}>
-                                    <Text sytle={styles.qqIcon}>&#xe62e;</Text>
+                                    <Text style={styles.qqIcon}>&#xe62e;</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

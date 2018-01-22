@@ -16,27 +16,11 @@ import {
 import { observer } from 'mobx-react/native';
 import hostUser from '../store/mobx';
 import Invite from './myown/Invite';
+import Meteor from 'react-native-meteor';
+import MeteorContainer from '../component/MeteorContainer';
 
-
-export default class Book extends Component {
-  
-  constructor(props) {
-    super(props)
-    this.state={
-      animationType: 'none',
-      isModalVisible: false,
-      transparent: false,
-      modalVisible: false
-    }
-  }
-
-  // _showModal = () => this.setState({ isModalVisible: true })
-
-  // _hideModal = () => this.setState({ isModalVisible: false })
-  setModalVisible(visible) {
-    this.setState({modalVisible: visible});
-  }
-  static navigationOptions = {
+import UserUtil from '../util/user';
+const navigationOptions =(navigation)=>({
     title: '我的',
     tabBarLabel: '我的',
     alignSelf: 'center',
@@ -48,7 +32,30 @@ export default class Book extends Component {
       alignSelf: 'center',
     },
     tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe63a;</Text>),
+  });
+const subCollection = () => () => {
+    Meteor.subscribe('users');
+    const friendIds = UserUtil.getFriends();
+    const users = friendIds.map(_id => Meteor.collection('users').findOne({ _id }));
+    console.log(users)
+    return {
+        users
+    }
+};
+class Book extends Component {  
+  constructor(props) {
+    super(props)
+    this.state={
+      animationType: 'none',
+      isModalVisible: false,
+      transparent: false,
+      modalVisible: false
+    }
   }
+  setModalVisible(visible) {
+    this.setState({modalVisible: visible});
+  }
+
   _onPressButton(id){
    this.props.navigation.navigate(id)
   }
@@ -130,6 +137,7 @@ export default class Book extends Component {
     );
   }
 }
+export default MeteorContainer(navigationOptions, subCollection())(Book);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
