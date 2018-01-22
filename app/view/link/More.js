@@ -99,15 +99,9 @@ export default class Person extends Component {
   }
   _setModalVisible=()=>{
     this.setState({modalVisible: true});
-    // const _this=this;
-    // setTimeout(_this.setState({modalVisible:false}), 5000)
   }
   componentDidMount(){  
-    //在static中使用this方法  
     this.props.navigation.setParams({ navigatePress:this._setModalVisible }) ;
-    // this.listener = DeviceEventEmitter.addListener('Modal',this.setState({
-    //     modalVisible: false,
-    // }));
 }  
   render() {
     const {name}=this.props.navigation.state.params
@@ -124,13 +118,13 @@ export default class Person extends Component {
          </View>
          </TouchableOpacity>
          <Modal
-        animationType={"slide"}
+        animationType={"none"}
         transparent={true}
         style={{position:'relative'}}
          visible={this.state.modalVisible}
          onShow= {()=>setTimeout(() => {
             this.setState({modalVisible: false});
-        }, 200)}
+        }, 1000)}
          onRequestClose={() => {this._setModalVisible(false)}}
          >
          <View style={{flex:1,backgroundColor:'transparent',alignItems:'center',justifyContent:'center'}}>

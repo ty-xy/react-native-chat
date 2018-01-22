@@ -9,7 +9,7 @@ import CardStackStyleInterpolator from 'react-navigation/src/views/AnimatedValue
 import Chat from './view/chatList';
 import ChatWindow from './view/chatWindow';
 import LovePage from './view/Link';
-import BookPage from './view/Book';
+import Personal from './view/Personal';
 import DetailPage from './view/Detail';
 import Panels from './view/Panel';
 import Person from './view/myown/Person';
@@ -43,12 +43,12 @@ const TabNavigation = TabNavigator({
   Link: {  
     screen: LovePage,
   },
-  Book: {
-    screen: BookPage,
+  Personal: {
+    screen:Personal
   },
 }, {
   initialRouteName: 'Home',
-  order: ['Home', 'Link', 'Book'],
+  order: ['Home', 'Link', 'Personal'],
   tabBarOptions: {
     inactiveTintColor: '#999A9B',
     activeTintColor: '#218DF4',
