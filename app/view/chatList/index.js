@@ -68,9 +68,9 @@ const subCollection = () => () => {
         x.sortTime = x.createdAt;
     });
     return {
-        chatList: [],
-        allUnRead: [],
-        newFriendNotice: [],
+        chatList,
+        allUnRead,
+        newFriendNotice,
     };
 };
 
@@ -82,6 +82,9 @@ class Home extends Component {
     }
     constructor() {
         super();
+        this.state = {
+            loginInfo: {},
+        }
     }
     componentWillMount() {
         const loginstatus = this._getLoginStorage();
@@ -89,6 +92,8 @@ class Home extends Component {
             console.log('loginstatus', res)
             if (!res) {
                 this.props.navigation.navigate('Login');
+            } else {
+                this.setState({ loginInfo: res });
             }
         });
     }

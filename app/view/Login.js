@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   Dimensions,
   TextInput,
-  Alert
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Meteor from 'react-native-meteor';
@@ -54,13 +53,13 @@ class Login extends Component {
     _handleSubmit = () => {
         const { username, password } = this.state;
         if (!username) {
-            alertOk.alertOk('用户名不能为空')
+            util.alertOk('用户名不能为空')
         } else if (!password) {
-            alertOk.alertOk('密码不能为空')
+            util.alertOk('密码不能为空')
         } else {
             Meteor.loginWithPassword(username, password, (error) => {
                 if (error) {
-                    alertOk.alertOk('用户名或密码错误')
+                    util.alertOk('用户名或密码错误')
                 } else {
                     toast.toast('登陆成功', this);
                     this.props.navigation.goBack();
