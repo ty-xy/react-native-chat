@@ -18,7 +18,9 @@ import Card from './component/Card';
 import MeteorContainer from '../../component/MeteorContainer';
 import IdUtil from '../../util/id';
 import UserUtil from '../../util/user';
-import localStorage from '../../util/storage'
+import localStorage from '../../util/storage';
+
+import PopulateUtil from '../../util/populate';
 
 const navigationOptions = (navigation) => ({
     title: '消息',

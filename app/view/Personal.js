@@ -16,27 +16,11 @@ import {
 import { observer } from 'mobx-react/native';
 import hostUser from '../store/mobx';
 import Invite from './myown/Invite';
+import Meteor from 'react-native-meteor';
+import MeteorContainer from '../component/MeteorContainer';
 
-
-export default class Book extends Component {
-  
-  constructor(props) {
-    super(props)
-    this.state={
-      animationType: 'none',
-      isModalVisible: false,
-      transparent: false,
-      modalVisible: false
-    }
-  }
-
-  // _showModal = () => this.setState({ isModalVisible: true })
-
-  // _hideModal = () => this.setState({ isModalVisible: false })
-  setModalVisible(visible) {
-    this.setState({modalVisible: visible});
-  }
-  static navigationOptions = {
+import UserUtil from '../util/user';
+const navigationOptions =(navigation)=>({
     title: '我的',
     tabBarLabel: '我的',
     alignSelf: 'center',
@@ -48,12 +32,42 @@ export default class Book extends Component {
       alignSelf: 'center',
     },
     tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe63a;</Text>),
+  });
+const subCollection = () => () => {
+    Meteor.subscribe('users');
+    const name = UserUtil.getName();
+    const avatar = UserUtil.getAvatar();
+    const users = Meteor.user();
+    // const username=users.username||'';
+    // const users = friendIds.map(_id => Meteor.collection('users').findOne({ _id }));
+    console.log(users)
+    return {
+        users,
+        name,
+        avatar
+    }
+};
+class Book extends Component {  
+  constructor(props) {
+    super(props)
+    this.state={
+      animationType: 'none',
+      isModalVisible: false,
+      transparent: false,
+      modalVisible: false
+    }
   }
-  _onPressButton(id){
-   this.props.navigation.navigate(id)
+  setModalVisible(visible) {
+    this.setState({modalVisible: visible});
+  }
+
+  _onPressButton(id,name,username){
+   this.props.navigation.navigate(id,{name:name,username:username})
   }
   render() {
-    const { navigation } = this.props;
+    const { navigation,name,avatar,users } = this.props;
+    const username =users? users.username: '';
+    console.log(this.props,username)
     var modalBackgroundStyle = {
       backgroundColor: this.state.transparent ? 'rgba(0, 0, 0, 0.5)' : '#f5fcff',
     };
@@ -63,7 +77,6 @@ export default class Book extends Component {
     var activeButtonStyle = {
       backgroundColor: '#ddd'
     };
-
     return (
       <ScrollView style={styles.container}>
         <View style={styles.wrap}>
@@ -72,13 +85,13 @@ export default class Book extends Component {
            style={{width:'100%', height: 160}}
            >
             <View style={styles.first}>
-            <Image source={require('../image/oval.png')} style={styles.img} />
-            <Text style={styles.firstname} >林亦宣</Text>
-            <Text style={styles.numbert}>账号:176 0022 4466</Text>
+            <Image source={{uri:avatar}} style={styles.img} />
+            <Text style={styles.firstname} >{name}</Text>
+            <Text style={styles.numbert}>账号:{username}</Text>
             </View>
            </ImageBackground>
            <View  style={styles.mybody}>
-           <TouchableHighlight onPress={ () => this._onPressButton('Person') }>
+           <TouchableHighlight onPress={ () => this._onPressButton('Person',name,username) }>
              <View style={styles.mytext} >
                <Image source={require('../image/curriculum.png')} style={styles.imgicon} />
                <Text >个人资料</Text>
@@ -130,6 +143,7 @@ export default class Book extends Component {
     );
   }
 }
+export default MeteorContainer(navigationOptions, subCollection())(Book);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -153,6 +167,7 @@ const styles = StyleSheet.create({
   img:{
     width: 80, 
     height: 80,
+    borderRadius:40,
   },
   imgicon:{
     width:40,
