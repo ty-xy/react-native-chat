@@ -103,12 +103,12 @@ class Home extends Component {
         const res = await localStorage('login').get();
         return res;
     }
-    _goChatWindow = (to) => {
+    _goChatWindow = (to, name) => {
         const { navigation } = this.props;
-        navigation.navigate('ChatWindow', { to });
+        navigation.navigate('ChatWindow', { to, name });
     }
     _renderItem = ({item}) => {
-        return (<Card {...item} key={item._id} _goChatWindow={() => this._goChatWindow(item.groupId)} />);
+        return (<Card {...item} key={item._id} _goChatWindow={() => this._goChatWindow(item.groupId, item.name)} />);
     }
     _compare = property => (a, b) => b[property] - a[property];
     render() {
