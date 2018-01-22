@@ -22,6 +22,8 @@ import SelectImage from './view/common/ImageSelect';
 import PreviewImg from './view/common/PreviewImg';
 import Camera from './view/common/Camera';
 import Geolocation from './view/common/Geolocation';
+import Login from './view/Login';
+
 
 import AddFriend from './view/link/AddFriend';
 import SendApply from './view/link/SendApply';
@@ -31,6 +33,8 @@ import FriendApply from './view/link/FriendApply';
 import AddDetail from './view/link/AddDetail';
 import wChat from './view/link/wChat';
 import More from  './view/link/More';
+
+
 // APP tab 配置: https://reactnavigation.org/docs/navigators/tab
 const TabNavigation = TabNavigator({
   Home: {
@@ -143,6 +147,9 @@ const Navigation = StackNavigator({
     },
     More:{
         screen:More,
+    },
+    Login:{
+        screen: Login,
     }
 });
 
