@@ -3,6 +3,7 @@ package com.egiant;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.BV.LinearGradient.LinearGradientPackage;
 import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
 import com.facebook.react.ReactNativeHost;
@@ -23,9 +24,8 @@ public class MainApplication extends Application implements ReactApplication {
 
         @Override
         protected List<ReactPackage> getPackages() {
-            return Arrays.<ReactPackage>asList(new MainReactPackage(),
-            new ReactNativeContacts(),
-            new RCTCameraPackage());
+            return Arrays.<ReactPackage>asList(new MainReactPackage(), new LinearGradientPackage(),
+                    new ReactNativeContacts(), new RCTCameraPackage());
         }
 
         @Override
