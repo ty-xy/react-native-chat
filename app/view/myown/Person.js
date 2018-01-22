@@ -6,9 +6,11 @@ import {
   FlatList,
   View,
   TouchableOpacity,
-  // Button,
+  TextInput
 } from 'react-native';
 import Book from '../Item';
+import Meteor from 'react-native-meteor';
+import MeteorContainer from '../../component/MeteorContainer';
 
 const styles = StyleSheet.create({
   container: {
@@ -66,28 +68,18 @@ buttonText: {
     // height: 48,
     width: 200,
     marginLeft:3,
-    // lineHeight:48,
-    // borderBottomLeftRadius:100,
 },
 });
 
-export default class Person extends Component {
-  constructor(props){
-    super(props);
-    this.state={
-      data : [
-              {key:'昵称',name:'林亦宣'},
-              {key:'手机号',name:'176 0022 4466'},
-              {key:'地区',name:'北京市-朝阳区'},
-              {key:'公司',name:'万科企业股份有限公司'},
-              {key:'部门',name:'商务部'},
-              {key:'职务',name:'商务总监'},
-             ]
-  }
-}
-  static navigationOptions = {
-    title: '个人信息',
-    tabBarLabel: '个人信息',
+const subCollection = () => () => {
+    Meteor.subscribe('users');
+    return {
+        user: Meteor.user() || {},
+    }
+};
+const navigationOptions = (navigation)=>({
+    title: '个人资料',
+    tabBarLabel: '个人资料',
     alignSelf: 'center',
     headerStyle: {
       height: 49,
@@ -96,12 +88,43 @@ export default class Person extends Component {
     headerTitleStyle: {
       alignSelf: 'center',
     },
+  })
+class Person extends Component {
+  constructor(props){
+    super(props);
+    this.state={
+        name:"",
+        address:"",
+        company:"",
   }
-  _renderFlatlist(item) {
+}
+componentWillMount(){
+    const { profile = {} } = this.props.user;
+    const { name = '', signature = '', age = '', sex = 'male', address = [], company = [] } = profile;
+    this.setState({
+            name,
+            address,
+            company,
+    })    
+}
+componentWillReceiveProps() {
+    const { profile = {} } = this.props.user;
+    const { name = '', signature = '', age = '', sex = 'male', address = [], company = [] } = profile;
+    this.setState({
+            name,
+            address,
+            company,
+    })    
+}
+// renderCompany = (companyIds) => {
+//     const companyList = companyIds.map(companyId => PopulateUtil.company(companyId));
+//     return companyList.map(company => company && <p key={company._id}>{company.name}</p>);
+// }
+  _renderFlatlist=(name,item)=> {
       return (
         <View style={styles.flatlist}>
-           <Text style={styles.keylist}>{item.key}</Text>
-           <Text style={styles.namelist}>{item.name}</Text>
+           <Text style={styles.keylist}>{name}</Text>
+           <Text style={styles.namelist}>{item}</Text>
         </View>
       )
   }
@@ -109,13 +132,59 @@ export default class Person extends Component {
     let num = 0
     console.log(num++)
   }
+  handleChangeTry=(i, event) => {
+    const newState = {};
+    newState[i] = event.nativeEvent.value;
+    this.setState(newState);
+}
+// updateText = (text) => {
+//     this.setState((state) => {
+//       return {
+//         curText: text,
+//       };
+//     });
+//   };
   render() {
+    // const {name,username}=this.props.navigation.state.params
+    const {  username = '' } = this.props.user;
+    console.log(this.props) 
+    
+    // const { name = '', signature = '', age = '', sex = 'male', address = [], company = [] } = profile;
     return (
       <View style={styles.container}>
-     <FlatList
-        data={this.state.data}
-        renderItem={({item}) => this._renderFlatlist(item)}
-      />
+        <View style={styles.flatlist}>
+             <Text style={styles.keylist}>昵称</Text>
+             <TextInput
+                style={{minHeight: 32, borderColor: 'transparent', borderWidth: 1,padding: 0,width:'100%',color:'#666666'}}
+                 underlineColorAndroid="transparent"
+                  onChange={(name) => { 
+                 this.setState({name});
+                }}
+                 maxLength = {326}
+                 multiline = {true}
+                value={this.state.name}
+                />
+        </View>
+      <View style={styles.flatlist}>
+           <Text style={styles.keylist}>手机号</Text>
+           <Text style={[styles.namelist,{color:'#d1d1d1'}]}>{username}</Text>
+        </View>
+        <View style={styles.flatlist}>
+             <Text style={styles.keylist}>地区</Text>
+             <TextInput
+                style={{minHeight: 32, borderColor: 'transparent', borderWidth: 1,padding: 0,width:'100%',color:'#666666'}}
+                 underlineColorAndroid="transparent"
+                  onChange={(address) => { 
+                 this.setState({address});
+                }}
+                 maxLength = {326}
+                 multiline = {true}
+                value={this.state.address}
+                />
+        </View>
+      {this._renderFlatlist('公司','万科企业股份有限公司')}
+      {this._renderFlatlist('部门','商务部')}
+      {this._renderFlatlist('职务','商务总监')}
       <TouchableOpacity
           style={styles.button}>
          <Text style={styles.buttonText}>保存</Text>  
@@ -126,3 +195,4 @@ export default class Person extends Component {
   }
 }
 
+export default MeteorContainer(navigationOptions, subCollection())(Person);
