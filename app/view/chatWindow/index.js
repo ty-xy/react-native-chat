@@ -73,7 +73,7 @@ const subCollection = () => (navigation) => {
     Meteor.subscribe('message');
     Meteor.subscribe('group');
     Meteor.subscribe('files');
-    Meteor.subscribe('user');
+    Meteor.subscribe('users');
     const { to } = navigation.state.params || {};
     const chatGroup = Meteor.collection('group').findOne({ _id: to }) || {};
     console.log('subCollection', navigation, to)
