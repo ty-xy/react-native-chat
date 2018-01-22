@@ -35,11 +35,16 @@ const navigationOptions =(navigation)=>({
   });
 const subCollection = () => () => {
     Meteor.subscribe('users');
-    const friendIds = UserUtil.getFriends();
-    const users = friendIds.map(_id => Meteor.collection('users').findOne({ _id }));
+    const name = UserUtil.getName();
+    const avatar = UserUtil.getAvatar();
+    const users = Meteor.user();
+    // const username=users.username||'';
+    // const users = friendIds.map(_id => Meteor.collection('users').findOne({ _id }));
     console.log(users)
     return {
-        users
+        users,
+        name,
+        avatar
     }
 };
 class Book extends Component {  
@@ -56,11 +61,13 @@ class Book extends Component {
     this.setState({modalVisible: visible});
   }
 
-  _onPressButton(id){
-   this.props.navigation.navigate(id)
+  _onPressButton(id,name,username){
+   this.props.navigation.navigate(id,{name:name,username:username})
   }
   render() {
-    const { navigation } = this.props;
+    const { navigation,name,avatar,users } = this.props;
+    const username =users? users.username: '';
+    console.log(this.props,username)
     var modalBackgroundStyle = {
       backgroundColor: this.state.transparent ? 'rgba(0, 0, 0, 0.5)' : '#f5fcff',
     };
@@ -70,7 +77,6 @@ class Book extends Component {
     var activeButtonStyle = {
       backgroundColor: '#ddd'
     };
-
     return (
       <ScrollView style={styles.container}>
         <View style={styles.wrap}>
@@ -79,13 +85,13 @@ class Book extends Component {
            style={{width:'100%', height: 160}}
            >
             <View style={styles.first}>
-            <Image source={require('../image/oval.png')} style={styles.img} />
-            <Text style={styles.firstname} >林亦宣</Text>
-            <Text style={styles.numbert}>账号:176 0022 4466</Text>
+            <Image source={{uri:avatar}} style={styles.img} />
+            <Text style={styles.firstname} >{name}</Text>
+            <Text style={styles.numbert}>账号:{username}</Text>
             </View>
            </ImageBackground>
            <View  style={styles.mybody}>
-           <TouchableHighlight onPress={ () => this._onPressButton('Person') }>
+           <TouchableHighlight onPress={ () => this._onPressButton('Person',name,username) }>
              <View style={styles.mytext} >
                <Image source={require('../image/curriculum.png')} style={styles.imgicon} />
                <Text >个人资料</Text>
@@ -161,6 +167,7 @@ const styles = StyleSheet.create({
   img:{
     width: 80, 
     height: 80,
+    borderRadius:40,
   },
   imgicon:{
     width:40,
