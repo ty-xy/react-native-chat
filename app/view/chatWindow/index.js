@@ -73,10 +73,10 @@ const subCollection = () => (navigation) => {
     Meteor.subscribe('message');
     Meteor.subscribe('group');
     Meteor.subscribe('files');
-    Meteor.subscribe('user');
+    Meteor.subscribe('users');
     const { to } = navigation.state.params || {};
     const chatGroup = Meteor.collection('group').findOne({ _id: to }) || {};
-    console.log('subCollection', navigation, to)
+    // console.log('subCollection', navigation, to)
     const files =  Meteor.collection('messages').find({ groupId: to, type: 'file' }, { sort: { createdAt: -1 } }).map(msg => PopulateUtil.file(msg.content));
     if (files[0]) {
         files.forEach((d, i, data) => {
@@ -143,7 +143,6 @@ class ChatWindow extends Component {
     // }
     componentDidMount() {
         const { navigation } = this.props;
-        console.log('navigation', navigation)
         // navigation.setParams({
         //     _goChat: () => this._goChat(),
         // });
@@ -183,7 +182,6 @@ class ChatWindow extends Component {
     //     }
     // }
     _onContentSizeChange = (event) => {
-        console.log('_onContentSizeChange')
         this.setState({inputHeight: event.nativeEvent.contentSize.height + 146});
     }
     // 底部加载显示
@@ -193,11 +191,9 @@ class ChatWindow extends Component {
     }
     // 输入框获得焦点
     _onFocus = () => {
-        console.log('_onFocus')
         this.setState({ sendButton: true });
     }
     _onBlur = () => {
-        console.log('state', this.state)
         this.setState({ sendButton: false });
     }
     // 输入文字
@@ -251,7 +247,6 @@ class ChatWindow extends Component {
         const date = (new Date().valueOf() - dateInOut) / 1000;
         if (date > 1) {
             this._handleSendAudio();
-            console.log('发送录音')
         } else {
             toast.toast('时间太短', this);
         }
@@ -433,7 +428,7 @@ class ChatWindow extends Component {
         const height = (inputHeight < 51) ? 50 : inputHeight;
         const flatListfooterStyle = { height: 10 };
         const { messages } = this.props;
-        console.log('chatwindow-props', this.props, this.content)
+        // console.log('chatwindow-props', this.props, this.content)
         return (
             <View style={styles.window}>
                 <FlatList

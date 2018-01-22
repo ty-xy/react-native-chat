@@ -60,7 +60,6 @@ export default class Message extends PureComponent {
     }
     render() {
         const { from } = this.props;
-        console.log('this.props', this.props)
         return (from !== Meteor.userId() ? this.messageLeft() : this.messageRight());
     }
 }
