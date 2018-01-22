@@ -118,13 +118,13 @@ export default class Person extends Component {
          </View>
          </TouchableOpacity>
          <Modal
-        animationType={"slide"}
+        animationType={"none"}
         transparent={true}
         style={{position:'relative'}}
          visible={this.state.modalVisible}
          onShow= {()=>setTimeout(() => {
             this.setState({modalVisible: false});
-        }, 200)}
+        }, 1000)}
          onRequestClose={() => {this._setModalVisible(false)}}
          >
          <View style={{flex:1,backgroundColor:'transparent',alignItems:'center',justifyContent:'center'}}>

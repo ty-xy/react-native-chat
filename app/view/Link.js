@@ -78,17 +78,16 @@ class Link extends PureComponent {
     try:true,
   }
 
- _onPressButton=(name, number)=>{
+ _onPressButton=(name, number,avatar,id)=>{
     const { navigation } = this.props;
     if (navigation.state.params && navigation.state.params.cardCase) {
         navigation.navigate('ChatWindow', { id: '323', name, number, cardCase: true, avatar: '../../image/beautiful.png' });
     } else {
-        navigation.navigate('FriendDetail', { id: '323', name, number, area: '北京市-海淀区', company:'万达集团股份有限公司' });
+        navigation.navigate('FriendDetail', { id, name, number,avatar, area: '北京市-海淀区', company:'万达集团股份有限公司' });
     }
 }
   render() {
     const data =this.props.pinyinData
-    console.log(this.props.pinyinData)
     return (
         <Concat datalist={data}  _onPressButton={this._onPressButton}/>
     );
