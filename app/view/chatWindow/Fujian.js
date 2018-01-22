@@ -26,6 +26,9 @@ export default class Fujian extends Component {
     _sendCardcase = () => {
         this.props.navigation.navigate('Love', { cardCase: true });
     }
+    _sendRtc = () => {
+        this.props.navigation.navigate('RTC');
+    }
     render() {
         return (
             <View style={styles.files}>
@@ -35,7 +38,7 @@ export default class Fujian extends Component {
                         underlayColor="#ffffff"
                     >
                         <View style={styles.fujian}>
-                            <Image source={require('../../image/photo.png')} style={{width: 44, height: 44}} />
+                            <Image resizeMode='contain' source={require('../../image/photo.png')} style={{width: 44, height: 44}} />
                             <Text style={styles.text}>照片</Text>
                         </View>
                     </TouchableHighlight>
@@ -44,7 +47,7 @@ export default class Fujian extends Component {
                         underlayColor="#ffffff"
                     >
                         <View style={styles.fujian}>
-                            <Image source={require('../../image/location.png')} style={{width: 44, height: 44}} />
+                            <Image resizeMode='contain' source={require('../../image/location.png')} style={{width: 44, height: 44}} />
                             <Text style={styles.text}>位置</Text>
                         </View>
                     </TouchableHighlight>
@@ -53,23 +56,23 @@ export default class Fujian extends Component {
                         underlayColor="#ffffff"
                     >
                         <View style={styles.fujian}>
-                            <Image source={require('../../image/cardcase.png')} style={{width: 44, height: 44}} />
+                            <Image resizeMode='contain' source={require('../../image/cardcase.png')} style={{width: 44, height: 44}} />
                             <Text style={styles.text}>名片</Text>
                         </View>
                     </TouchableHighlight>
                     <View style={styles.fujian}>
-                        <Image source={require('../../image/file.png')} style={{width: 44, height: 44}} />
+                        <Image resizeMode='contain' source={require('../../image/file.png')} style={{width: 44, height: 44}} />
                         <Text style={styles.text}>文件</Text>
                     </View>  
                 </View>     
                 <View style={[styles.row, { justifyContent: 'flex-start' }]}>
                     <TouchableHighlight
-                        onPress={this._sendCardcase}
+                        onPress={this._sendRtc}
                         underlayColor="#ffffff"
                     >
                         <View style={styles.fujian}>
-                            <Image source={require('../../image/cardcase.png')} style={{width: 44, height: 44}} />
-                            <Text style={styles.text}>名片</Text>
+                            <Image resizeMode='contain' source={require('../../image/videoChat.png')} style={{ width: 44, height: 44,  }} />
+                            <Text style={styles.text}>视频</Text>
                         </View>
                     </TouchableHighlight>
                 </View> 
@@ -81,7 +84,9 @@ export default class Fujian extends Component {
 const styles = StyleSheet.create({
     files: {
         justifyContent: 'space-around',
-        width: '100%',
+        // width: '100%',
+        paddingLeft: 20,
+        paddingRight: 20,
         alignItems: 'center',
         flexDirection: 'column',
         height: 200,

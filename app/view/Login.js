@@ -62,7 +62,7 @@ class Login extends Component {
                     util.alertOk('用户名或密码错误')
                 } else {
                     toast.toast('登陆成功', this);
-                    this.props.navigation.goBack();
+                    this.props.navigation.navigate('Home');
                     localStorage('login').set({ username, password });
                 }
             });
@@ -99,7 +99,7 @@ class Login extends Component {
                                 />
                                 {this._closeIcon(this.state.password, 'password')}
                                 <TouchableOpacity style={styles.eye} onPress={this._handleShowPwd}>
-                                    {showpwd ? <Text style={styles.eyeIcon}>&#xe62c;</Text> : <Text style={styles.eyeIcon}>&#xe62b;</Text>}
+                                    {!showpwd ? <Text style={styles.eyeIcon}>&#xe62c;</Text> : <Text style={styles.eyeIcon}>&#xe62b;</Text>}
                                 </TouchableOpacity>
                             </View>
                             <TouchableOpacity style={{ marginBottom: 20 }} onPress={this._handleSubmit}>
