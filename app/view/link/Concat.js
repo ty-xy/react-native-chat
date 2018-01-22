@@ -37,7 +37,7 @@ export default class Concat extends Component {
       }
   }
   _renderFlatlist(item) {
-      const {profile={},username}=item.user
+      const {profile={},username,_id}=item.user
       const {name,avatar}=profile
     return (
       <View style={styles.total} >
@@ -48,7 +48,7 @@ export default class Concat extends Component {
        :
        <Text style={styles.left}/>}
         <TouchableHighlight 
-             onPress={ () => this.props._onPressButton(name,username) } 
+             onPress={ () => this.props._onPressButton(name,username,avatar,_id) } 
              underlayColor='transparent'
              style={{ flex:1 }}
         >

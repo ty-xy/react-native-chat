@@ -13,7 +13,43 @@ ScrollView,
 } from 'react-native';
 import Book from '../Item';
 import PassWord from '../myown/PassWord';
+import Meteor from 'react-native-meteor';
+import MeteorContainer from '../../component/MeteorContainer';
 
+const navigationOptions=(navigation)=>({
+    title:'详细资料',
+    alignSelf: 'center',
+    headerStyle: {
+      height: 49,
+      backgroundColor: '#fff',
+    },
+    headerTitleStyle: {
+      alignSelf: 'center',
+    },
+    headerRight: (
+        <TouchableOpacity onPress={() =>navigation.navigate('More',{name:navigation.state.params.name})}>
+    <Text  style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>更多</Text>
+      </TouchableOpacity>
+    ),
+  })
+  const subCollection = () => (navigation) => {
+    Meteor.subscribe('users');
+    Meteor.subscribe('group');
+    const {id}=navigation.state.params
+    console.log(id)
+    const user = Meteor.user() || {};
+    const group = Meteor.collection('group').findOne({ $and: [{ type: 'user', members: { $all: [Meteor.userId(), id] } }] }) || {};
+    const groupId = group._id || '';
+    // const chatUser = Meteor.users.findOne({ _id: friendId }) || {};
+    // console.log(chatUser);
+    console.log(groupId,group)
+    return {
+        // user,
+        // chatUser,
+        // friendId,
+       groupId,
+    };
+  }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -68,6 +104,7 @@ const styles = StyleSheet.create({
   img:{
     width: 80, 
     height: 80,
+    borderRadius:40,
   },
   buttonList:{
     flexDirection: 'row',
@@ -96,7 +133,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default class Person extends Component {
+ class FriendDetail extends Component {
   constructor(props){
     super(props);
     this.state={
@@ -104,33 +141,18 @@ export default class Person extends Component {
         modalVisible: false,
   }
 }
-  static navigationOptions=({navigation})=>({
-    title:'详细资料',
-    alignSelf: 'center',
-    headerStyle: {
-      height: 49,
-      backgroundColor: '#fff',
-    },
-    headerTitleStyle: {
-      alignSelf: 'center',
-    },
-    headerRight: (
-        <TouchableOpacity onPress={() =>navigation.navigate('More',{name:navigation.state.params.name})}>
-    <Text  style={{fontFamily: 'iconfont', marginRight: 10, fontSize: 18, color: '#29B6F6'}}>更多</Text>
-      </TouchableOpacity>
-    ),
-  })
+  
 
   onPressLearnMore () {
     let num = 0
     console.log(num++)
   }
-  _onPressSend =(name,number)=>{
+  _onPressSend =(groupId)=>{
       const {navigation}=this.props
-      navigation.navigate('ChatWindow', { id: '323', name, number, avatar: '../../image/beautiful.png' });
+      navigation.navigate('ChatWindow', { to:groupId });
   }
   render() {
-    const {name,number,area,company}=this.props.navigation.state.params
+    const {name,number,avatar,area,company,id}=this.props.navigation.state.params
     console.log(this.props)
     return (
       <ScrollView>
@@ -140,7 +162,7 @@ export default class Person extends Component {
         style={{width:'100%', height: 160}}
         >
          <View style={styles.first}>
-            <Image source={require('../../image/Barbara.png')} style={styles.img} />
+            <Image source={{uri:avatar}} style={styles.img} />
          </View>
         </ImageBackground>
          <View style={styles.flatlist}>
@@ -161,7 +183,7 @@ export default class Person extends Component {
          </View>
          <View style={styles.buttonList}>
              <TouchableOpacity
-              onPress={()=>this._onPressSend(name,number)}
+              onPress={()=>this._onPressSend(this.props.groupId)}
               style={[styles.button,{backgroundColor:'#22B1FF'}]}>
               <Text style={styles.buttonText}>发送消息</Text>  
              </TouchableOpacity>
@@ -176,3 +198,4 @@ export default class Person extends Component {
   }
 }
 
+export default MeteorContainer(navigationOptions, subCollection())(FriendDetail);
