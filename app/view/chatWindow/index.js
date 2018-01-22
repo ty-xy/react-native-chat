@@ -55,7 +55,7 @@ let dateInOut = 0;
 const selectedArr = ["拍照", "图库"];
 
 const navigationOptions = (navigation) => ({
-    title: '李冰',
+    title: navigation.state.params.name,
     tabBarLabel: '联系人',
     headerStyle: {
         height: 49,

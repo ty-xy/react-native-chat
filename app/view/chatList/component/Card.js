@@ -205,6 +205,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     contentNoBreak: {
+        // backgroundColor: 'red',
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'flex-start',
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
         color: '#999999',
         paddingLeft: 10,
         lineHeight:20,
-        maxHeight: 20,
+        height: 18,
         overflow: 'hidden',
     },
     avatar: {

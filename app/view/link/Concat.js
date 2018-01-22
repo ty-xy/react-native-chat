@@ -121,12 +121,13 @@ _captureRef = (ref) => { this._listRef = ref};
                 <Text style={{fontFamily:'iconfont',fontSize:16,color:'#29B6F6',marginRight:-24}}>&#xe636;</Text>
         </View>
         <View style={styles.body}>
-           <FlatList
-           data={this.props.datalist}
-           renderItem={({item}) => this._renderFlatlist(item)}
-           ref={this._captureRef}
-           onScroll={this._onScrollIndex}
-      />
+            <FlatList
+                data={this.props.datalist}
+                renderItem={({item}) => this._renderFlatlist(item)}
+                ref={this._captureRef}
+                onScroll={this._onScrollIndex}
+                keyExtractor={item => item.user._id}
+            />
           {this._renderRight(this.props.datalist)}
         </View>
       </View>

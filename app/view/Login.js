@@ -40,7 +40,7 @@ class Login extends Component {
         if (state) {
             return (
                 <TouchableOpacity style={[styles.close, styles[password]]} onPress={() => this._clearInput(password)}>
-                    <Text sytle={styles.closeIcon}>&#xe67b;</Text>
+                    <Text style={styles.closeIcon}>&#xe67b;</Text>
                 </TouchableOpacity>
             );
         }
@@ -77,27 +77,29 @@ class Login extends Component {
                         <Image style={styles.avatar} source={require('../image/oval.png')} />
                         <View style={styles.form}>
                             <View style={styles.formLable}>
-                                <Text sytle={styles.label}>手机号码</Text>
+                                <Text style={styles.label}>手机号码</Text>
                                 <TextInput
                                     style={styles.input}
                                     placeholder="请输入手机号码!"
                                     value={this.state.username}
+                                    underlineColorAndroid='transparent'
                                     onChangeText={(username) => this.setState({ username })}
                                 />
                                 {this._closeIcon(this.state.username, 'username')}
                             </View>
                             <View style={[styles.formLable]}>
-                                <Text sytle={styles.label}>密码</Text>
+                                <Text style={styles.label}>密码</Text>
                                 <TextInput
                                     style={styles.input}
                                     value={this.state.password}
                                     placeholder="请输入密码!"
+                                    underlineColorAndroid='transparent'
                                     secureTextEntry={showpwd}
                                     onChangeText={(password) => this.setState({ password })}
                                 />
                                 {this._closeIcon(this.state.password, 'password')}
                                 <TouchableOpacity style={styles.eye} onPress={this._handleShowPwd}>
-                                    {showpwd ? <Text sytle={styles.eyeIcon}>&#xe62c;</Text> : <Text sytle={styles.eyeIcon}>&#xe62b;</Text>}
+                                    {showpwd ? <Text style={styles.eyeIcon}>&#xe62c;</Text> : <Text style={styles.eyeIcon}>&#xe62b;</Text>}
                                 </TouchableOpacity>
                             </View>
                             <TouchableOpacity style={{ marginBottom: 20 }} onPress={this._handleSubmit}>
@@ -202,13 +204,14 @@ const styles = StyleSheet.create({
     },
     eyeIcon: {
         fontFamily: 'iconfont',
-        fontSize: 20,
+        fontSize: 14,
         color: '#B7D9F4'
     },
     closeIcon: {
         fontFamily: 'iconfont',
-        fontSize: 20,
-        color: '#B7D9F4'
+        fontSize: 14,
+        color: '#B7D9F4',
+        marginRight: 5
     },
     label: {
         fontSize: 12,
