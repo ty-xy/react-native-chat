@@ -103,14 +103,13 @@ class Home extends Component {
         const res = await localStorage('login').get();
         return res;
     }
-    _goChatWindow = (to) => {
+    _goChatWindow = (to, name) => {
         const { navigation } = this.props;
-        navigation.navigate('ChatWindow', { to });
+        navigation.navigate('ChatWindow', { to, name });
     }
     _renderItem = ({item}) => {
-        return (<Card {...item} key={item._id} _goChatWindow={() => this._goChatWindow(item.groupId)} />);
+        return (<Card {...item} key={item._id} _goChatWindow={() => this._goChatWindow(item.groupId, item.name)} />);
     }
-    _keyExtractor = (item, index) => item._id;
     _compare = property => (a, b) => b[property] - a[property];
     render() {
         const { newFriendNotice = [], chatList = [] } = this.props;
@@ -160,7 +159,7 @@ class Home extends Component {
                         useFlatList
                         style={{paddingTop: 15, paddingBottom: 30}}
                         data={res}
-                        keyExtractor={this._keyExtractor}
+                        keyExtractor={item => item._id}
                         renderItem={this._renderItem}
                         previewOpenValue={0}
                         renderHiddenItem={(data, rowMap) => (

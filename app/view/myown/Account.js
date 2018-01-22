@@ -10,6 +10,9 @@ import {
   Button,
 } from 'react-native';
 import Book from '../Item';
+import localStorage from '../../util/storage';
+import Login from '../Login';
+
 
 const styles = StyleSheet.create({
   container: {
@@ -116,6 +119,11 @@ export default class Aboutus extends Component {
     let num = 0
     console.log(num++)
   }
+    //   退出
+    _handleLogout = () => {
+        localStorage('login').remove();
+        this.props.navigation.navigate('Login');
+    }
   render() {
     return (
       <View style={styles.container}>
@@ -124,7 +132,7 @@ export default class Aboutus extends Component {
            renderItem={({item}) => this._renderFlatlist(item)}
       />
        
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={this._handleLogout}>
          <Text style={styles.buttonText}>退出保存</Text>  
        </TouchableOpacity>
       </View>
