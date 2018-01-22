@@ -2,6 +2,7 @@
 import {
     Platform,
     ToastAndroid,
+    Alert
 } from 'react-native';
 
 export default {
@@ -24,5 +25,9 @@ export default {
             }
         }
         return res;
-    }
+    },
+    // alert弹框
+    alertOk: (title) => {
+        Alert.alert(title, '', [{ text: '确定' }])
+    },
 };

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Dimensions,
   TextInput,
+  Alert
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Meteor from 'react-native-meteor';
@@ -16,6 +17,7 @@ import Toast from 'react-native-easy-toast'
 import toast from '../util/util'
 import localStorage from '../util/storage';
 import navigation from '../util/navigation'
+import util from '../util/util'
 
 class Login extends Component {
     static navigationOptions = {
@@ -51,21 +53,27 @@ class Login extends Component {
     // 用户登录
     _handleSubmit = () => {
         const { username, password } = this.state;
-        Meteor.loginWithPassword(username, password, (error) => {
-            if (error) {
-                alert(error.reason)
-            } else {
-                toast.toast('登陆成功', this);
-                this.props.navigation.goBack();
-                localStorage('login').set({ username, password });
-            }
-        });
+        if (!username) {
+            alertOk.alertOk('用户名不能为空')
+        } else if (!password) {
+            alertOk.alertOk('密码不能为空')
+        } else {
+            Meteor.loginWithPassword(username, password, (error) => {
+                if (error) {
+                    alertOk.alertOk('用户名或密码错误')
+                } else {
+                    toast.toast('登陆成功', this);
+                    this.props.navigation.goBack();
+                    localStorage('login').set({ username, password });
+                }
+            });
+        }
     }
     render() {
         const { showpwd } = this.state;
         return (
             <View style={styles.wrap}>
-                <ImageBackground style={styles.bg} source={require('../image/beautiful.png')}>
+                <ImageBackground style={styles.bg} source={require('../image/loginbg.jpg')}>
                     <View style={styles.login}>
                         <Image style={styles.avatar} source={require('../image/oval.png')} />
                         <View style={styles.form}>

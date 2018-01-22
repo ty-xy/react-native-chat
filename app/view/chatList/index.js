@@ -19,14 +19,9 @@ import MeteorContainer from '../../component/MeteorContainer';
 import IdUtil from '../../util/id';
 import UserUtil from '../../util/user';
 import localStorage from '../../util/storage'
-// import feedback from '../util/feedback';
-// import formatDate from '../util/formatDate';
-// import PopulateUtil from '../util/populate';
-// import NoticeSound from '../util/sound';
-// import avatarUrl from '../util/avatarUrl';
 
 const navigationOptions = (navigation) => ({
-    title: '消息（12）',
+    title: '消息',
     tabBarLabel: '消息',
     alignSelf: 'center',
     headerStyle: {
@@ -91,6 +86,7 @@ class Home extends Component {
     componentWillMount() {
         const loginstatus = this._getLoginStorage();
         loginstatus.then((res) => {
+            console.log('loginstatus', res)
             if (!res) {
                 this.props.navigation.navigate('Login');
             }
