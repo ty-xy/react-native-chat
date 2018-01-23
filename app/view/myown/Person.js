@@ -147,7 +147,7 @@ componentWillReceiveProps() {
   render() {
     // const {name,username}=this.props.navigation.state.params
     const {  username = '' } = this.props.user;
-    console.log(this.props) 
+    // console.log(this.props) 
     
     // const { name = '', signature = '', age = '', sex = 'male', address = [], company = [] } = profile;
     return (
