@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import Book from '../Item';
 import localStorage from '../../util/storage';
+import navigation from '../../util/navigation';
 import Login from '../Login';
 
 
@@ -122,7 +123,8 @@ export default class Aboutus extends Component {
     //   退出
     _handleLogout = () => {
         localStorage('login').remove();
-        this.props.navigation.navigate('Login');
+        // this.props.navigation.navigate('Login');
+        navigation.reset(this.props.navigation, 'Login')
     }
   render() {
     return (

@@ -120,7 +120,7 @@ export default class Card extends PureComponent {
             });
         }
     }
-  _renderUser = (user, lastMessage, time, type, unreadMessage, id) => {
+  _renderUser = (user = { profile: {} }, lastMessage, time, type, unreadMessage, id) => {
       return (
         <TouchableOpacity
             key={id}

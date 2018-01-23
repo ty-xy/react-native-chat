@@ -23,6 +23,8 @@ import PreviewImg from './view/common/PreviewImg';
 import Camera from './view/common/Camera';
 import Geolocation from './view/common/Geolocation';
 import Login from './view/Login';
+import RTC from './view/common/RTC';
+
 
 
 import AddFriend from './view/link/AddFriend';
@@ -150,6 +152,9 @@ const Navigation = StackNavigator({
     },
     Login:{
         screen: Login,
+    },
+    RTC: {
+        screen: RTC,
     }
 });
 
