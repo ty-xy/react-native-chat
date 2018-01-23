@@ -14,7 +14,7 @@ export default class Card extends PureComponent {
   static propTypes = {
     style: PropTypes.object,
     _id: PropTypes.any,
-    lastMessage: PropTypes.string,
+    // lastMessage: PropTypes.string,
     name: PropTypes.string,
     _goChatWindow: PropTypes.func,
   };
@@ -26,36 +26,39 @@ export default class Card extends PureComponent {
         status:true,
     };
   }
-  _onChangeStatus=(id)=>{
-    this.setState({
-      status:false,
-    //   [`status${id}`]:false
-    })
-    console.log(1111)
-}
+ 
   componentDidMount() {
 
   } 
+//   deleteNotice = (noticeId) => {
+//     Meteor.call('deleteFriendNotice', noticeId, (err) => {
+//         console.log(err);
+//     });
+// }
   render() {
-    const { style = {}, lastMessage, _id, name,status,number } = this.props;
-   console.log(status)
+    const {  _id, noticeContent,noticeFrom,dealResult,from,showType } = this.props;
+    const {profile={},username} = noticeFrom || {};
+    const {name,avatar}=profile;
     return (
+        <View>
+               {showType?
         <TouchableHighlight
             style={styles.card}
             underlayColor={'rgba(100,100,100,0.2)'}
             onPress={() => {
-                this.props._goChatWindow(name,number);
+                this.props._goChatWindow(from,name,username,avatar,dealResult);
             }}
         >
+           
             <View style={styles.chatList}>
                 <View style={styles.chatTitle}>
                     <View>
                     <Text style={styles.chatContent}>{name}</Text>
-                    <Text style={styles.lastMessage}>{lastMessage}</Text>
+                    <Text style={styles.lastMessage}>您好,{noticeContent}</Text>
                     </View>
                     <View>
-                    {this.state.status?
-                    <TouchableOpacity onPress={this._onChangeStatus}>
+                    {dealResult===0?
+                    <TouchableOpacity onPress={()=>this.props.dealNotice(_id,1,from,name)}>
                     <Text style={{fontFamily:'iconfont',fontSize:24,color:'#29B6F6',marginRight:10}}>&#xe63f;</Text>
                     </TouchableOpacity>:<Text>已经同意</Text>}
                     </View>
@@ -63,12 +66,14 @@ export default class Card extends PureComponent {
                 <View style={styles.avatar}>
                     <Image
                         style={{width: 42, height: 42, borderRadius: 21}}
-                        source={require('../../image/Andy.png')}
+                        source={{uri:avatar}}
                     />
                 </View>
                 {/* <View style={styles.badge}><Text style={{fontSize: 12, color: '#fff'}}>23</Text></View> */}
             </View>
-        </TouchableHighlight>
+           
+        </TouchableHighlight>:null}
+         </View>
     );
   }
 }

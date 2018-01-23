@@ -40,13 +40,8 @@ const navigationOptions=(navigation)=>({
     const user = Meteor.user() || {};
     const group = Meteor.collection('group').findOne({ $and: [{ type: 'user', members: { $all: [Meteor.userId(), id] } }] }) || {};
     const groupId = group._id || '';
-    // const chatUser = Meteor.users.findOne({ _id: friendId }) || {};
-    // console.log(chatUser);
     console.log(groupId,group)
     return {
-        // user,
-        // chatUser,
-        // friendId,
        groupId,
     };
   }
@@ -147,13 +142,20 @@ const styles = StyleSheet.create({
     let num = 0
     console.log(num++)
   }
-  _onPressSend =(groupId)=>{
-      const {navigation}=this.props
-      navigation.navigate('ChatWindow', { to:groupId });
+  _onPressSend =(groupId,id)=>{
+    Meteor.call('addTemporaryChat', id, (err, groupId) => {
+        if (err) {
+            console.error(err.reason);
+        } else {
+            const {navigation}=this.props
+            navigation.navigate('ChatWindow', { to:groupId });
+        }
+    });
+   
   }
   render() {
-    const {name,number,avatar,area,company,id}=this.props.navigation.state.params
-    console.log(this.props)
+    const {id,name,number,avatar,area,company}=this.props.navigation.state.params
+    console.log(this.props,id)
     return (
       <ScrollView>
          <View style={styles.container}>
@@ -183,7 +185,7 @@ const styles = StyleSheet.create({
          </View>
          <View style={styles.buttonList}>
              <TouchableOpacity
-              onPress={()=>this._onPressSend(this.props.groupId)}
+              onPress={()=>this._onPressSend(this.props.groupId,id)}
               style={[styles.button,{backgroundColor:'#22B1FF'}]}>
               <Text style={styles.buttonText}>发送消息</Text>  
              </TouchableOpacity>
