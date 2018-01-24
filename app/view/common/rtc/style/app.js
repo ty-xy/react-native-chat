@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import config from "../rtc/config/app.js";
+import config from "../config/app.js";
 
 export default StyleSheet.create({
   container: {
@@ -8,15 +8,6 @@ export default StyleSheet.create({
     width: config.screenWidth,
     height: config.screenHeight,
     //borderWidth: 1, borderColor: "red"
-  },
-  logo: {
-    position: "absolute",
-    width: 100,
-    height: 50,
-    top: 0,
-    left: 0,
-    //borderWidth: 1, borderColor: "white"
-    backgroundColor: "rgba(255, 255, 255, 0.5)"
   },
   backgroundImage: {
     position: "absolute",

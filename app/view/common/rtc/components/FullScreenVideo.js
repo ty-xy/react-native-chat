@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, TouchableHighlight, View, ListView, Image} from 'react-native';
-import {RTCView} from 'react-native-webrtc';
+import { StyleSheet, Text, TouchableHighlight, View, ListView, Image } from 'react-native';
+import { RTCView } from 'react-native-webrtc';
 import config from "../config/app.js";
-import styles from "../../style/fullScreenVideo.js";
+import styles from "../style/fullScreenVideo.js";
 
 export default class FullScreenVideo extends Component{
 
