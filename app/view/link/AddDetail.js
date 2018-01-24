@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
   img:{
     width: 80, 
     height: 80,
+    borderRadius:40,
   },
   buttonList:{
     flexDirection: 'row',
@@ -122,7 +123,7 @@ export default class Person extends Component {
     console.log(num++)
   }
   render() {
-    const {name,number,area,company}=this.props.navigation.state.params
+    const {name,number,avatar}=this.props.navigation.state.params
     console.log(this.props)
     return (
       <ScrollView>
@@ -132,7 +133,7 @@ export default class Person extends Component {
         style={{width:'100%', height: 160}}
         >
          <View style={styles.first}>
-            <Image source={require('../../image/Barbara.png')} style={styles.img} />
+            <Image source={{uri:avatar}} style={styles.img} />
          </View>
         </ImageBackground>
          <View style={styles.flatlist}>
