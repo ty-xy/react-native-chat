@@ -281,6 +281,9 @@ class RCTWebRTC extends Component {
             textRoomValue: '',
         };
     }
+    componentWillMount() {
+        console.log('componentWillMount')
+    }
     componentDidMount() {
         console.log('componentDidMount', this)
         container = this;
@@ -300,8 +303,8 @@ class RCTWebRTC extends Component {
             });
         });
     }
-    _press(event) {
-        this.refs.roomID.blur();
+    _press = (event) => {
+        this.roomID.blur();
         this.setState({status: 'connect', info: 'Connecting'});
         join(this.state.roomID);
     }
@@ -325,12 +328,12 @@ class RCTWebRTC extends Component {
         }
         });
     }
-    receiveTextData(data) {
+    receiveTextData = (data) => {
         const textRoomData = this.state.textRoomData.slice();
         textRoomData.push(data);
         this.setState({textRoomData, textRoomValue: ''});
     }
-    _textRoomPress() {
+    _textRoomPress = () => {
         if (!this.state.textRoomValue) {
             return
         }
@@ -342,7 +345,7 @@ class RCTWebRTC extends Component {
         }
         this.setState({textRoomData, textRoomValue: ''});
     }
-    _renderTextRoom() {
+    _renderTextRoom = () => {
         return (
         <View style={styles.listViewContainer}>
             <ListView
@@ -378,21 +381,22 @@ class RCTWebRTC extends Component {
                 <Text>Switch camera</Text>
             </TouchableHighlight>
             </View>
-            { this.state.status == 'ready' ?
-            (<View>
+            {/* { this.state.status == 'ready' ? ( */}
+            <View>
                 <TextInput
-                ref='roomID'
-                autoCorrect={false}
-                style={{width: 200, height: 40, borderColor: 'gray', borderWidth: 1}}
-                onChangeText={(text) => this.setState({roomID: text})}
-                value={this.state.roomID}
+                    ref={i => this.roomID = i}
+                    autoCorrect={false}
+                    style={{width: 200, height: 40, borderColor: 'gray', borderWidth: 1}}
+                    onChangeText={(text) => this.setState({roomID: text})}
+                    value={this.state.roomID}
                 />
                 <TouchableHighlight
                 onPress={this._press}>
                 <Text>Enter room</Text>
                 </TouchableHighlight>
-            </View>) : null
-            }
+            </View>
+            {/* )  */}
+            {/* : null} */}
             <RTCView streamURL={this.state.selfViewSrc} style={styles.selfView}/>
             {
             mapHash(this.state.remoteList, function(remote, index) {
