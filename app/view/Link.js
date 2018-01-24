@@ -45,9 +45,9 @@ const navigationOptions = (navigation) => ({
 const subCollection = () => () => {
     Meteor.subscribe('users');
     const friendIds = UserUtil.getFriends();
-    console.log(friendIds);
+    // console.log(friendIds);
     const users = friendIds.map(_id => Meteor.collection('users').findOne({ _id }));
-    console.log(users)
+    // console.log(users)
     const pinyinData = users.map(user => ({
         user,
         pinyin: pinyin(user.profile && user.profile.name, {

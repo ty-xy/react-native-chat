@@ -40,7 +40,7 @@ const subCollection = () => () => {
     const users = Meteor.user();
     // const username=users.username||'';
     // const users = friendIds.map(_id => Meteor.collection('users').findOne({ _id }));
-    console.log(users)
+    // console.log(users)
     return {
         users,
         name,
@@ -67,7 +67,7 @@ class Book extends Component {
   render() {
     const { navigation,name,avatar,users } = this.props;
     const username =users? users.username: '';
-    console.log(this.props,username)
+    // console.log(this.props,username)
     var modalBackgroundStyle = {
       backgroundColor: this.state.transparent ? 'rgba(0, 0, 0, 0.5)' : '#f5fcff',
     };
