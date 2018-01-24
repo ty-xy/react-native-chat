@@ -76,11 +76,11 @@ export default class App extends Component {
             return true;
         }
         let now = new Date().getTime();
-        if (now - lastClickTime < 2500) {
+        if (now - this.lastClickTime < 2500) {
         //2.5秒内点击后退键两次推出应用程序
             return false;//控制权交给原生
         }
-        lastClickTime = now;
+        this.lastClickTime = now;
         ToastAndroid.show('再按一次退出一个',ToastAndroid.SHORT);
         return true;
     }
