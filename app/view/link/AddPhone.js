@@ -60,6 +60,7 @@ export default class Love extends Component {
 }
   render() {
     const data = this.props.navigation.state.params;
+    console.log(data)
     const datalist = data.map((v)=>{
         num=v.phoneNumbers[0].number,
         key=v.familyName+v.middleName+v.givenName
@@ -68,13 +69,15 @@ export default class Love extends Component {
          str=newstr[0]==="0"?newstr.substr(1):newstr
             return  {
                 num:v.phoneNumbers[0].number,
-                 key:str
+                 key:str,
+                 _id:v.recordID,
             }
     });
     pinyinData = datalist.map(han => ({
-        key: han.key,
-        url:'../image/oval.png',
-        num:han.num,
+        user:{ _id: han._id,
+              profile:{name:han.key,avatar:'http://cdn.zg18.com/avatar_363yzuQ252jgG4yCJ_1514857959722.png'},
+              username:han.num
+         },
         pinyin:  pinyin(han.key[0], {
                 style: pinyin.STYLE_FIRST_LETTER,
             },
@@ -106,11 +109,6 @@ export default class Love extends Component {
         }
        
       });
-//    const datalisty={
-//         datalist:pinyinData,
-//         add:true,
-//         status:1
-//     }
    return (
     <Concat 
     datalist={pinyinData} 

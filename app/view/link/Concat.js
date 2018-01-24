@@ -114,6 +114,7 @@ _captureRef = (ref) => { this._listRef = ref};
   render() {
     // const data =this.props.link.pinyinData
     // console.log(this.props.navigation,this.props.datalist)
+    console.log(this.props.datalist)
     return (
       <View style={styles.container}>
              <View style={styles.search}>

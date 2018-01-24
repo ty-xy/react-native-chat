@@ -209,21 +209,21 @@ function leave(socketId) {
   container.setState({info: 'One peer leave!'});
 }
 
-// socket.on('exchange', function(data){
-//   exchange(data);
-// });
-// socket.on('leave', function(socketId){
-//   leave(socketId);
-// });
+socket.on('exchange', function(data){
+  exchange(data);
+});
+socket.on('leave', function(socketId){
+  leave(socketId);
+});
 
-// socket.on('connect', function(data) {
-//   console.log('connect');
-//   getLocalStream(true, function(stream) {
-//     localStream = stream;
-//     container.setState({selfViewSrc: stream.toURL()});
-//     container.setState({status: 'ready', info: 'Please enter or create room ID'});
-//   });
-// });
+socket.on('connect', function(data) {
+  console.log('connect');
+  getLocalStream(true, function(stream) {
+    localStream = stream;
+    container.setState({selfViewSrc: stream.toURL()});
+    container.setState({status: 'ready', info: 'Please enter or create room ID'});
+  });
+});
 
 function logError(error) {
   console.log("logError", error);
@@ -284,21 +284,21 @@ class RCTWebRTC extends Component {
     componentDidMount() {
         console.log('componentDidMount', this)
         container = this;
-        socket.on('exchange', function(data){
-            exchange(data);
-        });
-        socket.on('leave', function(socketId){
-            leave(socketId);
-        });
+        // socket.on('exchange', function(data){
+        //     exchange(data);
+        // });
+        // socket.on('leave', function(socketId){
+        //     leave(socketId);
+        // });
         
-        socket.on('connect', function(data) {
-            console.log('connect');
-            getLocalStream(true, function(stream) {
-                localStream = stream;
-                container.setState({selfViewSrc: stream.toURL()});
-                container.setState({status: 'ready', info: 'Please enter or create room ID'});
-            });
-        });
+        // socket.on('connect', function(data) {
+        //     console.log('connect');
+        //     getLocalStream(true, function(stream) {
+        //         localStream = stream;
+        //         container.setState({selfViewSrc: stream.toURL()});
+        //         container.setState({status: 'ready', info: 'Please enter or create room ID'});
+        //     });
+        // });
     }
     _press(event) {
         this.refs.roomID.blur();
