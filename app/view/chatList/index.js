@@ -19,6 +19,7 @@ import MeteorContainer from '../../component/MeteorContainer';
 import IdUtil from '../../util/id';
 import UserUtil from '../../util/user';
 import localStorage from '../../util/storage';
+import _navigation from '../../util/navigation';
 
 import PopulateUtil from '../../util/populate';
 
@@ -93,7 +94,7 @@ class Home extends Component {
         loginstatus.then((res) => {
             console.log('loginstatus', res)
             if (!res) {
-                this.props.navigation.navigate('Login');
+                _navigation.reset(this.props.navigation, 'Login');
             } else {
                 this.setState({ loginInfo: res });
             }

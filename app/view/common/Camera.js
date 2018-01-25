@@ -63,7 +63,7 @@ export default class MyCamera extends PureComponent {
     _goChatWindow = () => {
         // console.log('_goChatWindow', this.state.selectedImg);
         const { imageUrl } = this.state;
-        this.props.navigation.navigate('ChatWindow', { selectedImg: imageUrl });
+        this.props.navigation.navigate('ChatWindow', { selectedImg: imageUrl, index: 2 });
     }
     render() {
         const { style = {}, lastMessage, _id, name } = this.props;

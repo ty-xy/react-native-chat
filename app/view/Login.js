@@ -15,7 +15,7 @@ import Meteor from 'react-native-meteor';
 import Toast from 'react-native-easy-toast'
 import toast from '../util/util'
 import localStorage from '../util/storage';
-import navigation from '../util/navigation'
+import _navigation from '../util/navigation'
 import util from '../util/util'
 
 class Login extends Component {
@@ -64,8 +64,9 @@ class Login extends Component {
                     this.password.blur();
                     this.phone.blur();
                     toast.toast('登陆成功', this);
-                    localStorage('login').set({ username, password });                    
-                    this.props.navigation.navigate('Home');
+                    localStorage('login').set({ username, password });    
+                    // this.props.navigation.goBack();                
+                    _navigation.reset(this.props.navigation, 'HomeScreen');
                 }
             });
         }

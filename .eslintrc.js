@@ -10,7 +10,7 @@ module.exports = {
       'import',
       'react-native',
       'flowtype',
-      'lodash-fp',
+    //   'lodash-fp',
       'promise',
       'jest',
       'json',

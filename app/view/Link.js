@@ -46,7 +46,13 @@ const subCollection = () => () => {
     Meteor.subscribe('users');
     const friendIds = UserUtil.getFriends();
     // console.log(friendIds);
-    const users = friendIds.map(_id => Meteor.collection('users').findOne({ _id }));
+    const users = [];
+    friendIds.forEach((_id) => {
+        const user_ = Meteor.collection('users').findOne({ _id });
+        if (user_) {
+            users.push(user_);
+        }
+    });
     // console.log(users)
     const pinyinData = users.map(user => ({
         user,
