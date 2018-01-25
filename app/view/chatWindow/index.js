@@ -17,6 +17,7 @@ import {
     CameraRoll,
     NativeModules,
     Dimensions,
+    BackHandler
 } from 'react-native';
 import Toast, { DURATION } from 'react-native-easy-toast'
 import { observer, inject } from 'mobx-react/native';
@@ -25,6 +26,7 @@ import Meteor from 'react-native-meteor';
 import Message from './Message';
 import Fujian from './Fujian';
 import toast from '../../util/util'
+import _navigation from '../../util/navigation'
 import Emoji from './emoji';
 import AertSelecte from '../../component/AertSelecte';
 import Modal from '../../component/Modal';
@@ -137,10 +139,13 @@ class ChatWindow extends Component {
             transparent: true,
         };
     }
-    // componentWillMount () {
-    //     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
-    //     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
-    // }
+    componentWillMount () {
+        // this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+        // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid);
+        }
+    }
     componentDidMount() {
         const { navigation } = this.props;
         // navigation.setParams({
@@ -149,6 +154,20 @@ class ChatWindow extends Component {
         if (navigation.state.params && navigation.state.params.cardCase) {
             this.setState({ cardcaseVisible: true });
         }
+    }
+    componentWillUnmount() {
+        if (Platform.OS === 'android') {
+            BackHandler.removeEventListener('hardwareBackPress', this.onBackAndroid);
+        }
+    }
+    onBackAndroid = () => {
+        const nav = this.props.navigation;
+        if (nav.state.routeName === "ChatWindow" && nav.state.params.index) {
+            // console.log('nav', nav)
+            _navigation.reset(nav, 'HomeScreen')
+            return true;
+        }
+        return false;
     }
     // 返回首页
     _goChat =() => {

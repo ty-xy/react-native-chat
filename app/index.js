@@ -21,9 +21,9 @@ class App extends Component {
     // }
     render() {
         return (
-            <Provider {...stores}>
+            // <Provider {...stores}>
                 <Router />
-            </Provider>
+            // </Provider>
         );
     }
 }
