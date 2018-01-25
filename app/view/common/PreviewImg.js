@@ -85,7 +85,7 @@ export default class PreviewImg extends React.Component {
                 selectedImg.push(item.uri);
             }
         });
-        navigation.navigate('ChatWindow', { selectedImg });
+        navigation.navigate('ChatWindow', { selectedImg, index: 2 });
     }
     _goBack = () => {
         this.props.navigation.goBack()

@@ -15,7 +15,7 @@ import Meteor from 'react-native-meteor';
 import Toast from 'react-native-easy-toast'
 import toast from '../util/util'
 import localStorage from '../util/storage';
-import navigation from '../util/navigation'
+import _navigation from '../util/navigation'
 import util from '../util/util'
 
 class Login extends Component {
@@ -61,9 +61,12 @@ class Login extends Component {
                 if (error) {
                     util.alertOk('用户名或密码错误')
                 } else {
+                    this.password.blur();
+                    this.phone.blur();
                     toast.toast('登陆成功', this);
-                    this.props.navigation.navigate('Home');
-                    localStorage('login').set({ username, password });
+                    localStorage('login').set({ username, password });    
+                    // this.props.navigation.goBack();                
+                    _navigation.reset(this.props.navigation, 'HomeScreen');
                 }
             });
         }
@@ -79,6 +82,7 @@ class Login extends Component {
                             <View style={styles.formLable}>
                                 <Text style={styles.label}>手机号码</Text>
                                 <TextInput
+                                    ref={i => this.phone = i}
                                     style={styles.input}
                                     placeholder="请输入手机号码!"
                                     value={this.state.username}
@@ -90,6 +94,7 @@ class Login extends Component {
                             <View style={[styles.formLable]}>
                                 <Text style={styles.label}>密码</Text>
                                 <TextInput
+                                    ref={i => this.password = i}
                                     style={styles.input}
                                     value={this.state.password}
                                     placeholder="请输入密码!"
