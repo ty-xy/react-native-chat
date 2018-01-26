@@ -15,13 +15,6 @@ import {
 } from 'react-native';
 
 import io from 'socket.io-client';
-import Call from './component/Call'
-
-// const socket = io.connect('https://react-native-webrtc.herokuapp.com', {transports: ['websocket']});
-const socket = io.connect('https://creek.xin:13229', {transports: ['websocket']});
-console.ignoredYellowBox = ['Setting a timer'];
-const window = Dimensions.get('window');
-
 import {
   RTCPeerConnection,
   RTCMediaStream,
@@ -31,6 +24,12 @@ import {
   MediaStreamTrack,
   getUserMedia,
 } from 'react-native-webrtc';
+import Connected from './component/Connected';
+import Call from './component/Call'
+
+const socket = io.connect('https://creek.xin:13229', {transports: ['websocket']});
+console.ignoredYellowBox = ['Setting a timer'];
+const window = Dimensions.get('window');
 
 // const configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
 const configuration = {"iceServers": [
@@ -369,7 +368,7 @@ class RCTWebRTC extends Component {
         console.log('切换语音')
     }
     render() {
-        const { isVideo, selfViewSrc } = this.state;
+        const { isVideo, selfViewSrc, status, remoteList } = this.state;
         console.log('state', this.state)
         return (
         <View style={styles.containerVideo}>
@@ -379,33 +378,34 @@ class RCTWebRTC extends Component {
                 <RTCView streamURL={selfViewSrc} style={styles.selfView}/> :
                 <Image source={require('../../../image/loginbg.jpg')} style={styles.image} resizeMode={"contain"} />
             }
-            <Text>{this.state.info} --- {this.state.isFront ? "Use front camera" : "Use back camera"}</Text>
-            {/* <TouchableOpacity
-                style={styles.tabCamera}
-                onPress={this._switchVideoType}
-            >
-                <Text style={styles.callIcon}>切换</Text>
-            </TouchableOpacity> */}
-            {/* { this.state.status == 'ready' ? ( */}
-            {/* )  */}
-            {/* : null} */}
-
-            {/* <View style={styles.listVideo}>
+            <Text style={{color: '#fff'}}>{this.state.info} --- {this.state.isFront ? "Use front camera" : "Use back camera"}</Text>
+        
+            {/* 拨打电话界面 */}
+            {
+                status === 'connect' ?
+                <Connected
+                    _handleHangUp={this._handleHangUp}
+                    _handleTabAudio={this._handleTabAudio}
+                    _handleTabCamera={this._switchVideoType}
+                    {...this.state}
+                    {...this.props}
+                /> :
+                <Call
+                    _handleMute={this._handleMute}
+                    _handleHangUp={this._handleHangUp}
+                    _handleHandsFree={this._handleHandsFree}
+                    _handleTabAudio={this._handleTabAudio}
+                    {...this.state}
+                    {...this.props}
+                />
+            }
+            <View style={styles.listVideo}>
                 {
-                    mapHash(this.state.remoteList, function(remote, index) {
+                    mapHash(remoteList, function(remote, index) {
                         return <RTCView key={index} streamURL={remote} style={styles.remoteView}/>
                     })
                 }
-            </View> */}
-            {/* 拨打电话界面 */}
-            <Call
-                {...this.props}
-                selfViewSrc={selfViewSrc}
-                _handleMute={this._handleMute}
-                _handleHangUp={this._handleHangUp}
-                _handleHandsFree={this._handleHandsFree}
-                _handleTabAudio={this._handleTabAudio}
-            />
+            </View>
         </View>
         );
     }
@@ -450,11 +450,13 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 100,
         right: 0,
+        // zIndex: 4,
+        // backgroundColor: 'red',
         width: window.windth,
         height: 180,
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        // backgroundColor: '#efefef',
+        transform: [{'translate':[0,0,1]}],
     },
     remoteView: {
         width: 130,
