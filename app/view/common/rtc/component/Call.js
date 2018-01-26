@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         flexDirection: 'row',
         height: 140,
-        marginBottom: 40,
+        paddingBottom: 40,
     },
     actionDiv: {
         justifyContent: 'center',
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const Call = ({ selfViewSrc, _handleMute, _handleHangUp, _handleHandsFree, _handleTabAudio, name, company }) => (
+const Call = ({ _handleMute, _handleHangUp, _handleHandsFree, _handleTabAudio, name, company }) => (
     <View style={styles.call}>
         <View style={styles.avatarDiv}>
             <Image source={require('../../../../image/Andy.png')} style={styles.avatar} />

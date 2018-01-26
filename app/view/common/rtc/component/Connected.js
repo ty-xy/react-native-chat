@@ -16,23 +16,23 @@ import {
 import { RTCView } from 'react-native-webrtc';
 
 const styles = StyleSheet.create({
-    call: {
+    connected: {
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        zIndex: 5,
         flex: 1,
         justifyContent: 'space-between',
         flexDirection: 'column',
+        backgroundColor: 'transparent'
     },
     actions: {
         justifyContent: 'space-around',
         alignItems: 'flex-end',
         flexDirection: 'row',
         height: 140,
-        marginBottom: 40,
+        paddingBottom: 40,
     },
     actionDiv: {
         justifyContent: 'center',
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         width: 70,
         height: 70,
         borderRadius: 35,
-        backgroundColor: '#000',
+        // backgroundColor: '#000',
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1,
@@ -60,54 +60,29 @@ const styles = StyleSheet.create({
     },
     avatarDiv: {
         marginTop: 30,
-        marginLeft: 30,
+        marginRight: 30,
         flexDirection: 'row',
-        alignItems: 'center'
-    },
-    status: {
-        flex: 1,
-        // backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    avatar: {
-        height: 56,
-        width: 56,
-        borderRadius: 28,
-    },
-    tab: {
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: 'flex-end',
     },
 });
 
-const Connected = ({ _handleMute, _handleHangUp, _handleHandsFree, _handleTabAudio, name, company }) => (
-    <View style={styles.call}>
-        <View style={styles.avatarDiv}>
-            <Image source={require('../../../../image/Andy.png')} style={styles.avatar} />
-            <View style={{ marginLeft: 15 }}>
-                <Text style={{ fontSize: 16, color: '#fff' }}>{name || '山东黄金'}</Text>
-                <Text style={{ fontSize: 14, color: '#999' }}>{company || '中医小黄打多久'}</Text>
-            </View>
-        </View>
-        <View style={styles.status}><Text style={{ color: '#fff', fontSize: 20 }}>等待对方接听...</Text></View>
-        <View style={styles.tab}>
-            <TouchableOpacity
-                onPress={_handleTabAudio}
-            >
-                <Text style={[styles.callIcon, {textAlign: 'center', fontSize: 40}]}>&#xe658;</Text>
-                <Text style={{ color: '#999', fontSize: 14 }}>切换为电话聊天...</Text>                
-            </TouchableOpacity>
-        </View>
+const Connected = ({ _handleHangUp, _handleTabAudio, _handleTabCamera, name, company }) => (
+    <View style={styles.connected}>
+        <TouchableOpacity
+            style={styles.avatarDiv}
+            onPress={_handleTabCamera}
+        >
+            <Text style={styles.callIcon}>&#xe642;</Text>
+        </TouchableOpacity>
         <View style={styles.actions}>
             <View style={styles.actionDiv}>
                 <TouchableOpacity
-                    onPress={_handleMute}
+                    onPress={_handleTabAudio}
                     style={[styles.iconDiv]}
                 >
-                    <Text style={styles.callIcon}>&#xe60a;</Text>                 
+                    <Text style={styles.callIcon}>&#xe658;</Text>                 
                 </TouchableOpacity>
-                <Text style={styles.callText}>静音</Text>   
+                <Text style={styles.callText}>切换语音聊天</Text>   
             </View>
             <View style={styles.actionDiv}>
                 <TouchableOpacity
@@ -120,12 +95,11 @@ const Connected = ({ _handleMute, _handleHangUp, _handleHandsFree, _handleTabAud
             </View>
             <View style={styles.actionDiv}>
                 <TouchableOpacity
-                    onPress={_handleHandsFree}
                     style={styles.iconDiv}
                 >
-                    <Text style={styles.callIcon}>&#xe628;</Text>                   
+                    <Text style={styles.callIcon}>&#xe615;</Text>                   
                 </TouchableOpacity>
-                <Text style={styles.callText}>免提</Text> 
+                <Text style={styles.callText}>收起视频</Text> 
             </View>
         </View>
     </View>
