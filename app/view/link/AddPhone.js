@@ -76,7 +76,7 @@ export default class Love extends Component {
     pinyinData = datalist.map(han => ({
         user:{ _id: han._id,
               profile:{name:han.key,avatar:'http://cdn.zg18.com/avatar_363yzuQ252jgG4yCJ_1514857959722.png'},
-              username:han.num
+              username:han.num.replace(/\s/g, "")
          },
         pinyin:  pinyin(han.key[0], {
                 style: pinyin.STYLE_FIRST_LETTER,

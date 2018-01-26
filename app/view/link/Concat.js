@@ -14,8 +14,32 @@ import {
 } from 'react-native';
 
 import PassWord from '../myown/PassWord';
-import pinyin from 'pinyin'
-export default class Concat extends Component {
+import pinyin from 'pinyin';
+import Meteor from 'react-native-meteor';
+import MeteorContainer from '../../component/MeteorContainer';
+const navigationOptions =()=>{
+
+}
+const subCollection = () => () => {
+    Meteor.subscribe('notice');
+    // 找出别人向你发起的好友认证
+    let friendNotice = Meteor.collection('notices').find({ type: 0, to: Meteor.userId() },{ sort: { createdAt: -1 } });
+    friendNotice.forEach((x) => {
+        x.noticeFrom = PopulateUtil.user(x.from) || {};
+    });
+    // 找出你向别人,然后别人拒绝你的好友认证
+    // const refuseFriend = Notice.find({ type: 0, from: Meteor.userId(), dealResult: 2 }).fetch();
+    const refuseFriend=Meteor.collection('notices').find({ type: 0, from: Meteor.userId() },{ sort: { createdAt: -1 } })
+    // refuseFriend.forEach((x) => {
+    //     x.noticeTo = PopulateUtil.user(x.to) || {};
+    // });
+    const newFriendNotice = [...refuseFriend];
+    console.log(newFriendNotice, Meteor.userId());
+    return {
+        newFriendNotice,
+    };
+}
+class Concat extends Component {
   state = {
     text: '',
     showInput: false,
@@ -24,17 +48,31 @@ export default class Concat extends Component {
     try:true,
   }
   _addPeople(item){
-      if(item.name !=="淘淘" && this.props.status !==1){
-           return (
-           <TouchableOpacity onPress={this.props._onPressAdd}>
-                 <Text style={{color:'#29B6F6'}}>添加</Text>
-            </TouchableOpacity>
-           )
-      }else if(item.name !=="淘淘" &&this.props.status ===1 ){
-         return(<Text>已发送</Text>)
-      }else{
-        return( <Text>已添加</Text>)
-      }
+    Meteor.call('searchFriends', item.user.username, (err, result) => {
+        console.log(err)
+        if (result){
+            console.log(result)
+            return(<Text>已添加</Text>)
+        }else if(this.props.status !==1){
+                   return (
+                   <TouchableOpacity onPress={this.props._onPressAdd}>
+                         <Text style={{color:'#29B6F6'}}>添加</Text>
+                    </TouchableOpacity>
+                   )
+              }else if( this.props.status ===1 ){
+                 return(<Text>已发送</Text>)}
+    });
+    //   if(item.name !=="淘淘" && this.props.status !==1){
+    //        return (
+    //        <TouchableOpacity onPress={this.props._onPressAdd}>
+    //              <Text style={{color:'#29B6F6'}}>添加</Text>
+    //         </TouchableOpacity>
+    //        )
+    //   }else if(item.name !=="淘淘" &&this.props.status ===1 ){
+    //      return(<Text>已发送</Text>)
+    //   }else{
+    //     return( <Text>已添加</Text>)
+    //   }
   }
   _renderFlatlist(item) {
       const {profile={},username,_id}=item.user
@@ -138,6 +176,7 @@ _captureRef = (ref) => { this._listRef = ref};
   }
 }
 
+export default MeteorContainer(navigationOptions, subCollection())(Concat);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
