@@ -131,10 +131,11 @@ export default class Card extends PureComponent {
             }}
         >
             <View style={styles.avatar}>
-                <Image
-                    style={styles.image}
-                    source={{uri: user.profile.avatar || ''}}
-                />
+
+             <Image
+             style={styles.image}
+             source={user.profile.avatar.length>0?{uri: user.profile.avatar}:require('../../../image/toufemail.png')}
+           />
             </View>
             <View style={styles.chatList}>
                 <View style={styles.chatlistContent}>

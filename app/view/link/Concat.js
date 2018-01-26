@@ -54,7 +54,9 @@ export default class Concat extends Component {
         >
           <View style={styles.flatlist}>
              <View style={styles.flatleft} >
-             <Image source={{uri : avatar}} style={styles.img} />
+            {avatar&&avatar.length>0?
+             <Image source={{uri : avatar}} style={styles.img} />:
+             <Image source={require('../../image/toufemail.png')} style={styles.img} />}
              <View style={styles.imgRight}>
                <Text style={styles.keylist}>{name}</Text>
                <Text style={styles.numlist}>{username}</Text>
