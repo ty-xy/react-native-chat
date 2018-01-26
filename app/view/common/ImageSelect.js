@@ -92,7 +92,7 @@ export default class SelectImage extends PureComponent {
         // console.log('_goChatWindow', this.state.selectedImg);
         const { selectedImg } = this.state;
         const { navigation } = this.props;
-        navigation.navigate('ChatWindow', { id: '323', selectedImg });
+        navigation.navigate('ChatWindow', { id: '323', selectedImg, index: 2 });
     }
     // 显示相册
     _handleShowPhotoList= () => {

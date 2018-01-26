@@ -10,6 +10,8 @@ import {
   TextInput,
   ListView,
   Platform,
+  Dimensions,
+  Image
 } from 'react-native';
 
 import io from 'socket.io-client';
@@ -17,6 +19,7 @@ import io from 'socket.io-client';
 // const socket = io.connect('https://react-native-webrtc.herokuapp.com', {transports: ['websocket']});
 const socket = io.connect('https://creek.xin:13229', {transports: ['websocket']});
 console.ignoredYellowBox = ['Setting a timer'];
+const window = Dimensions.get('window');
 
 import {
   RTCPeerConnection,
@@ -38,6 +41,23 @@ const configuration = {"iceServers": [
 const pcPeers = {};
 let localStream;
 let container;
+
+
+socket.on('exchange', function(data){
+    exchange(data);
+});
+socket.on('leave', function(socketId){
+    leave(socketId);
+});
+
+socket.on('connect', function(data) {
+    console.log('connect');
+    getLocalStream(true, function(stream) {
+        localStream = stream;
+        container.setState({selfViewSrc: stream.toURL()});
+        container.setState({status: 'ready', info: 'Please enter or create room ID'});
+    });
+});
 
 function getLocalStream(isFront, callback) {
 
@@ -170,30 +190,30 @@ function createPC(socketId, isOffer) {
 }
 
 function exchange(data) {
-  const fromId = data.from;
-  let pc;
-  if (fromId in pcPeers) {
-    pc = pcPeers[fromId];
-  } else {
-    pc = createPC(fromId, false);
-  }
+    const fromId = data.from;
+    let pc;
+    if (fromId in pcPeers) {
+        pc = pcPeers[fromId];
+    } else {
+        pc = createPC(fromId, false);
+    }
 
-  if (data.sdp) {
-    console.log('exchange sdp', data);
-    pc.setRemoteDescription(new RTCSessionDescription(data.sdp), function () {
-      if (pc.remoteDescription.type == "offer")
-        pc.createAnswer(function(desc) {
-          console.log('createAnswer', desc);
-          pc.setLocalDescription(desc, function () {
-            console.log('setLocalDescription', pc.localDescription);
-            socket.emit('exchange', {'to': fromId, 'sdp': pc.localDescription });
-          }, logError);
+    if (data.sdp) {
+        console.log('exchange sdp', data);
+        pc.setRemoteDescription(new RTCSessionDescription(data.sdp), function () {
+        if (pc.remoteDescription.type == "offer")
+            pc.createAnswer(function(desc) {
+                console.log('createAnswer', desc);
+                pc.setLocalDescription(desc, function () {
+                    console.log('setLocalDescription', pc.localDescription);
+                    socket.emit('exchange', {'to': fromId, 'sdp': pc.localDescription });
+                }, logError);
+            }, logError);
         }, logError);
-    }, logError);
-  } else {
-    console.log('exchange candidate', data);
-    pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-  }
+    } else {
+        console.log('exchange candidate', data);
+        pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+    }
 }
 
 function leave(socketId) {
@@ -208,22 +228,6 @@ function leave(socketId) {
   container.setState({ remoteList: remoteList });
   container.setState({info: 'One peer leave!'});
 }
-
-socket.on('exchange', function(data){
-  exchange(data);
-});
-socket.on('leave', function(socketId){
-  leave(socketId);
-});
-
-socket.on('connect', function(data) {
-  console.log('connect');
-  getLocalStream(true, function(stream) {
-    localStream = stream;
-    container.setState({selfViewSrc: stream.toURL()});
-    container.setState({status: 'ready', info: 'Please enter or create room ID'});
-  });
-});
 
 function logError(error) {
   console.log("logError", error);
@@ -253,17 +257,7 @@ function getStats() {
 
 class RCTWebRTC extends Component {
     static navigationOptions = (navigation) => ({
-        title: '视频',
-        headerStyle: {
-            height: 49,
-            backgroundColor: '#fff',
-        },
-        headerTitleStyle: {
-            alignSelf: 'center',
-            fontSize: 16,
-            fontWeight: 'normal'
-        },
-
+        header: null,
     });
     
     constructor(props) {
@@ -272,13 +266,14 @@ class RCTWebRTC extends Component {
         this.state = {
             info: 'Initializing',
             status: 'init',
-            roomID: '',
+            roomID: 'abc',
             isFront: true,
             selfViewSrc: null,
             remoteList: {},
             textRoomConnected: false,
             textRoomData: [],
             textRoomValue: '',
+            isVideo: true,
         };
     }
     componentWillMount() {
@@ -287,21 +282,21 @@ class RCTWebRTC extends Component {
     componentDidMount() {
         console.log('componentDidMount', this)
         container = this;
-        // socket.on('exchange', function(data){
-        //     exchange(data);
-        // });
-        // socket.on('leave', function(socketId){
-        //     leave(socketId);
-        // });
+        socket.on('exchange', function(data){
+            exchange(data);
+        });
+        socket.on('leave', function(socketId){
+            leave(socketId);
+        });
         
-        // socket.on('connect', function(data) {
-        //     console.log('connect');
-        //     getLocalStream(true, function(stream) {
-        //         localStream = stream;
-        //         container.setState({selfViewSrc: stream.toURL()});
-        //         container.setState({status: 'ready', info: 'Please enter or create room ID'});
-        //     });
-        // });
+        socket.on('connect', function(data) {
+            console.log('connect');
+            getLocalStream(true, function(stream) {
+                localStream = stream;
+                container.setState({selfViewSrc: stream.toURL()});
+                container.setState({status: 'ready', info: 'Please enter or create room ID'});
+            });
+        });
     }
     _press = (event) => {
         this.roomID.blur();
@@ -314,8 +309,8 @@ class RCTWebRTC extends Component {
         getLocalStream(isFront, function(stream) {
         if (localStream) {
             for (const id in pcPeers) {
-            const pc = pcPeers[id];
-            pc && pc.removeStream(localStream);
+                const pc = pcPeers[id];
+                pc && pc.removeStream(localStream);
             }
             localStream.release();
         }
@@ -349,87 +344,129 @@ class RCTWebRTC extends Component {
         return (
         <View style={styles.listViewContainer}>
             <ListView
-            dataSource={this.ds.cloneWithRows(this.state.textRoomData)}
-            renderRow={rowData => <Text>{`${rowData.user}: ${rowData.message}`}</Text>}
+                dataSource={this.ds.cloneWithRows(this.state.textRoomData)}
+                renderRow={rowData => <Text>{`${rowData.user}: ${rowData.message}`}</Text>}
             />
             <TextInput
-            style={{width: 200, height: 30, borderColor: 'gray', borderWidth: 1}}
-            onChangeText={value => this.setState({textRoomValue: value})}
-            value={this.state.textRoomValue}
+                style={{width: 200, height: 30, borderColor: 'gray', borderWidth: 1}}
+                onChangeText={value => this.setState({textRoomValue: value})}
+                value={this.state.textRoomValue}
             />
             <TouchableHighlight
             onPress={this._textRoomPress}>
-            <Text>Send</Text>
+                <Text>Send</Text>
             </TouchableHighlight>
         </View>
         );
     }
     render() {
+        const { isVideo, selfViewSrc } = this.state;
         return (
-        <View style={styles.container}>
-            <Text style={styles.welcome}>
-            {this.state.info}
-            </Text>
-            {this.state.textRoomConnected && this._renderTextRoom()}
-            <View style={{flexDirection: 'row'}}>
-            <Text>
-                {this.state.isFront ? "Use front camera" : "Use back camera"}
-            </Text>
-            <TouchableHighlight
-                style={{borderWidth: 1, borderColor: 'black'}}
-                onPress={this._switchVideoType}>
-                <Text>Switch camera</Text>
-            </TouchableHighlight>
+        <View style={styles.containerVideo}>
+            {/* {this.state.textRoomConnected && this._renderTextRoom()} */}
+            {
+                isVideo ? 
+                <RTCView streamURL={selfViewSrc} style={styles.selfView}/> :
+                <Image source={require('../../../image/loginbg.jpg')} style={styles.image} resizeMode={"contain"} />
+            }
+            <View style={styles.welcome}>
+                <Text>{this.state.info} --- {this.state.isFront ? "Use front camera" : "Use back camera"}</Text>
+                <TouchableHighlight
+                    style={styles.tabCamera}
+                    onPress={this._switchVideoType}>
+                    <Text>Switch camera</Text>
+                </TouchableHighlight>
             </View>
             {/* { this.state.status == 'ready' ? ( */}
-            <View>
+            {/* )  */}
+            {/* : null} */}
+
+            <View style={styles.listVideo}>
+                {
+                    mapHash(this.state.remoteList, function(remote, index) {
+                        return <RTCView key={index} streamURL={remote} style={styles.remoteView}/>
+                    })
+                }
+            </View>
+            <View style={styles.actions}>
                 <TextInput
                     ref={i => this.roomID = i}
                     autoCorrect={false}
-                    style={{width: 200, height: 40, borderColor: 'gray', borderWidth: 1}}
+                    style={{width: 100, height: 40, borderColor: 'gray', borderWidth: 1}}
                     onChangeText={(text) => this.setState({roomID: text})}
                     value={this.state.roomID}
                 />
                 <TouchableHighlight
-                onPress={this._press}>
-                <Text>Enter room</Text>
+                    onPress={this._press}
+                    style={{padding: 5, backgroundColor: '#058'}}
+                >
+                    <Text>Enter room</Text>
                 </TouchableHighlight>
             </View>
-            {/* )  */}
-            {/* : null} */}
-            <RTCView streamURL={this.state.selfViewSrc} style={styles.selfView}/>
-            {
-            mapHash(this.state.remoteList, function(remote, index) {
-                return <RTCView key={index} streamURL={remote} style={styles.remoteView}/>
-            })
-            }
         </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-  selfView: {
-    width: 200,
-    height: 150,
-  },
-  remoteView: {
-    width: 200,
-    height: 150,
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  listViewContainer: {
-    height: 150,
-  },
+    containerVideo: {
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: '#F5FCFF',
+        position: 'relative',
+    },
+    actions: {
+        position: 'absolute',
+        left: 20,
+        right: 20,
+        bottom: 35,
+        zIndex: 5,
+        backgroundColor: '#eee'
+    },
+    welcome: {
+        margin: 10,
+        position: 'absolute',
+        top: 15,
+        left: 0,
+        right: 0,
+        zIndex: 1
+    },
+    tabCamera: {
+        marginTop: 20,
+        backgroundColor: '#eee',
+        padding: 10,
+    },
+    selfView: {
+        position: 'absolute',
+        width: window.width,
+        height: window.height,
+        zIndex: 0,
+    },
+    image: {
+        position: 'absolute',
+        zIndex: 0,
+        width: window.width,
+        height: window.height,
+        backgroundColor: 'red'
+    },
+    listVideo: {
+        position: 'absolute',
+        zIndex: 2,
+        bottom: 100,
+        right: 0,
+        width: window.windth,
+        height: 180,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        backgroundColor: '#efefef',
+    },
+    remoteView: {
+        width: 130,
+        height: 180,
+    },
+    listViewContainer: {
+        height: 150,
+    },
 });
 
 export default RCTWebRTC;

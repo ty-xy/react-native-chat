@@ -15,7 +15,15 @@ const reset = (navigation, routeName) => {
   navigation.dispatch(resetAction);
 };
 
+const back = (navigation, routeName) => {
+    const resetAction = NavigationActions.back({
+        key: routeName
+    });
+    navigation.dispatch(resetAction);
+};
+
 
 export default {
   reset,
+  back
 };
