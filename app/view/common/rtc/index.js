@@ -384,7 +384,8 @@ class RCTWebRTC extends Component {
             <View style={styles.listVideo}>
                 {
                     mapHash(this.state.remoteList, function(remote, index) {
-                        return <RTCView key={index} streamURL={remote} style={styles.remoteView}/>
+                        return <RTCView key={index} streamURL={remote} style={{ width: 180,
+                            height: 180}}/>
                     })
                 }
             </View>
@@ -420,7 +421,7 @@ const styles = StyleSheet.create({
         left: 20,
         right: 20,
         bottom: 35,
-        zIndex: 5,
+        // zIndex: 5,
         backgroundColor: '#eee'
     },
     welcome: {
@@ -429,7 +430,7 @@ const styles = StyleSheet.create({
         top: 15,
         left: 0,
         right: 0,
-        zIndex: 1
+        // zIndex: 1
     },
     tabCamera: {
         marginTop: 20,
@@ -440,32 +441,36 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width: window.width,
         height: window.height,
-        zIndex: 0,
+        // zIndex: 0,
     },
     image: {
         position: 'absolute',
-        zIndex: 0,
+        // zIndex: 0,
         width: window.width,
         height: window.height,
         backgroundColor: 'red'
     },
     listVideo: {
         position: 'absolute',
-        zIndex: 2,
+        // zIndex: 10000,
         bottom: 100,
         right: 0,
-        width: window.windth,
+        width: 180,
+        // width: window.windth,
         height: 180,
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        backgroundColor: '#efefef',
+        backgroundColor: '#EFEFEF',
+        transform: [{'translate':[0,0,1]}] ,
     },
     remoteView: {
-        width: 130,
+        width: 160,
         height: 180,
+        position: 'absolute',
+        right: 0,
     },
     listViewContainer: {
-        height: 150,
+        // height: 150,
     },
 });
 
