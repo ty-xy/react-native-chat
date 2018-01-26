@@ -13,16 +13,16 @@ import {
   Dimensions,
   Image
 } from 'react-native';
-
+import { RTCView } from 'react-native-webrtc';
 
 const styles = StyleSheet.create({
     call: {
-        // backgroundColor: 'red',
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
+        zIndex: 5,
         flex: 1,
         justifyContent: 'space-between',
         flexDirection: 'column',
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         width: 70,
         height: 70,
         borderRadius: 35,
-        // backgroundColor: '#000',
+        backgroundColor: '#000',
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1,
@@ -81,13 +81,13 @@ const styles = StyleSheet.create({
     },
 });
 
-const Call = ({ selfViewSrc, _handleMute, _handleHangUp, _handleHandsFree, _handleTabAudio, name, company }) => (
+const Connected = ({ _handleMute, _handleHangUp, _handleHandsFree, _handleTabAudio, name, company }) => (
     <View style={styles.call}>
         <View style={styles.avatarDiv}>
             <Image source={require('../../../../image/Andy.png')} style={styles.avatar} />
             <View style={{ marginLeft: 15 }}>
                 <Text style={{ fontSize: 16, color: '#fff' }}>{name || '山东黄金'}</Text>
-                <Text style={{ fontSize: 14, color: '#fff' }}>{company || '中医小黄打多久'}</Text>
+                <Text style={{ fontSize: 14, color: '#999' }}>{company || '中医小黄打多久'}</Text>
             </View>
         </View>
         <View style={styles.status}><Text style={{ color: '#fff', fontSize: 20 }}>等待对方接听...</Text></View>
@@ -96,7 +96,7 @@ const Call = ({ selfViewSrc, _handleMute, _handleHangUp, _handleHandsFree, _hand
                 onPress={_handleTabAudio}
             >
                 <Text style={[styles.callIcon, {textAlign: 'center', fontSize: 40}]}>&#xe658;</Text>
-                <Text style={{ color: '#fff', fontSize: 14 }}>切换为电话聊天...</Text>                
+                <Text style={{ color: '#999', fontSize: 14 }}>切换为电话聊天...</Text>                
             </TouchableOpacity>
         </View>
         <View style={styles.actions}>
@@ -131,4 +131,4 @@ const Call = ({ selfViewSrc, _handleMute, _handleHangUp, _handleHandsFree, _hand
     </View>
 );
 
-export default Call;
+export default Connected;

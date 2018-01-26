@@ -80,13 +80,14 @@ function getLocalStream(isFront, callback) {
 }
 
 function join(roomID) {
-  socket.emit('join', roomID, function(socketIds){
-    console.log('join', socketIds);
-    for (const i in socketIds) {
-      const socketId = socketIds[i];
-      createPC(socketId, true);
-    }
-  });
+    socket.emit('connect', roomID);
+    socket.emit('join', roomID, function(socketIds){
+        console.log('join', socketIds);
+        for (const i in socketIds) {
+            const socketId = socketIds[i];
+            createPC(socketId, true);
+        }
+    });
 }
 
 function createPC(socketId, isOffer) {
@@ -259,7 +260,7 @@ class RCTWebRTC extends Component {
             textRoomConnected: false,
             textRoomData: [],
             textRoomValue: '',
-            isVideo: true,
+            isVideo: false,
         };
     }
     componentWillMount() {
@@ -273,20 +274,25 @@ class RCTWebRTC extends Component {
             exchange(data);
         });
         socket.on('leave', function(socketId){
+            console.log('socketId', socketId)
             leave(socketId);
         });
-
         socket.on('connect', function(data) {
             console.log('connect', container);
-            getLocalStream(true, function(stream) {
-                localStream = stream;
-                container.setState({selfViewSrc: stream.toURL()});
-                container.setState({status: 'ready', info: 'Please enter or create room ID'});
-            });
+            // getLocalStream(true, function(stream) {
+            //     localStream = stream;
+            //     container.setState({selfViewSrc: stream.toURL()});
+            //     container.setState({status: 'ready', info: 'Please enter or create room ID'});
+            // });
         });
+        this._switchVideoType();
+        setTimeout(() => {
+            this._press();
+        }, 500);
+        // this._press();
     }
     _press = (event) => {
-        this.roomID.blur();
+        // this.roomID.blur();
         this.setState({status: 'connect', info: 'Connecting'});
         join(this.state.roomID);
     }
@@ -294,20 +300,20 @@ class RCTWebRTC extends Component {
         const isFront = !this.state.isFront;
         this.setState({isFront});
         getLocalStream(isFront, function(stream) {
-        if (localStream) {
+            if (localStream) {
+                for (const id in pcPeers) {
+                    const pc = pcPeers[id];
+                    pc && pc.removeStream(localStream);
+                }
+                localStream.release();
+            }
+            localStream = stream;
+            container.setState({selfViewSrc: stream.toURL(), isVideo: true });
+
             for (const id in pcPeers) {
                 const pc = pcPeers[id];
-                pc && pc.removeStream(localStream);
+                pc && pc.addStream(localStream);
             }
-            localStream.release();
-        }
-        localStream = stream;
-        container.setState({selfViewSrc: stream.toURL()});
-
-        for (const id in pcPeers) {
-            const pc = pcPeers[id];
-            pc && pc.addStream(localStream);
-        }
         });
     }
     receiveTextData = (data) => {
@@ -353,6 +359,7 @@ class RCTWebRTC extends Component {
     // 挂断
     _handleHangUp = () => {
         console.log('挂断')
+        socket.emit('leave', this.state.roomID);
     }
     // 静音
     _handleMute = () => {
@@ -363,35 +370,37 @@ class RCTWebRTC extends Component {
     }
     render() {
         const { isVideo, selfViewSrc } = this.state;
+        console.log('state', this.state)
         return (
         <View style={styles.containerVideo}>
             {/* {this.state.textRoomConnected && this._renderTextRoom()} */}
-            {/* <Text>{this.state.info} --- {this.state.isFront ? "Use front camera" : "Use back camera"}</Text>
             {
                 isVideo ? 
                 <RTCView streamURL={selfViewSrc} style={styles.selfView}/> :
                 <Image source={require('../../../image/loginbg.jpg')} style={styles.image} resizeMode={"contain"} />
             }
-            <TouchableOpacity
+            <Text>{this.state.info} --- {this.state.isFront ? "Use front camera" : "Use back camera"}</Text>
+            {/* <TouchableOpacity
                 style={styles.tabCamera}
-                ac
                 onPress={this._switchVideoType}
             >
-                <Text style={styles.callIcon}>&#xe642;</Text>
+                <Text style={styles.callIcon}>切换</Text>
             </TouchableOpacity> */}
             {/* { this.state.status == 'ready' ? ( */}
             {/* )  */}
             {/* : null} */}
 
-            <View style={styles.listVideo}>
+            {/* <View style={styles.listVideo}>
                 {
                     mapHash(this.state.remoteList, function(remote, index) {
                         return <RTCView key={index} streamURL={remote} style={styles.remoteView}/>
                     })
                 }
-            </View>
+            </View> */}
+            {/* 拨打电话界面 */}
             <Call
                 {...this.props}
+                selfViewSrc={selfViewSrc}
                 _handleMute={this._handleMute}
                 _handleHangUp={this._handleHangUp}
                 _handleHandsFree={this._handleHandsFree}
@@ -406,7 +415,7 @@ const styles = StyleSheet.create({
     containerVideo: {
         flex: 1,
         justifyContent: 'center',
-        backgroundColor: '#1A1A1A',
+        // backgroundColor: '#1A1A1A',
         position: 'relative',
     },
     welcome: {
@@ -415,7 +424,6 @@ const styles = StyleSheet.create({
         top: 15,
         left: 0,
         right: 0,
-        zIndex: 1
     },
     tabCamera: {
         width: 70,
@@ -423,7 +431,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 10,
-        zIndex: 3,
         position: 'absolute',
         right: 0,
         top: 0,
@@ -432,25 +439,22 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width: window.width,
         height: window.height,
-        zIndex: 0,
+        backgroundColor: 'transparent'
     },
     image: {
         position: 'absolute',
-        zIndex: 0,
         width: window.width,
         height: window.height,
-        backgroundColor: 'red'
     },
     listVideo: {
         position: 'absolute',
-        zIndex: 2,
         bottom: 100,
         right: 0,
         width: window.windth,
         height: 180,
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        backgroundColor: '#efefef',
+        // backgroundColor: '#efefef',
     },
     remoteView: {
         width: 130,
