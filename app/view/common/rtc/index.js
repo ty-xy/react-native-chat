@@ -5,7 +5,7 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  TouchableHighlight,
+  TouchableOpacity,
   View,
   TextInput,
   ListView,
@@ -15,12 +15,6 @@ import {
 } from 'react-native';
 
 import io from 'socket.io-client';
-
-// const socket = io.connect('https://react-native-webrtc.herokuapp.com', {transports: ['websocket']});
-const socket = io.connect('https://creek.xin:13229', {transports: ['websocket']});
-console.ignoredYellowBox = ['Setting a timer'];
-const window = Dimensions.get('window');
-
 import {
   RTCPeerConnection,
   RTCMediaStream,
@@ -30,6 +24,12 @@ import {
   MediaStreamTrack,
   getUserMedia,
 } from 'react-native-webrtc';
+import Connected from './component/Connected';
+import Call from './component/Call'
+
+const socket = io.connect('https://creek.xin:13229', {transports: ['websocket']});
+console.ignoredYellowBox = ['Setting a timer'];
+const window = Dimensions.get('window');
 
 // const configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
 const configuration = {"iceServers": [
@@ -43,65 +43,50 @@ let localStream;
 let container;
 
 
-socket.on('exchange', function(data){
-    exchange(data);
-});
-socket.on('leave', function(socketId){
-    leave(socketId);
-});
-
-socket.on('connect', function(data) {
-    console.log('connect');
-    getLocalStream(true, function(stream) {
-        localStream = stream;
-        container.setState({selfViewSrc: stream.toURL()});
-        container.setState({status: 'ready', info: 'Please enter or create room ID'});
-    });
-});
-
 function getLocalStream(isFront, callback) {
 
-  let videoSourceId;
+    let videoSourceId;
 
-  // on android, you don't have to specify sourceId manually, just use facingMode
-  // uncomment it if you want to specify
-  if (Platform.OS === 'ios') {
-    MediaStreamTrack.getSources(sourceInfos => {
-      console.log("sourceInfos: ", sourceInfos);
+    // on android, you don't have to specify sourceId manually, just use facingMode
+    // uncomment it if you want to specify
+    if (Platform.OS === 'ios') {
+        MediaStreamTrack.getSources(sourceInfos => {
+            console.log("sourceInfos: ", sourceInfos);
 
-      for (const i = 0; i < sourceInfos.length; i++) {
-        const sourceInfo = sourceInfos[i];
-        if(sourceInfo.kind == "video" && sourceInfo.facing == (isFront ? "front" : "back")) {
-          videoSourceId = sourceInfo.id;
-        }
-      }
-    });
-  }
-  getUserMedia({
-    audio: true,
-    video: {
-      mandatory: {
-        minWidth: 640, // Provide your own width, height and frame rate here
-        minHeight: 360,
-        minFrameRate: 30,
-      },
-      facingMode: (isFront ? "user" : "environment"),
-      optional: (videoSourceId ? [{sourceId: videoSourceId}] : []),
+            for (const i = 0; i < sourceInfos.length; i++) {
+                const sourceInfo = sourceInfos[i];
+                if(sourceInfo.kind == "video" && sourceInfo.facing == (isFront ? "front" : "back")) {
+                    videoSourceId = sourceInfo.id;
+                }
+            }
+        });
     }
-  }, function (stream) {
-    console.log('getUserMedia success', stream);
-    callback(stream);
-  }, logError);
+    getUserMedia({
+        audio: true,
+        video: {
+        mandatory: {
+            minWidth: 640, // Provide your own width, height and frame rate here
+            minHeight: 360,
+            minFrameRate: 30,
+        },
+        facingMode: (isFront ? "user" : "environment"),
+        optional: (videoSourceId ? [{sourceId: videoSourceId}] : []),
+        }
+    }, function (stream) {
+        console.log('getUserMedia success', stream);
+        callback(stream);
+    }, logError);
 }
 
 function join(roomID) {
-  socket.emit('join', roomID, function(socketIds){
-    console.log('join', socketIds);
-    for (const i in socketIds) {
-      const socketId = socketIds[i];
-      createPC(socketId, true);
-    }
-  });
+    socket.emit('connect', roomID);
+    socket.emit('join', roomID, function(socketIds){
+        console.log('join', socketIds);
+        for (const i in socketIds) {
+            const socketId = socketIds[i];
+            createPC(socketId, true);
+        }
+    });
 }
 
 function createPC(socketId, isOffer) {
@@ -132,61 +117,61 @@ function createPC(socketId, isOffer) {
     }
   }
 
-  pc.oniceconnectionstatechange = function(event) {
-    console.log('oniceconnectionstatechange', event.target.iceConnectionState);
-    if (event.target.iceConnectionState === 'completed') {
-      setTimeout(() => {
-        getStats();
-      }, 1000);
+    pc.oniceconnectionstatechange = function(event) {
+        console.log('oniceconnectionstatechange', event.target.iceConnectionState);
+        if (event.target.iceConnectionState === 'completed') {
+            setTimeout(() => {
+                    getStats();
+            }, 1000);
+        }
+        if (event.target.iceConnectionState === 'connected') {
+            createDataChannel();
+        }
+    };
+    pc.onsignalingstatechange = function(event) {
+        console.log('onsignalingstatechange', event.target.signalingState);
+    };
+
+    pc.onaddstream = function (event) {
+        console.log('onaddstream', event.stream);
+        container.setState({info: 'One peer join!'});
+
+        const remoteList = container.state.remoteList;
+        remoteList[socketId] = event.stream.toURL();
+        container.setState({ remoteList: remoteList });
+    };
+    pc.onremovestream = function (event) {
+        console.log('onremovestream', event.stream);
+    };
+
+    pc.addStream(localStream);
+    function createDataChannel() {
+        if (pc.textDataChannel) {
+            return;
+        }
+        const dataChannel = pc.createDataChannel("text");
+
+        dataChannel.onerror = function (error) {
+         console.log("dataChannel.onerror", error);
+        };
+
+        dataChannel.onmessage = function (event) {
+            console.log("dataChannel.onmessage:", event.data);
+            container.receiveTextData({user: socketId, message: event.data});
+        };
+
+        dataChannel.onopen = function () {
+            console.log('dataChannel.onopen');
+            container.setState({textRoomConnected: true});
+        };
+
+        dataChannel.onclose = function () {
+            console.log("dataChannel.onclose");
+        };
+
+        pc.textDataChannel = dataChannel;
     }
-    if (event.target.iceConnectionState === 'connected') {
-      createDataChannel();
-    }
-  };
-  pc.onsignalingstatechange = function(event) {
-    console.log('onsignalingstatechange', event.target.signalingState);
-  };
-
-  pc.onaddstream = function (event) {
-    console.log('onaddstream', event.stream);
-    container.setState({info: 'One peer join!'});
-
-    const remoteList = container.state.remoteList;
-    remoteList[socketId] = event.stream.toURL();
-    container.setState({ remoteList: remoteList });
-  };
-  pc.onremovestream = function (event) {
-    console.log('onremovestream', event.stream);
-  };
-
-  pc.addStream(localStream);
-  function createDataChannel() {
-    if (pc.textDataChannel) {
-      return;
-    }
-    const dataChannel = pc.createDataChannel("text");
-
-    dataChannel.onerror = function (error) {
-      console.log("dataChannel.onerror", error);
-    };
-
-    dataChannel.onmessage = function (event) {
-      console.log("dataChannel.onmessage:", event.data);
-      container.receiveTextData({user: socketId, message: event.data});
-    };
-
-    dataChannel.onopen = function () {
-      console.log('dataChannel.onopen');
-      container.setState({textRoomConnected: true});
-    };
-
-    dataChannel.onclose = function () {
-      console.log("dataChannel.onclose");
-    };
-
-    pc.textDataChannel = dataChannel;
-  }
-  return pc;
+    return pc;
 }
 
 function exchange(data) {
@@ -217,29 +202,29 @@ function exchange(data) {
 }
 
 function leave(socketId) {
-  console.log('leave', socketId);
-  const pc = pcPeers[socketId];
-  const viewIndex = pc.viewIndex;
-  pc.close();
-  delete pcPeers[socketId];
+    console.log('leave', socketId);
+    const pc = pcPeers[socketId];
+    const viewIndex = pc.viewIndex;
+    pc.close();
+    delete pcPeers[socketId];
 
-  const remoteList = container.state.remoteList;
-  delete remoteList[socketId]
-  container.setState({ remoteList: remoteList });
-  container.setState({info: 'One peer leave!'});
+    const remoteList = container.state.remoteList;
+    delete remoteList[socketId]
+    container.setState({ remoteList: remoteList });
+    container.setState({info: 'One peer leave!'});
 }
 
 function logError(error) {
-  console.log("logError", error);
+    console.log("logError", error);
 }
 
 function mapHash(hash, func) {
-  const array = [];
-  for (const key in hash) {
-    const obj = hash[key];
-    array.push(func(obj, key));
-  }
-  return array;
+    const array = [];
+    for (const key in hash) {
+        const obj = hash[key];
+        array.push(func(obj, key));
+    }
+    return array;
 }
 
 function getStats() {
@@ -252,6 +237,7 @@ function getStats() {
     }, logError);
   }
 }
+
 
 
 
@@ -273,7 +259,7 @@ class RCTWebRTC extends Component {
             textRoomConnected: false,
             textRoomData: [],
             textRoomValue: '',
-            isVideo: true,
+            isVideo: false,
         };
     }
     componentWillMount() {
@@ -286,20 +272,25 @@ class RCTWebRTC extends Component {
             exchange(data);
         });
         socket.on('leave', function(socketId){
+            console.log('socketId', socketId)
             leave(socketId);
         });
-        
         socket.on('connect', function(data) {
-            console.log('connect');
-            getLocalStream(true, function(stream) {
-                localStream = stream;
-                container.setState({selfViewSrc: stream.toURL()});
-                container.setState({status: 'ready', info: 'Please enter or create room ID'});
-            });
+            console.log('connect', container);
+            // getLocalStream(true, function(stream) {
+            //     localStream = stream;
+            //     container.setState({selfViewSrc: stream.toURL()});
+            //     container.setState({status: 'ready', info: 'Please enter or create room ID'});
+            // });
         });
+        this._switchVideoType();
+        setTimeout(() => {
+            this._press();
+        }, 500);
+        // this._press();
     }
     _press = (event) => {
-        this.roomID.blur();
+        // this.roomID.blur();
         this.setState({status: 'connect', info: 'Connecting'});
         join(this.state.roomID);
     }
@@ -307,20 +298,20 @@ class RCTWebRTC extends Component {
         const isFront = !this.state.isFront;
         this.setState({isFront});
         getLocalStream(isFront, function(stream) {
-        if (localStream) {
+            if (localStream) {
+                for (const id in pcPeers) {
+                    const pc = pcPeers[id];
+                    pc && pc.removeStream(localStream);
+                }
+                localStream.release();
+            }
+            localStream = stream;
+            container.setState({selfViewSrc: stream.toURL(), isVideo: true });
+
             for (const id in pcPeers) {
                 const pc = pcPeers[id];
-                pc && pc.removeStream(localStream);
+                pc && pc.addStream(localStream);
             }
-            localStream.release();
-        }
-        localStream = stream;
-        container.setState({selfViewSrc: stream.toURL()});
-
-        for (const id in pcPeers) {
-            const pc = pcPeers[id];
-            pc && pc.addStream(localStream);
-        }
         });
     }
     receiveTextData = (data) => {
@@ -352,15 +343,32 @@ class RCTWebRTC extends Component {
                 onChangeText={value => this.setState({textRoomValue: value})}
                 value={this.state.textRoomValue}
             />
-            <TouchableHighlight
+            <TouchableOpacity
             onPress={this._textRoomPress}>
                 <Text>Send</Text>
-            </TouchableHighlight>
+            </TouchableOpacity>
         </View>
         );
     }
+    // 免提
+    _handleHandsFree = () => {
+        console.log('免提')
+    }
+    // 挂断
+    _handleHangUp = () => {
+        console.log('挂断')
+        socket.emit('leave', this.state.roomID);
+    }
+    // 静音
+    _handleMute = () => {
+        console.log('静音')
+    }
+    _handleTabAudio = () => {
+        console.log('切换语音')
+    }
     render() {
-        const { isVideo, selfViewSrc } = this.state;
+        const { isVideo, selfViewSrc, status, remoteList } = this.state;
+        console.log('state', this.state)
         return (
         <View style={styles.containerVideo}>
             {/* {this.state.textRoomConnected && this._renderTextRoom()} */}
@@ -369,40 +377,33 @@ class RCTWebRTC extends Component {
                 <RTCView streamURL={selfViewSrc} style={styles.selfView}/> :
                 <Image source={require('../../../image/loginbg.jpg')} style={styles.image} resizeMode={"contain"} />
             }
-            <View style={styles.welcome}>
-                <Text>{this.state.info} --- {this.state.isFront ? "Use front camera" : "Use back camera"}</Text>
-                <TouchableHighlight
-                    style={styles.tabCamera}
-                    onPress={this._switchVideoType}>
-                    <Text>Switch camera</Text>
-                </TouchableHighlight>
-            </View>
-            {/* { this.state.status == 'ready' ? ( */}
-            {/* )  */}
-            {/* : null} */}
-
+            <Text style={{color: '#fff'}}>{this.state.info} --- {this.state.isFront ? "Use front camera" : "Use back camera"}</Text>
+        
+            {/* 拨打电话界面 */}
+            {
+                status === 'connect' ?
+                <Connected
+                    _handleHangUp={this._handleHangUp}
+                    _handleTabAudio={this._handleTabAudio}
+                    _handleTabCamera={this._switchVideoType}
+                    {...this.state}
+                    {...this.props}
+                /> :
+                <Call
+                    _handleMute={this._handleMute}
+                    _handleHangUp={this._handleHangUp}
+                    _handleHandsFree={this._handleHandsFree}
+                    _handleTabAudio={this._handleTabAudio}
+                    {...this.state}
+                    {...this.props}
+                />
+            }
             <View style={styles.listVideo}>
                 {
-                    mapHash(this.state.remoteList, function(remote, index) {
-                        return <RTCView key={index} streamURL={remote} style={{ width: 180,
-                            height: 180}}/>
+                    mapHash(remoteList, function(remote, index) {
+                        return <RTCView key={index} streamURL={remote} style={styles.remoteView}/>
                     })
                 }
-            </View>
-            <View style={styles.actions}>
-                <TextInput
-                    ref={i => this.roomID = i}
-                    autoCorrect={false}
-                    style={{width: 100, height: 40, borderColor: 'gray', borderWidth: 1}}
-                    onChangeText={(text) => this.setState({roomID: text})}
-                    value={this.state.roomID}
-                />
-                <TouchableHighlight
-                    onPress={this._press}
-                    style={{padding: 5, backgroundColor: '#058'}}
-                >
-                    <Text>Enter room</Text>
-                </TouchableHighlight>
             </View>
         </View>
         );
@@ -413,16 +414,8 @@ const styles = StyleSheet.create({
     containerVideo: {
         flex: 1,
         justifyContent: 'center',
-        backgroundColor: '#F5FCFF',
+        // backgroundColor: '#1A1A1A',
         position: 'relative',
-    },
-    actions: {
-        position: 'absolute',
-        left: 20,
-        right: 20,
-        bottom: 35,
-        // zIndex: 5,
-        backgroundColor: '#eee'
     },
     welcome: {
         margin: 10,
@@ -430,38 +423,39 @@ const styles = StyleSheet.create({
         top: 15,
         left: 0,
         right: 0,
-        // zIndex: 1
     },
     tabCamera: {
-        marginTop: 20,
-        backgroundColor: '#eee',
+        width: 70,
+        height: 70,
+        justifyContent: 'center',
+        alignItems: 'center',
         padding: 10,
+        position: 'absolute',
+        right: 0,
+        top: 0,
     },
     selfView: {
         position: 'absolute',
         width: window.width,
         height: window.height,
-        // zIndex: 0,
+        backgroundColor: 'transparent'
     },
     image: {
         position: 'absolute',
-        // zIndex: 0,
         width: window.width,
         height: window.height,
-        backgroundColor: 'red'
     },
     listVideo: {
         position: 'absolute',
-        // zIndex: 10000,
         bottom: 100,
         right: 0,
-        width: 180,
-        // width: window.windth,
+        // zIndex: 4,
+        // backgroundColor: 'red',
+        width: window.windth,
         height: 180,
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        backgroundColor: '#EFEFEF',
-        transform: [{'translate':[0,0,1]}] ,
+        transform: [{'translate':[0,0,1]}],
     },
     remoteView: {
         width: 160,
