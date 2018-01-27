@@ -56,7 +56,7 @@ const subCollection = () => () => {
     // console.log(users)
     const pinyinData = users.map(user => ({
         user,
-        pinyin: pinyin(user.profile && user.profile.name, {
+        pinyin: pinyin(user.profile && user.profile.name[0], {
             style: pinyin.STYLE_FIRST_LETTER,
         },
         )[0][0], // 可以自行选择不同的生成拼音方案和风格。

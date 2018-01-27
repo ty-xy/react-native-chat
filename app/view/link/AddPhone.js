@@ -43,47 +43,53 @@ export default class Love extends Component {
   
     tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe635;</Text>),
   })
-  _onPressButtonAdd=(id)=>{
+  _onPressButtonAdd=(id,name)=>{
     const { navigation } = this.props;
-    navigation.navigate('SendApply', { id: '323', name:"taotao"});
+    navigation.navigate('SendApply', { id, name});
     this.setState({
              status:1
       })
   }
-  _onPressButton=(name, number)=>{
+  _onPressButton=(name,number,avatar,_id,status)=>{
     const { navigation } = this.props;
-    if (this.state.status===2) {
-        navigation.navigate('AddDetail', { id: '323', name, number, cardCase: true, avatar: '../../image/beautiful.png' });
+    if (status===1) {
+        navigation.navigate('AddDetail', { name,number, avatar,_id });
     } else {
-        navigation.navigate('FriendDetail', { id: '323', name, number, area: '北京市-海淀区', company:'万达集团股份有限公司' });
+        navigation.navigate('FriendDetail', { name,number, avatar,_id, area: '北京市-海淀区', company:'万达集团股份有限公司' });
     }
 }
   render() {
     const data = this.props.navigation.state.params;
+    console.log(data)
     const datalist = data.map((v)=>{
         num=v.phoneNumbers[0].number,
-        key=v.familyName+v.middleName+v.givenName
+        key=v.familyName+v.middleName+v.givenName,
+        company=v.company;
          reg=new RegExp("null","g"); //创建正则RegExp对象      
          newstr=key.replace(reg,"");
          str=newstr[0]==="0"?newstr.substr(1):newstr
             return  {
                 num:v.phoneNumbers[0].number,
-                 key:str
+                 key:str.length>0?str:company.length>0?company:num,
+                 _id:v.recordID,
             }
     });
+    console.log(datalist)
     pinyinData = datalist.map(han => ({
-        key: han.key,
-        url:'../image/oval.png',
-        num:han.num,
-        pinyin:  pinyin(han.key[0], {
+        user:{ _id: han._id,
+              profile:{name:han.key,avatar:'http://cdn.zg18.com/avatar_363yzuQ252jgG4yCJ_1514857959722.png'},
+              username:han.num.replace(/\s/g, "")
+         },
+        pinyin:pinyin(han.key[0], {
                 style: pinyin.STYLE_FIRST_LETTER,
             },
             )[0][0], // 可以自行选择不同的生成拼音方案和风格。
       }));
+      console.log(pinyinData)
      sortedData =pinyinData.sort((a, b) => {
         return a.pinyin.localeCompare(b.pinyin);
       }).map((d) =>d.pinyin)
-      console.log(pinyinData,sortedData)
+      console.log(sortedData)
       pinyinData.forEach((d, i, data) => {
         d.showType = false;
         reg=/[^a-zA-Z]+/;
@@ -106,11 +112,6 @@ export default class Love extends Component {
         }
        
       });
-//    const datalisty={
-//         datalist:pinyinData,
-//         add:true,
-//         status:1
-//     }
    return (
     <Concat 
     datalist={pinyinData} 

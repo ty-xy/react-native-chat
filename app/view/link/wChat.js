@@ -15,8 +15,7 @@ export default class wChat extends Component{
     _renderTitleBar(){
         return(
             <Text
-                style={{color:'white',textAlignVertical:'center', textAlign:'center',font:20,padding:12}}
-            >Here is title bar</Text>
+                style={{color:'white',textAlignVertical:'center', textAlign:'center',fontSize:20,padding:12}}>Here is title bar</Text>
         );
     }
 

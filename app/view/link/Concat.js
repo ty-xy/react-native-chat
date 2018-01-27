@@ -14,8 +14,56 @@ import {
 } from 'react-native';
 
 import PassWord from '../myown/PassWord';
-import pinyin from 'pinyin'
-export default class Concat extends Component {
+import pinyin from 'pinyin';
+import Meteor from 'react-native-meteor';
+import MeteorContainer from '../../component/MeteorContainer';
+import UserUtil from '../../util/user';
+import userinfo, { userIdToInfo } from '../../util/user';
+const navigationOptions =()=>{
+
+}
+const subCollection = () => () => {
+    Meteor.subscribe('notice');
+    // 找出别人向你发起的好友认证
+    Meteor.subscribe('users');
+    const friendIds = UserUtil.getFriends();
+    // console.log(friendIds);
+    const users = [];
+    const name=[];
+    friendIds.forEach((_id) => {
+        const user_ = Meteor.collection('users').findOne({ _id });
+        if (user_) {
+            users.push(user_);
+            name.push(user_.username)
+        }
+    });
+    console.log(users,name)
+    let friendNotice = Meteor.collection('notices').find({ type: 0, to: Meteor.userId() },{ sort: { createdAt: -1 } });
+
+    friendNotice.forEach((x) => {
+        x.noticeFrom = PopulateUtil.user(x.from) || {};
+    });
+    // 找出你向别人,然后别人拒绝你的好友认证
+    // const refuseFriend = Notice.find({ type: 0, from: Meteor.userId(), dealResult: 2 }).fetch();
+    const refuseFriend=Meteor.collection('notices').find({ type: 0, from: Meteor.userId() },{ sort: { createdAt: -1 } })
+    // const alsendToId=Meteor.collection('notices').find({ type: 0, from: Meteor.userId() },{ sort: { createdAt: -1 } })
+    const newFriendNotice = [...refuseFriend];
+    const sendAlready = [];
+    newFriendNotice.forEach((to) => {
+        const user_ = Meteor.collection('users').findOne({ _id:to.to});
+        if (user_) {
+            // users.push(user_);
+            sendAlready.push(user_.username)
+        }
+    });
+    console.log(newFriendNotice,sendAlready);
+    return {
+        newFriendNotice,
+        name,
+        sendAlready
+    };
+}
+class Concat extends Component {
   state = {
     text: '',
     showInput: false,
@@ -23,22 +71,29 @@ export default class Concat extends Component {
     selectedChat:{},
     try:true,
   }
-  _addPeople(item){
-      if(item.name !=="淘淘" && this.props.status !==1){
-           return (
-           <TouchableOpacity onPress={this.props._onPressAdd}>
-                 <Text style={{color:'#29B6F6'}}>添加</Text>
-            </TouchableOpacity>
-           )
-      }else if(item.name !=="淘淘" &&this.props.status ===1 ){
-         return(<Text>已发送</Text>)
-      }else{
-        return( <Text>已添加</Text>)
-      }
-  }
+   _addPeople = (item) => {
+       const namelist=this.props.name;
+       console.log(item)
+     if(this.props.name.indexOf(item.user.username)!==-1){ 
+        return (<Text>已添加</Text>)
+     }else{
+        if(this.props.sendAlready.indexOf(item.user.username)!==-1){
+            return (<Text>已发送</Text>)
+        }else{
+            return (<TouchableOpacity onPress={()=>this.props._onPressAdd(item.user._id,item.user.profile.name)}>
+                    <Text style={{color:'#29B6F6'}}>添加</Text>
+                </TouchableOpacity>
+                )
+            } 
+        }
+     }
+
   _renderFlatlist(item) {
-      const {profile={},username,_id}=item.user
-      const {name,avatar}=profile
+      const {profile={},username,_id}=item.user;
+      const {name,avatar}=profile;
+       const namelist=this.props.name;
+      const status=namelist.indexOf(username)==-1?1:2
+      console.log(username)
     return (
       <View style={styles.total} >
        {item.showType?
@@ -48,22 +103,25 @@ export default class Concat extends Component {
        :
        <Text style={styles.left}/>}
         <TouchableHighlight 
-             onPress={ () => this.props._onPressButton(name,username,avatar,_id) } 
+             onPress={ () => this.props._onPressButton(name,username,avatar,_id,status) } 
              underlayColor='transparent'
              style={{ flex:1 }}
         >
           <View style={styles.flatlist}>
              <View style={styles.flatleft} >
-             <Image source={{uri : avatar}} style={styles.img} />
+            {avatar&&avatar.length>0?
+             <Image source={{uri : avatar}} style={styles.img} />:
+             <Image source={require('../../image/toufemail.png')} style={styles.img} />}
              <View style={styles.imgRight}>
                <Text style={styles.keylist}>{name}</Text>
                <Text style={styles.numlist}>{username}</Text>
             </View>
             </View>
-            {this.props.add?
-            <View >
-               {this._addPeople(item)}
-               </View>:null}
+            {this.props.add ?
+                <View >
+                    {this._addPeople(item)}
+               </View> : null
+            }
           </View>
       </TouchableHighlight>
       </View>
@@ -114,6 +172,7 @@ _captureRef = (ref) => { this._listRef = ref};
   render() {
     // const data =this.props.link.pinyinData
     // console.log(this.props.navigation,this.props.datalist)
+    console.log(this.props.datalist)
     return (
       <View style={styles.container}>
              <View style={styles.search}>
@@ -135,6 +194,7 @@ _captureRef = (ref) => { this._listRef = ref};
   }
 }
 
+export default MeteorContainer(navigationOptions, subCollection())(Concat);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
