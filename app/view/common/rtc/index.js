@@ -274,6 +274,7 @@ class RCTWebRTC extends Component {
         socket.on('leave', function(socketId){
             console.log('socketId', socketId)
             leave(socketId);
+            
         });
         socket.on('connect', function(data) {
             console.log('connect', container);
@@ -358,6 +359,7 @@ class RCTWebRTC extends Component {
     _handleHangUp = () => {
         console.log('挂断')
         socket.emit('leave', this.state.roomID);
+        MediaStreamTrack.prototype.stop(this.state.roomID);
     }
     // 静音
     _handleMute = () => {
@@ -372,6 +374,13 @@ class RCTWebRTC extends Component {
         return (
         <View style={styles.containerVideo}>
             {/* {this.state.textRoomConnected && this._renderTextRoom()} */}
+            <View style={styles.listVideo}>
+                {
+                    mapHash(remoteList, function(remote, index) {
+                        return <RTCView key={index} streamURL={remote} style={styles.remoteView}/>
+                    })
+                }
+            </View>
             {
                 isVideo ? 
                 <RTCView streamURL={selfViewSrc} style={styles.selfView}/> :
@@ -398,13 +407,7 @@ class RCTWebRTC extends Component {
                     {...this.props}
                 />
             }
-            <View style={styles.listVideo}>
-                {
-                    mapHash(remoteList, function(remote, index) {
-                        return <RTCView key={index} streamURL={remote} style={styles.remoteView}/>
-                    })
-                }
-            </View>
+         
         </View>
         );
     }
@@ -450,7 +453,7 @@ const styles = StyleSheet.create({
         bottom: 100,
         right: 0,
         // zIndex: 4,
-        // backgroundColor: 'red',
+        backgroundColor: 'red',
         width: window.windth,
         height: 180,
         flexDirection: 'row',

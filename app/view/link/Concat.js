@@ -17,26 +17,50 @@ import PassWord from '../myown/PassWord';
 import pinyin from 'pinyin';
 import Meteor from 'react-native-meteor';
 import MeteorContainer from '../../component/MeteorContainer';
+import UserUtil from '../../util/user';
+import userinfo, { userIdToInfo } from '../../util/user';
 const navigationOptions =()=>{
 
 }
 const subCollection = () => () => {
     Meteor.subscribe('notice');
     // 找出别人向你发起的好友认证
+    Meteor.subscribe('users');
+    const friendIds = UserUtil.getFriends();
+    // console.log(friendIds);
+    const users = [];
+    const name=[];
+    friendIds.forEach((_id) => {
+        const user_ = Meteor.collection('users').findOne({ _id });
+        if (user_) {
+            users.push(user_);
+            name.push(user_.username)
+        }
+    });
+    console.log(users,name)
     let friendNotice = Meteor.collection('notices').find({ type: 0, to: Meteor.userId() },{ sort: { createdAt: -1 } });
+
     friendNotice.forEach((x) => {
         x.noticeFrom = PopulateUtil.user(x.from) || {};
     });
     // 找出你向别人,然后别人拒绝你的好友认证
     // const refuseFriend = Notice.find({ type: 0, from: Meteor.userId(), dealResult: 2 }).fetch();
     const refuseFriend=Meteor.collection('notices').find({ type: 0, from: Meteor.userId() },{ sort: { createdAt: -1 } })
-    // refuseFriend.forEach((x) => {
-    //     x.noticeTo = PopulateUtil.user(x.to) || {};
-    // });
+    // const alsendToId=Meteor.collection('notices').find({ type: 0, from: Meteor.userId() },{ sort: { createdAt: -1 } })
     const newFriendNotice = [...refuseFriend];
-    console.log(newFriendNotice, Meteor.userId());
+    const sendAlready = [];
+    newFriendNotice.forEach((to) => {
+        const user_ = Meteor.collection('users').findOne({ _id:to.to});
+        if (user_) {
+            // users.push(user_);
+            sendAlready.push(user_.username)
+        }
+    });
+    console.log(newFriendNotice,sendAlready);
     return {
         newFriendNotice,
+        name,
+        sendAlready
     };
 }
 class Concat extends Component {
@@ -47,36 +71,29 @@ class Concat extends Component {
     selectedChat:{},
     try:true,
   }
-  _addPeople(item){
-    Meteor.call('searchFriends', item.user.username, (err, result) => {
-        console.log(err)
-        if (result){
-            console.log(result)
-            return(<Text>已添加</Text>)
-        }else if(this.props.status !==1){
-                   return (
-                   <TouchableOpacity onPress={this.props._onPressAdd}>
-                         <Text style={{color:'#29B6F6'}}>添加</Text>
-                    </TouchableOpacity>
-                   )
-              }else if( this.props.status ===1 ){
-                 return(<Text>已发送</Text>)}
-    });
-    //   if(item.name !=="淘淘" && this.props.status !==1){
-    //        return (
-    //        <TouchableOpacity onPress={this.props._onPressAdd}>
-    //              <Text style={{color:'#29B6F6'}}>添加</Text>
-    //         </TouchableOpacity>
-    //        )
-    //   }else if(item.name !=="淘淘" &&this.props.status ===1 ){
-    //      return(<Text>已发送</Text>)
-    //   }else{
-    //     return( <Text>已添加</Text>)
-    //   }
-  }
+   _addPeople = (item) => {
+       const namelist=this.props.name;
+       console.log(item)
+     if(this.props.name.indexOf(item.user.username)!==-1){ 
+        return (<Text>已添加</Text>)
+     }else{
+        if(this.props.sendAlready.indexOf(item.user.username)!==-1){
+            return (<Text>已发送</Text>)
+        }else{
+            return (<TouchableOpacity onPress={this.props._onPressAdd}>
+                    <Text style={{color:'#29B6F6'}}>添加</Text>
+                </TouchableOpacity>
+                )
+            } 
+        }
+     }
+
   _renderFlatlist(item) {
-      const {profile={},username,_id}=item.user
-      const {name,avatar}=profile
+      const {profile={},username,_id}=item.user;
+      const {name,avatar}=profile;
+       const namelist=this.props.name;
+      const status=namelist.indexOf(username)==-1?1:2
+      console.log(username)
     return (
       <View style={styles.total} >
        {item.showType?
@@ -86,7 +103,7 @@ class Concat extends Component {
        :
        <Text style={styles.left}/>}
         <TouchableHighlight 
-             onPress={ () => this.props._onPressButton(name,username,avatar,_id) } 
+             onPress={ () => this.props._onPressButton(name,username,avatar,_id,status) } 
              underlayColor='transparent'
              style={{ flex:1 }}
         >
@@ -100,10 +117,11 @@ class Concat extends Component {
                <Text style={styles.numlist}>{username}</Text>
             </View>
             </View>
-            {this.props.add?
-            <View >
-               {this._addPeople(item)}
-               </View>:null}
+            {this.props.add ?
+                <View >
+                    {this._addPeople(item)}
+               </View> : null
+            }
           </View>
       </TouchableHighlight>
       </View>
