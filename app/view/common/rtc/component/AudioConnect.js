@@ -62,28 +62,37 @@ const styles = StyleSheet.create({
     avatarDiv: {
         marginTop: 30,
         marginRight: 30,
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
+        flexDirection: 'column',
+        alignItems: 'center'
+    },
+    avatar: {
+        height: 100,
+        width: 100,
+        borderRadius: 50,
+    },
+    status: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });
 
-const Connected = ({ _handleHangUp, _handleTabAudio, _handleTabCamera, name, company }) => (
+const AudioConnect = ({ _handleHangUp, _handleMute, _handleHandsFree, name, company, avatar }) => (
     <View style={styles.connected}>
-        <TouchableOpacity
-            style={styles.avatarDiv}
-            onPress={_handleTabCamera}
-        >
-            <Text style={styles.callIcon}>&#xe642;</Text>
-        </TouchableOpacity>
+        <View style={styles.avatarDiv}>
+            <Image source={require('../../../../image/Andy.png')} style={styles.avatar} />
+            <Text style={{ fontSize: 16, color: '#fff', marginTop: 10 }}>{name || '山东黄金'}</Text>
+        </View>
+        <View style={styles.status}><Text style={{ color: '#fff', fontSize: 20 }}>{name}00:00:04</Text></View>
         <View style={styles.actions}>
             <View style={styles.actionDiv}>
                 <TouchableOpacity
-                    onPress={_handleTabAudio}
+                    onPress={_handleMute}
                     style={[styles.iconDiv]}
                 >
-                    <Text style={styles.callIcon}>&#xe658;</Text>                 
+                    <Text style={styles.callIcon}>&#xe60a;</Text>                 
                 </TouchableOpacity>
-                <Text style={styles.callText}>切换语音聊天</Text>   
+                <Text style={styles.callText}>静音</Text>   
             </View>
             <View style={styles.actionDiv}>
                 <TouchableOpacity
@@ -97,13 +106,14 @@ const Connected = ({ _handleHangUp, _handleTabAudio, _handleTabCamera, name, com
             <View style={styles.actionDiv}>
                 <TouchableOpacity
                     style={styles.iconDiv}
+                    onPress={_handleHandsFree}
                 >
-                    <Text style={styles.callIcon}>&#xe615;</Text>                   
+                    <Text style={styles.callIcon}>&#xe628;</Text>                   
                 </TouchableOpacity>
-                <Text style={styles.callText}>收起视频</Text> 
+                <Text style={styles.callText}>免提</Text> 
             </View>
         </View>
     </View>
 );
 
-export default Connected;
+export default AudioConnect;
