@@ -80,7 +80,7 @@ class Concat extends Component {
         if(this.props.sendAlready.indexOf(item.user.username)!==-1){
             return (<Text>已发送</Text>)
         }else{
-            return (<TouchableOpacity onPress={this.props._onPressAdd}>
+            return (<TouchableOpacity onPress={()=>this.props._onPressAdd(item.user._id,item.user.profile.name)}>
                     <Text style={{color:'#29B6F6'}}>添加</Text>
                 </TouchableOpacity>
                 )

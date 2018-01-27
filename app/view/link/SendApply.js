@@ -32,7 +32,7 @@ const  navigationOptions =({navigation}) =>({
     Meteor.subscribe('users');
     const {_id}=navigation.state.params
     const chatUser = Meteor.collection('users').findOne({ _id}) || {};
-    console.log(chatUser);
+    console.log(chatUser,navigation.state.params);
     return {
         chatUser,
     };

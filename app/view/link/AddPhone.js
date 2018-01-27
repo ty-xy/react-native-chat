@@ -43,9 +43,9 @@ export default class Love extends Component {
   
     tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe635;</Text>),
   })
-  _onPressButtonAdd=(id)=>{
+  _onPressButtonAdd=(id,name)=>{
     const { navigation } = this.props;
-    navigation.navigate('SendApply', { id: '323', name:"taotao"});
+    navigation.navigate('SendApply', { id, name});
     this.setState({
              status:1
       })
