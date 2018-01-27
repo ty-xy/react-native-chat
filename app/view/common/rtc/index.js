@@ -13,6 +13,8 @@ import {
   Dimensions,
   Image
 } from 'react-native';
+import Meteor from 'react-native-meteor';
+
 
 import io from 'socket.io-client';
 import {
@@ -27,7 +29,10 @@ import {
 import Connected from './component/Connected';
 import Call from './component/Call'
 import Accept from './component/Accept';
-import AudioConnect from './component/AudioConnect'
+import AudioConnect from './component/AudioConnect';
+import userUtil from '../../../util/user';
+
+
 
 const socket = io.connect('https://creek.xin:13229', {transports: ['websocket']});
 const window = Dimensions.get('window');
@@ -81,6 +86,11 @@ function getLocalStream(isFront, callback) {
 
 function join(roomID) {
     socket.emit('connect', roomID);
+    console.log('join', roomID)
+    // 通知对象
+    Meteor.call('callVideo', roomID, (err, res) => {
+        console.log('callVideo', err, res)
+    });
     socket.emit('join', roomID, function(socketIds){
         console.log('join', socketIds);
         for (const i in socketIds) {
@@ -264,7 +274,8 @@ class RCTWebRTC extends Component {
         };
     }
     componentWillMount() {
-        console.log('componentWillMount')
+        console.log('componentWillMount');
+        this._switchVideoType();
     }
     componentDidMount() {
         console.log('componentDidMount', this)
@@ -285,16 +296,17 @@ class RCTWebRTC extends Component {
             //     container.setState({status: 'ready', info: 'Please enter or create room ID'});
             // });
         });
-        this._switchVideoType();
-        setTimeout(() => {
-            this._press();
-        }, 500);
-        // this._press();
+        // setTimeout(() => {
+        //     this._press();
+        // }, 500);
+        this._call();
     }
-    _press = (event) => {
+    _call = (event) => {
         // this.roomID.blur();
+        const { navigation } = this.props;
         this.setState({status: 'connect', info: 'Connecting'});
-        join(this.state.roomID);
+        join(navigation.state.params && navigation.state.params.callId);
+        console.log('_call', this.props)
     }
     _switchVideoType = () => {
         const isFront = !this.state.isFront;
@@ -415,7 +427,7 @@ class RCTWebRTC extends Component {
             /> */}
             <AudioConnect
                 _handleHangUp={this._handleHangUp}
-                _handleHangUp={this._handleHangUp}
+                _handleHandsFree={this._handleHandsFree}
                 _handleMute={this._handleMute}
                 {...this.state}
                 {...this.props}

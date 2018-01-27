@@ -46,7 +46,6 @@ const subCollection = () => () => {
     Meteor.subscribe('notice');
     Meteor.subscribe('message');
     const chatList = UserUtil.getChatList();
-    console.log('withTracker', chatList, Meteor.userId(), Meteor.collection('users'));
     chatList.forEach((item, index) => {
         Object.assign(item, Meteor.collection('group').findOne({ _id: item.groupId }));
         const allNum = Meteor.collection('messages').find({ 'to.userId': Meteor.userId(), groupId: item.groupId }) || [];
@@ -100,7 +99,10 @@ class Home extends Component {
             }
         });
     }
-
+    // componentWillReceiveProps(nextProps) {
+    //     console.log('nextProps', nextProps, this.props)
+    // }
+    
     // 恢复聊天记录
     _getLoginStorage = async () => {
         const res = await localStorage('login').get();
