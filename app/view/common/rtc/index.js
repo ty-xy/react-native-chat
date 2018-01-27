@@ -26,9 +26,10 @@ import {
 } from 'react-native-webrtc';
 import Connected from './component/Connected';
 import Call from './component/Call'
+import Accept from './component/Accept';
+import AudioConnect from './component/AudioConnect'
 
 const socket = io.connect('https://creek.xin:13229', {transports: ['websocket']});
-console.ignoredYellowBox = ['Setting a timer'];
 const window = Dimensions.get('window');
 
 // const configuration = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
@@ -90,32 +91,32 @@ function join(roomID) {
 }
 
 function createPC(socketId, isOffer) {
-  const pc = new RTCPeerConnection(configuration);
-  pcPeers[socketId] = pc;
+    const pc = new RTCPeerConnection(configuration);
+    pcPeers[socketId] = pc;
 
-  pc.onicecandidate = function (event) {
-    console.log('onicecandidate', event.candidate);
-    if (event.candidate) {
-      socket.emit('exchange', {'to': socketId, 'candidate': event.candidate });
+    pc.onicecandidate = function (event) {
+        console.log('onicecandidate', event.candidate);
+        if (event.candidate) {
+            socket.emit('exchange', {'to': socketId, 'candidate': event.candidate });
+        }
+    };
+
+    function createOffer() {
+        pc.createOffer(function(desc) {
+            console.log('createOffer', desc);
+            pc.setLocalDescription(desc, function () {
+                console.log('setLocalDescription', pc.localDescription);
+                socket.emit('exchange', {'to': socketId, 'sdp': pc.localDescription });
+            }, logError);
+        }, logError);
     }
-  };
 
-  function createOffer() {
-    pc.createOffer(function(desc) {
-      console.log('createOffer', desc);
-      pc.setLocalDescription(desc, function () {
-        console.log('setLocalDescription', pc.localDescription);
-        socket.emit('exchange', {'to': socketId, 'sdp': pc.localDescription });
-      }, logError);
-    }, logError);
-  }
-
-  pc.onnegotiationneeded = function () {
-    console.log('onnegotiationneeded');
-    if (isOffer) {
-      createOffer();
+    pc.onnegotiationneeded = function () {
+        console.log('onnegotiationneeded');
+        if (isOffer) {
+            createOffer();
+        }
     }
-  }
 
     pc.oniceconnectionstatechange = function(event) {
         console.log('oniceconnectionstatechange', event.target.iceConnectionState);
@@ -364,8 +365,13 @@ class RCTWebRTC extends Component {
     _handleMute = () => {
         console.log('静音')
     }
+    // 切换语音
     _handleTabAudio = () => {
         console.log('切换语音')
+    }
+    // 接听
+    _handleAccept = () => {
+        console.log('接听')
     }
     render() {
         const { isVideo, selfViewSrc, status, remoteList } = this.state;
@@ -382,23 +388,38 @@ class RCTWebRTC extends Component {
         
             {/* 拨打电话界面 */}
             {
-                status === 'connect' ?
-                <Connected
-                    _handleHangUp={this._handleHangUp}
-                    _handleTabAudio={this._handleTabAudio}
-                    _handleTabCamera={this._switchVideoType}
-                    {...this.state}
-                    {...this.props}
-                /> :
-                <Call
-                    _handleMute={this._handleMute}
-                    _handleHangUp={this._handleHangUp}
-                    _handleHandsFree={this._handleHandsFree}
-                    _handleTabAudio={this._handleTabAudio}
-                    {...this.state}
-                    {...this.props}
-                />
+                // status === 'connect' ?
+                // <Connected
+                //     _handleHangUp={this._handleHangUp}
+                //     _handleTabAudio={this._handleTabAudio}
+                //     _handleTabCamera={this._switchVideoType}
+                //     {...this.state}
+                //     {...this.props}
+                // /> :
+                // <Call
+                //     _handleMute={this._handleMute}
+                //     _handleHangUp={this._handleHangUp}
+                //     _handleHandsFree={this._handleHandsFree}
+                //     _handleTabAudio={this._handleTabAudio}
+                //     {...this.state}
+                //     {...this.props}
+                // />
             }
+            {/* 对方接听界面 */}
+            {/* <Accept
+                _handleAccept={this._handleAccept}
+                _handleHangUp={this._handleHangUp}
+                _handleTabAudio={this._handleTabAudio}
+                {...this.state}
+                {...this.props}
+            /> */}
+            <AudioConnect
+                _handleHangUp={this._handleHangUp}
+                _handleHangUp={this._handleHangUp}
+                _handleMute={this._handleMute}
+                {...this.state}
+                {...this.props}
+            />
             <View style={styles.listVideo}>
                 {
                     mapHash(remoteList, function(remote, index) {
@@ -415,31 +436,16 @@ const styles = StyleSheet.create({
     containerVideo: {
         flex: 1,
         justifyContent: 'center',
-        // backgroundColor: '#1A1A1A',
         position: 'relative',
-    },
-    welcome: {
-        margin: 10,
-        position: 'absolute',
-        top: 15,
-        left: 0,
-        right: 0,
-    },
-    tabCamera: {
-        width: 70,
-        height: 70,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 10,
-        position: 'absolute',
-        right: 0,
-        top: 0,
     },
     selfView: {
         position: 'absolute',
-        width: window.width,
-        height: window.height,
-        backgroundColor: 'transparent'
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        // backgroundColor: 'red',
+        flex: 1,
     },
     image: {
         position: 'absolute',
