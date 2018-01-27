@@ -54,6 +54,10 @@ const UserUtil = {
     getCompanyGrounpId() {
         return UserUtil.getProfile().groupId || '';
     },
+    // 获取视频
+    getVideo() {
+        return UserUtil.getProfile().videos || [];
+    }
 };
 export const userIdToInfo = {
     getProfile(users = [], userId) {

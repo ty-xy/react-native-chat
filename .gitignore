@@ -65,4 +65,6 @@ android/build
 /coverage
 /third-party
 
+/app/lib/server.js
+
 
