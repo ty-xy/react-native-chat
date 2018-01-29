@@ -164,7 +164,9 @@ const styles = StyleSheet.create({
         style={{width:'100%', height: 160}}
         >
          <View style={styles.first}>
-            <Image source={{uri:avatar}} style={styles.img} />
+         {avatar&&avatar.length>0?
+             <Image source={{uri : avatar}} style={styles.img} />:
+             <Image source={require('../../image/toufemail.png')} style={styles.img} />}
          </View>
         </ImageBackground>
          <View style={styles.flatlist}>

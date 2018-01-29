@@ -29,7 +29,7 @@ export default class Message extends PureComponent {
             <View style={styles.message}>
                 <Image
                     style={styles.avatar}
-                    source={uri ? { uri } : require('../../image/defaultAvatar.png') }                    
+                    source={uri ? { uri } : require('../../image/toufemail.png') }                    
                 />
                 <View style={styles.content}>
                     {chatType !== 'user' && <View style={[styles.contentLeftName, { justifyContent: 'flex-start' }]}><Text style={styles.text}>{userIdToInfo.getName(users, from)}</Text></View>}
@@ -53,7 +53,7 @@ export default class Message extends PureComponent {
                 </View>
                 <Image
                     style={styles.avatar}
-                    source={uri ? { uri } : require('../../image/defaultAvatar.png') }
+                    source={uri ? { uri } : require('../../image/toumail.png') }
                 />
             </View>
         );
