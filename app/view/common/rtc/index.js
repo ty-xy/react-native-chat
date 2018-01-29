@@ -373,8 +373,9 @@ class RCTWebRTC extends Component {
     // 挂断
     _handleHangUp = () => {
         console.log('挂断')
+        this.setState({ selfViewSrc: null });
         socket.emit('leave', this.state.roomID);
-        MediaStreamTrack.prototype.stop(this.state.roomID);
+        // leave(this.state.roomID);
     }
     // 静音
     _handleMute = () => {
@@ -382,7 +383,7 @@ class RCTWebRTC extends Component {
     }
     // 切换语音
     _handleTabAudio = () => {
-        console.log('切换语音')
+        console.log('切换语音')                        
     }
     // 接听
     _handleAccept = () => {
@@ -406,13 +407,6 @@ class RCTWebRTC extends Component {
                 <RTCView streamURL={selfViewSrc} style={styles.selfView}/> :
                 <Image source={require('../../../image/loginbg.jpg')} style={styles.image} resizeMode={"contain"} />
             }
-            <View style={styles.listVideo}>
-                {
-                    mapHash(remoteList, function(remote, index) {
-                        return <RTCView key={index} streamURL={remote} style={styles.remoteView}/>
-                    })
-                }
-            </View>
             <Text style={{color: '#fff'}}>{this.state.info} --- {this.state.isFront ? "Use front camera" : "Use back camera"}</Text>
         
             {/* 拨打电话界面 */}
@@ -442,13 +436,13 @@ class RCTWebRTC extends Component {
                 {...this.state}
                 {...this.props}
             /> */}
-            {/* <AudioConnect
+            <AudioConnect
                 _handleHangUp={this._handleHangUp}
                 _handleHandsFree={this._handleHandsFree}
                 _handleMute={this._handleMute}
                 {...this.state}
                 {...this.props}
-            /> */}
+            />
         </View>
         );
     }

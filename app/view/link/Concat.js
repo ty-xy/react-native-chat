@@ -18,6 +18,7 @@ import pinyin from 'pinyin';
 import Meteor from 'react-native-meteor';
 import MeteorContainer from '../../component/MeteorContainer';
 import UserUtil from '../../util/user';
+import PopulateUtil from '../../util/populate';
 import userinfo, { userIdToInfo } from '../../util/user';
 const navigationOptions =()=>{
 
@@ -27,7 +28,7 @@ const subCollection = () => () => {
     // 找出别人向你发起的好友认证
     Meteor.subscribe('users');
     const friendIds = UserUtil.getFriends();
-    // console.log(friendIds);
+    // .log(friendIds);
     const users = [];
     const name=[];
     friendIds.forEach((_id) => {
@@ -37,7 +38,7 @@ const subCollection = () => () => {
             name.push(user_.username)
         }
     });
-    console.log(users,name)
+    // .log(users,name)
     let friendNotice = Meteor.collection('notices').find({ type: 0, to: Meteor.userId() },{ sort: { createdAt: -1 } });
 
     friendNotice.forEach((x) => {
@@ -56,7 +57,7 @@ const subCollection = () => () => {
             sendAlready.push(user_.username)
         }
     });
-    console.log(newFriendNotice,sendAlready);
+    // .log(newFriendNotice,sendAlready);
     return {
         newFriendNotice,
         name,
@@ -73,7 +74,7 @@ class Concat extends Component {
   }
    _addPeople = (item) => {
        const namelist=this.props.name;
-       console.log(item)
+    //    .log(item)
      if(this.props.name.indexOf(item.user.username)!==-1){ 
         return (<Text>已添加</Text>)
      }else{
@@ -93,7 +94,7 @@ class Concat extends Component {
       const {name,avatar}=profile;
        const namelist=this.props.name;
       const status=namelist.indexOf(username)==-1?1:2
-      console.log(username)
+    //   .log(username)
     return (
       <View style={styles.total} >
        {item.showType?
@@ -171,8 +172,8 @@ _captureRef = (ref) => { this._listRef = ref};
 
   render() {
     // const data =this.props.link.pinyinData
-    // console.log(this.props.navigation,this.props.datalist)
-    console.log(this.props.datalist)
+    // .log(this.props.navigation,this.props.datalist)
+    // .log(this.props.datalist)
     return (
       <View style={styles.container}>
              <View style={styles.search}>
