@@ -85,7 +85,7 @@ function getLocalStream(isFront, callback) {
 }
 
 function join(roomID) {
-    socket.emit('connect', roomID);
+    // socket.emit('connect', roomID);
     console.log('join', roomID)
     // 通知对象
     Meteor.call('callVideo', roomID, (err, res) => {
@@ -276,11 +276,11 @@ class RCTWebRTC extends Component {
         };
     }
     componentWillMount() {
-        console.log('componentWillMount');
+        const { navigation } = this.props;
+        console.log('componentWillMount', navigation.state);
         this._switchVideoType();
     }
     componentDidMount() {
-        console.log('componentDidMount', this)
         container = this;
         socket.on('exchange', function(data){
             exchange(data);
@@ -301,13 +301,17 @@ class RCTWebRTC extends Component {
         // setTimeout(() => {
         //     this._press();
         // }, 500);
-        this._call();
+        const { params } = this.props.navigation.state;
+        console.log('componentDidMount==========', params.callId, params.send)
+        // if (params.callId && !params.send) {
+            this._call();
+        // }
     }
     _call = () => {
         // this.roomID.blur();
-        const { navigation } = this.props;
+        const { params } = this.props.navigation.state;
         this.setState({status: 'connect', info: 'Connecting'});
-        join(navigation.state.params && navigation.state.params.callId);
+        join(params.callId);
         console.log('_call', this.props)
     }
     _switchVideoType = () => {

@@ -20,6 +20,9 @@ import MeteorContainer from '../../component/MeteorContainer';
 import UserUtil from '../../util/user';
 import PopulateUtil from '../../util/populate';
 import userinfo, { userIdToInfo } from '../../util/user';
+// import PopulateUtil from '../../util/populate';
+
+
 const navigationOptions =()=>{
 
 }
@@ -38,7 +41,7 @@ const subCollection = () => () => {
             name.push(user_.username)
         }
     });
-    // .log(users,name)
+    // console.log(users,name)
     let friendNotice = Meteor.collection('notices').find({ type: 0, to: Meteor.userId() },{ sort: { createdAt: -1 } });
 
     friendNotice.forEach((x) => {
@@ -57,7 +60,6 @@ const subCollection = () => () => {
             sendAlready.push(user_.username)
         }
     });
-    // .log(newFriendNotice,sendAlready);
     return {
         newFriendNotice,
         name,
@@ -74,7 +76,6 @@ class Concat extends Component {
   }
    _addPeople = (item) => {
        const namelist=this.props.name;
-    //    .log(item)
      if(this.props.name.indexOf(item.user.username)!==-1){ 
         return (<Text>已添加</Text>)
      }else{
@@ -94,7 +95,6 @@ class Concat extends Component {
       const {name,avatar}=profile;
        const namelist=this.props.name;
       const status=namelist.indexOf(username)==-1?1:2
-    //   .log(username)
     return (
       <View style={styles.total} >
        {item.showType?
@@ -172,8 +172,7 @@ _captureRef = (ref) => { this._listRef = ref};
 
   render() {
     // const data =this.props.link.pinyinData
-    // .log(this.props.navigation,this.props.datalist)
-    // .log(this.props.datalist)
+    // console.log(this.props.navigation,this.props.datalist)
     return (
       <View style={styles.container}>
              <View style={styles.search}>
