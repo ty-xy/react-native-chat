@@ -70,6 +70,7 @@ const subCollection = () => () => {
         x.sortTime = x.createdAt;
     });
     return {
+        user: Meteor.user() && Meteor.user().profile || {},
         chatList,
         allUnRead,
         newFriendNotice,
@@ -99,9 +100,15 @@ class Home extends Component {
             }
         });
     }
-    // componentWillReceiveProps(nextProps) {
-    //     console.log('nextProps', nextProps, this.props)
-    // }
+    componentWillReceiveProps(nextProps) {
+        const { video } = this.props.user;
+        const { user } = nextProps;
+        console.log('video', video, user)
+        if (video && video.videoId && (user.video.videoId !== video.videoId)) {
+            console.log('RTCto')
+            this.props.navigation.navigate('RTC', { callId: user.video.groupId });
+        }
+    }
     
     // 恢复聊天记录
     _getLoginStorage = async () => {

@@ -89,13 +89,15 @@ function join(roomID) {
     console.log('join', roomID)
     // 通知对象
     Meteor.call('callVideo', roomID, (err, res) => {
-        console.log('callVideo', err, res)
-    });
-    socket.emit('join', roomID, function(socketIds){
-        console.log('join', socketIds);
-        for (const i in socketIds) {
-            const socketId = socketIds[i];
-            createPC(socketId, true);
+        console.log('发送视频消息', err, res)
+        if (res) {
+            socket.emit('join', roomID, function(socketIds){
+                console.log('join', socketIds);
+                for (const i in socketIds) {
+                    const socketId = socketIds[i];
+                    createPC(socketId, true);
+                }
+            });
         }
     });
 }
@@ -301,7 +303,7 @@ class RCTWebRTC extends Component {
         // }, 500);
         this._call();
     }
-    _call = (event) => {
+    _call = () => {
         // this.roomID.blur();
         const { navigation } = this.props;
         this.setState({status: 'connect', info: 'Connecting'});
@@ -404,6 +406,13 @@ class RCTWebRTC extends Component {
                 <RTCView streamURL={selfViewSrc} style={styles.selfView}/> :
                 <Image source={require('../../../image/loginbg.jpg')} style={styles.image} resizeMode={"contain"} />
             }
+            <View style={styles.listVideo}>
+                {
+                    mapHash(remoteList, function(remote, index) {
+                        return <RTCView key={index} streamURL={remote} style={styles.remoteView}/>
+                    })
+                }
+            </View>
             <Text style={{color: '#fff'}}>{this.state.info} --- {this.state.isFront ? "Use front camera" : "Use back camera"}</Text>
         
             {/* 拨打电话界面 */}
@@ -433,20 +442,13 @@ class RCTWebRTC extends Component {
                 {...this.state}
                 {...this.props}
             /> */}
-            <AudioConnect
+            {/* <AudioConnect
                 _handleHangUp={this._handleHangUp}
                 _handleHandsFree={this._handleHandsFree}
                 _handleMute={this._handleMute}
                 {...this.state}
                 {...this.props}
-            />
-            <View style={styles.listVideo}>
-                {
-                    mapHash(remoteList, function(remote, index) {
-                        return <RTCView key={index} streamURL={remote} style={styles.remoteView}/>
-                    })
-                }
-            </View>
+            /> */}
         </View>
         );
     }
@@ -461,11 +463,10 @@ const styles = StyleSheet.create({
     selfView: {
         position: 'absolute',
         top: 0,
-        bottom: 0,
         left: 0,
         right: 0,
+        bottom: 300,
         // backgroundColor: 'red',
-        flex: 1,
     },
     image: {
         position: 'absolute',
@@ -474,12 +475,9 @@ const styles = StyleSheet.create({
     },
     listVideo: {
         position: 'absolute',
-        bottom: 100,
+        bottom: 150,
         right: 0,
-        // zIndex: 4,
-        backgroundColor: 'red',
         width: window.windth,
-        height: 180,
         flexDirection: 'row',
         justifyContent: 'flex-end',
         transform: [{'translate':[0,0,1]}],
