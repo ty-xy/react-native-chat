@@ -27,7 +27,7 @@ export default class Fujian extends Component {
         this.props.navigation.navigate('Love', { cardCase: true });
     }
     _sendRtc = () => {
-        this.props.navigation.navigate('RTC', { callId: this.props.to, send: false });
+        this.props.navigation.navigate('RTC', { callId: this.props.to, call: true, accept: false });
     }
     render() {
         // console.log('fujian', this.props)

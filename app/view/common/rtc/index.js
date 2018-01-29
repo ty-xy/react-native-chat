@@ -91,9 +91,10 @@ function join(roomID) {
     Meteor.call('callVideo', roomID, (err, res) => {
         console.log('发送视频消息', err, res)
         if (res) {
-            socket.emit('join', roomID, function(socketIds){
-                console.log('join', socketIds);
+            socket.emit('join', roomID, function(socketIds, res){
+                console.log('socketIds', socketIds, res);
                 for (const i in socketIds) {
+                    console.log('-------for-in----------')
                     const socketId = socketIds[i];
                     createPC(socketId, true);
                 }
@@ -198,6 +199,7 @@ function exchange(data) {
 
     if (data.sdp) {
         console.log('exchange sdp', data);
+        container.setState({ socketId: data });
         pc.setRemoteDescription(new RTCSessionDescription(data.sdp), function () {
         if (pc.remoteDescription.type == "offer")
             pc.createAnswer(function(desc) {
@@ -205,7 +207,7 @@ function exchange(data) {
                 pc.setLocalDescription(desc, function () {
                     console.log('setLocalDescription', pc.localDescription);
                     socket.emit('exchange', {'to': fromId, 'sdp': pc.localDescription });
-                }, logError);
+                }, (err) => logError(err, '4356789'));
             }, logError);
         }, logError);
     } else {
@@ -215,8 +217,8 @@ function exchange(data) {
 }
 
 function leave(socketId) {
-    console.log('leave', socketId);
     const pc = pcPeers[socketId];
+    console.log('leave', pc, pcPeers);
     const viewIndex = pc.viewIndex;
     pc.close();
     delete pcPeers[socketId];
@@ -227,8 +229,8 @@ function leave(socketId) {
     container.setState({info: 'One peer leave!'});
 }
 
-function logError(error) {
-    console.log("logError", error);
+function logError(error, name) {
+    console.log("logError", error, name);
 }
 
 function mapHash(hash, func) {
@@ -273,11 +275,22 @@ class RCTWebRTC extends Component {
             textRoomData: [],
             textRoomValue: '',
             isVideo: false,
+            isAudio: false,
+            call: true,  // 是否显示拨打界面
+            accept: false,  // 表示是否显示接听界面
+            connected: false,  //表示未接通
+            chatVideo: false,
+            chatAudio: false,
+            socketId: {},
         };
+        console.ignoredYellowBox = [
+            'Setting a timer'
+        ];
     }
     componentWillMount() {
-        const { navigation } = this.props;
-        console.log('componentWillMount', navigation.state);
+        const { params } = this.props.navigation.state;
+        console.log('componentWillMount', params);
+        this.setState({ ...params });
         this._switchVideoType();
     }
     componentDidMount() {
@@ -303,9 +316,9 @@ class RCTWebRTC extends Component {
         // }, 500);
         const { params } = this.props.navigation.state;
         console.log('componentDidMount==========', params.callId, params.send)
-        // if (params.callId && !params.send) {
+        if (params.callId && params.call && !params.accept) {
             this._call();
-        // }
+        }
     }
     _call = () => {
         // this.roomID.blur();
@@ -377,10 +390,11 @@ class RCTWebRTC extends Component {
     // 挂断
     _handleHangUp = () => {
         console.log('挂断')
+        const { state } = this.props.navigation;
+        const { socketId } = this.state;
+        // this.props.navigation.navigate('ChatWindow', { to: state.params.callId, name: state.params.name, index: 2 });
+        leave(socketId.from);
         // socket.emit('leave', this.state.roomID);
-        // this.setState({ selfViewSrc: null });
-        socket.emit('leave', this.state.roomID);
-        // leave(this.state.roomID);
     }
     // 静音
     _handleMute = () => {
@@ -393,25 +407,69 @@ class RCTWebRTC extends Component {
     // 接听
     _handleAccept = () => {
         console.log('接听')
+        this.setState({ accept: false, chatVideo: true, connected: true });
+        this._call();
+
     }
     render() {
-        const { isVideo, selfViewSrc, status, remoteList } = this.state;
+        const { isVideo, chatAudio, chatVideo, selfViewSrc, status, remoteList, call, accept, connected } = this.state;
         console.log('state', this.state)
         return (
         <View style={styles.containerVideo}>
             {/* {this.state.textRoomConnected && this._renderTextRoom()} */}
-            <View style={styles.listVideo}>
-                {
-                    mapHash(remoteList, function(remote, index) {
-                        return <RTCView key={index} streamURL={remote} style={styles.remoteView}/>
-                    })
-                }
-            </View>
             {
                 isVideo ? 
                 <RTCView streamURL={selfViewSrc} style={styles.selfView}/> :
                 <Image source={require('../../../image/loginbg.jpg')} style={styles.image} resizeMode={"contain"} />
             }
+            
+            <Text style={{color: '#fff'}}>{this.state.info} --- {this.state.isFront ? "Use front camera" : "Use back camera"}</Text>
+            <TouchableOpacity
+                onPress={this._call}
+            >
+                <Text>Send</Text>
+            </TouchableOpacity>
+            {/* 拨打电话界面 */}
+            {call && !accept && !connected && (
+                <Call
+                    _handleMute={this._handleMute}
+                    _handleHangUp={this._handleHangUp}
+                    _handleHandsFree={this._handleHandsFree}
+                    _handleTabAudio={this._handleTabAudio}
+                    {...this.state}
+                    {...this.props}
+                />)
+            }
+            {/* 对方接听界面 */}
+            {!call && accept && !connected && (
+                <Accept
+                    _handleAccept={this._handleAccept}
+                    _handleHangUp={this._handleHangUp}
+                    _handleTabAudio={this._handleTabAudio}
+                    {...this.state}
+                    {...this.props}
+                />)
+            }
+            {/* 视频聊天界面 */}
+            {chatVideo && connected && (
+                <Connected
+                    _handleHangUp={this._handleHangUp}
+                    _handleTabAudio={this._handleTabAudio}
+                    _handleTabCamera={this._switchVideoType}
+                    {...this.state}
+                    {...this.props}
+                />
+            )}
+            {/* 语音聊天界面 */}
+            {chatAudio && connected && (
+                <AudioConnect
+                    _handleHangUp={this._handleHangUp}
+                    _handleHandsFree={this._handleHandsFree}
+                    _handleMute={this._handleMute}
+                    {...this.state}
+                    {...this.props}
+                />
+            )}
             <View style={styles.listVideo}>
                 {
                     mapHash(remoteList, function(remote, index) {
@@ -419,42 +477,6 @@ class RCTWebRTC extends Component {
                     })
                 }
             </View>
-            <Text style={{color: '#fff'}}>{this.state.info} --- {this.state.isFront ? "Use front camera" : "Use back camera"}</Text>
-        
-            {/* 拨打电话界面 */}
-            {
-                // status === 'connect' ?
-                // <Connected
-                //     _handleHangUp={this._handleHangUp}
-                //     _handleTabAudio={this._handleTabAudio}
-                //     _handleTabCamera={this._switchVideoType}
-                //     {...this.state}
-                //     {...this.props}
-                // /> :
-                // <Call
-                //     _handleMute={this._handleMute}
-                //     _handleHangUp={this._handleHangUp}
-                //     _handleHandsFree={this._handleHandsFree}
-                //     _handleTabAudio={this._handleTabAudio}
-                //     {...this.state}
-                //     {...this.props}
-                // />
-            }
-            {/* 对方接听界面 */}
-            {/* <Accept
-                _handleAccept={this._handleAccept}
-                _handleHangUp={this._handleHangUp}
-                _handleTabAudio={this._handleTabAudio}
-                {...this.state}
-                {...this.props}
-            /> */}
-            <AudioConnect
-                _handleHangUp={this._handleHangUp}
-                _handleHandsFree={this._handleHandsFree}
-                _handleMute={this._handleMute}
-                {...this.state}
-                {...this.props}
-            />
         </View>
         );
     }
@@ -472,7 +494,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 300,
-        // backgroundColor: 'red',
+        backgroundColor: 'blue',
     },
     image: {
         position: 'absolute',
@@ -481,12 +503,13 @@ const styles = StyleSheet.create({
     },
     listVideo: {
         position: 'absolute',
+        height: 400,
         bottom: 150,
-        right: 0,
         width: window.windth,
         flexDirection: 'row',
         justifyContent: 'flex-end',
         transform: [{'translate':[0,0,1]}],
+        backgroundColor: 'red',
     },
     remoteView: {
         width: 160,
