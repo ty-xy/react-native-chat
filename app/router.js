@@ -50,6 +50,7 @@ const TabNavigation = TabNavigator({
   },
 }, {
   initialRouteName: 'Home',
+  lazy: true, // 是否懒加载  
   order: ['Home', 'Link', 'Personal'],
   tabBarOptions: {
     inactiveTintColor: '#999A9B',
@@ -76,7 +77,6 @@ const TabNavigation = TabNavigator({
       backgroundColor: '#fff',
     },
   },
-  lazy: true, // 是否根据需要懒惰呈现标签，而不是提前制作，
   animationEnabled: false,
   tabBarPosition: 'bottom', // 显示在底端，android 默认是显示在页面顶端的
   swipeEnabled: false,

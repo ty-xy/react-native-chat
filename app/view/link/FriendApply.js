@@ -62,13 +62,12 @@ const subCollection = () => () => {
     };
 };
  class Person extends Component {
-  constructor(props){
-    super(props);
-    this.state={
-        text:'手机号查找',
-        // status:true,
-  }
-}
+    constructor(props){
+        super(props);
+        this.state={
+            text:'手机号查找',
+        }
+    }
 
   _goChatWindow = (id,name,number,avatar,dealResult) => {
     const { navigation } = this.props;
@@ -81,19 +80,19 @@ const subCollection = () => () => {
 }
 _onChangeStatus=(id)=>{
     this.setState({
-      status:false,
-      [`status${id}`]:false
+        status:false,
+        [`status${id}`]:false
     })
     console.log(1111)
 }
 _renderItem = ({item}) => {
     return (
         <AddCard
-         {...item} 
-         key={item._id} 
-         _goChatWindow={this._goChatWindow}
-         dealNotice={this.dealNotice}
-           />)
+            {...item} 
+            key={item._id} 
+            _goChatWindow={this._goChatWindow}
+            dealNotice={this.dealNotice}
+        />)
 }
 dealNotice = async (noticeId, index, friendId, user) => {
     console.log(111);

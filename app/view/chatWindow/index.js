@@ -142,9 +142,9 @@ class ChatWindow extends Component {
     componentWillMount () {
         // this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
         // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
-        if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid);
-        }
+        // if (Platform.OS === 'android') {
+            // BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid);
+        // }
     }
     componentDidMount() {
         const { navigation } = this.props;

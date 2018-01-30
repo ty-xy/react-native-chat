@@ -17,7 +17,7 @@ import {
 
 const styles = StyleSheet.create({
     call: {
-        // backgroundColor: 'red',
+        backgroundColor: 'transparent',
         position: 'absolute',
         top: 0,
         left: 0,
@@ -33,6 +33,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         height: 140,
         paddingBottom: 40,
+        backgroundColor: 'transparent'
+        
     },
     actionDiv: {
         justifyContent: 'center',
@@ -62,7 +64,8 @@ const styles = StyleSheet.create({
         marginTop: 30,
         marginLeft: 30,
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: 'transparent'
     },
     status: {
         flex: 1,
@@ -76,8 +79,8 @@ const styles = StyleSheet.create({
         borderRadius: 28,
     },
     tab: {
-        justifyContent: 'center',
         alignItems: 'center',
+        marginBottom: 20,
     },
 });
 

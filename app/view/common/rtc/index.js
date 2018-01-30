@@ -205,7 +205,6 @@ function exchange(data) {
             pc.createAnswer(function(desc) {
                 console.log('createAnswer', desc);
                 pc.setLocalDescription(desc, function () {
-                    console.log('setLocalDescription-----success', pc.localDescription);
                     socket.emit('exchange', {'to': fromId, 'sdp': pc.localDescription });
                 }, (err) => logError(err, '4356789'));
             }, logError);
@@ -229,7 +228,7 @@ function leave(socketId) {
     container.setState({ remoteList: remoteList });
     container.setState({info: 'One peer leave!'});
     // container.props.navigation.navigate('ChatWindow', { to: state.params.callId, name: state.params.name, index: 2 });    
-    container.props.navigation.goback();
+    container.props.navigation.goBack(null);
 }
 
 function logError(error, name) {
@@ -500,14 +499,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         position: 'relative',
+        backgroundColor: 'transparent'
     },
     selfView: {
         position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 300,
-        // backgroundColor: 'blue',
+        width: window.width,
+        height: window.height,
+        backgroundColor: 'transparent'
     },
     image: {
         position: 'absolute',
@@ -521,7 +519,6 @@ const styles = StyleSheet.create({
         width: window.windth,
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        // transform: [{'translate':[0,0,1]}],
         backgroundColor: 'red',
     },
     remoteView: {
@@ -536,6 +533,3 @@ const styles = StyleSheet.create({
 });
 
 export default RCTWebRTC;
-
-// import WebRTC from './rtc/App'
-// export default WebRTC;
