@@ -5,7 +5,7 @@ import {
   Text,
   FlatList,
   View,
-  TouchableHighlight
+  TouchableOpacity
 } from 'react-native';
 
 
@@ -41,11 +41,11 @@ export default class Invite extends Component {
               </View>
           </View>
               <View style={styles.bottom}>
-              <TouchableHighlight onPress={() => {
+              <TouchableOpacity onPress={() => {
               this.props.hide(false)
             }}>
               <Text >取消</Text>
-              </TouchableHighlight>
+              </TouchableOpacity>
             </View>
       </View>
     );

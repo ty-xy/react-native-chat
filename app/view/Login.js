@@ -12,11 +12,11 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Meteor from 'react-native-meteor';
-import Toast from 'react-native-easy-toast'
-import toast from '../util/util'
+import Toast from 'react-native-easy-toast';
+import toast from '../util/util';
 import localStorage from '../util/storage';
-import _navigation from '../util/navigation'
-import util from '../util/util'
+import _navigation from '../util/navigation';
+import util from '../util/util';
 
 class Login extends Component {
     static navigationOptions = {
@@ -118,7 +118,9 @@ class Login extends Component {
                                 </LinearGradient>
                             </TouchableOpacity>
                             <View style={styles.regback}>
+                               <TouchableOpacity onPress={()=>this.props.navigation.navigate('Register')}>
                                 <Text style={styles.register}>新用户注册</Text>
+                                </TouchableOpacity>
                                 <Text style={styles.register}>忘记密码</Text>
                             </View>
                             <View style={styles.other}>

@@ -5,7 +5,7 @@ import {
     StyleSheet,
     Text,
     View,
-    TouchableHighlight,
+    // TouchableOpacity,
     TouchableOpacity
 } from 'react-native';
 
@@ -42,9 +42,9 @@ export default class Card extends PureComponent {
     return (
         <View>
                {showType?
-        <TouchableHighlight
+        <TouchableOpacity
             style={styles.card}
-            underlayColor={'rgba(100,100,100,0.2)'}
+            // underlayColor={'rgba(100,100,100,0.2)'}
             onPress={() => {
                 this.props._goChatWindow(from,name,username,avatar,dealResult);
             }}
@@ -72,7 +72,7 @@ export default class Card extends PureComponent {
                 {/* <View style={styles.badge}><Text style={{fontSize: 12, color: '#fff'}}>23</Text></View> */}
             </View>
            
-        </TouchableHighlight>:null}
+        </TouchableOpacity>:null}
          </View>
     );
   }

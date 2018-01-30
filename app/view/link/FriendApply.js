@@ -23,6 +23,7 @@ const navigationOptions =(navigation)=>({
     alignSelf: 'center',
     headerTruncatedBackTitle:'返回',
     headerBackTitle:'返回',
+    headerRight:(<Text style={{color:'transparent'}}>111</Text>),
     headerStyle: {
       height: 49,
       backgroundColor: '#fff',
