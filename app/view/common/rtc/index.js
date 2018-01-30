@@ -85,7 +85,7 @@ function getLocalStream(isFront, callback) {
 }
 
 function join(roomID) {
-    // socket.emit('connect', roomID);
+    socket.emit('connect', roomID);
     console.log('join', roomID)
     // 通知对象
     Meteor.call('callVideo', roomID, (err, res) => {
@@ -205,7 +205,7 @@ function exchange(data) {
             pc.createAnswer(function(desc) {
                 console.log('createAnswer', desc);
                 pc.setLocalDescription(desc, function () {
-                    console.log('setLocalDescription', pc.localDescription);
+                    console.log('setLocalDescription-----success', pc.localDescription);
                     socket.emit('exchange', {'to': fromId, 'sdp': pc.localDescription });
                 }, (err) => logError(err, '4356789'));
             }, logError);
@@ -223,10 +223,13 @@ function leave(socketId) {
     pc.close();
     delete pcPeers[socketId];
 
+    const { state } = container.props.navigation;
     const remoteList = container.state.remoteList;
     delete remoteList[socketId]
     container.setState({ remoteList: remoteList });
     container.setState({info: 'One peer leave!'});
+    // container.props.navigation.navigate('ChatWindow', { to: state.params.callId, name: state.params.name, index: 2 });    
+    container.props.navigation.goback();
 }
 
 function logError(error, name) {
@@ -295,22 +298,26 @@ class RCTWebRTC extends Component {
     }
     componentDidMount() {
         container = this;
+        socket.connect();
         socket.on('exchange', function(data){
             exchange(data);
         });
         socket.on('leave', function(socketId){
-            console.log('socketId', socketId)
+            console.log('socket------leave', socketId)
             leave(socketId);
             
         });
         socket.on('connect', function(data) {
             console.log('connect', container);
-            // getLocalStream(true, function(stream) {
-            //     localStream = stream;
-            //     container.setState({selfViewSrc: stream.toURL()});
-            //     container.setState({status: 'ready', info: 'Please enter or create room ID'});
-            // });
+            getLocalStream(true, function(stream) {
+                localStream = stream;
+                container.setState({selfViewSrc: stream.toURL()});
+                container.setState({status: 'ready', info: 'Please enter or create room ID'});
+            });
         });
+        socket.on('join', function(data) {
+            console.log('join', data)
+        })
         // setTimeout(() => {
         //     this._press();
         // }, 500);
@@ -320,18 +327,23 @@ class RCTWebRTC extends Component {
             this._call();
         }
     }
+    // componentWillUnmount() {
+    //     console.log('componentWillUnmount')
+    // }
+    
     _call = () => {
         // this.roomID.blur();
         const { params } = this.props.navigation.state;
         this.setState({status: 'connect', info: 'Connecting'});
         join(params.callId);
-        console.log('_call', this.props)
+        // console.log('_call', this.props)
     }
     _switchVideoType = () => {
         const isFront = !this.state.isFront;
         this.setState({isFront});
         getLocalStream(isFront, function(stream) {
             if (localStream) {
+                console.log('pcPeers----1', pcPeers)
                 for (const id in pcPeers) {
                     const pc = pcPeers[id];
                     pc && pc.removeStream(localStream);
@@ -339,9 +351,10 @@ class RCTWebRTC extends Component {
                 localStream.release();
             }
             localStream = stream;
-            container.setState({selfViewSrc: stream.toURL(), isVideo: true });
+            container.setState({ selfViewSrc: stream.toURL(), isVideo: true });
 
             for (const id in pcPeers) {
+                console.log('pcPeers----2', pcPeers)
                 const pc = pcPeers[id];
                 pc && pc.addStream(localStream);
             }
@@ -394,7 +407,8 @@ class RCTWebRTC extends Component {
         const { socketId } = this.state;
         // this.props.navigation.navigate('ChatWindow', { to: state.params.callId, name: state.params.name, index: 2 });
         leave(socketId.from);
-        // socket.emit('leave', this.state.roomID);
+        socket.close();
+        // socket.emit('leave', socketId.from);
     }
     // 静音
     _handleMute = () => {
@@ -422,7 +436,13 @@ class RCTWebRTC extends Component {
                 <RTCView streamURL={selfViewSrc} style={styles.selfView}/> :
                 <Image source={require('../../../image/loginbg.jpg')} style={styles.image} resizeMode={"contain"} />
             }
-            
+            <View style={styles.listVideo}>
+                {
+                    mapHash(remoteList, function(remote, index) {
+                        return <RTCView key={index} streamURL={remote} style={styles.remoteView}/>
+                    })
+                }
+            </View>
             <Text style={{color: '#fff'}}>{this.state.info} --- {this.state.isFront ? "Use front camera" : "Use back camera"}</Text>
             <TouchableOpacity
                 onPress={this._call}
@@ -470,13 +490,6 @@ class RCTWebRTC extends Component {
                     {...this.props}
                 />
             )}
-            <View style={styles.listVideo}>
-                {
-                    mapHash(remoteList, function(remote, index) {
-                        return <RTCView key={index} streamURL={remote} style={styles.remoteView}/>
-                    })
-                }
-            </View>
         </View>
         );
     }
@@ -494,7 +507,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 300,
-        backgroundColor: 'blue',
+        // backgroundColor: 'blue',
     },
     image: {
         position: 'absolute',
@@ -508,7 +521,7 @@ const styles = StyleSheet.create({
         width: window.windth,
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        transform: [{'translate':[0,0,1]}],
+        // transform: [{'translate':[0,0,1]}],
         backgroundColor: 'red',
     },
     remoteView: {
