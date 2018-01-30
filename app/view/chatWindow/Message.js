@@ -31,7 +31,7 @@ export default class Message extends PureComponent {
                     source={uri ? { uri } : require('../../image/toufemail.png') }                    
                 />
                 <View style={styles.content}>
-                    {chatType !== 'user' && <View style={[styles.contentLeftName, { justifyContent: 'flex-start', marginLeft: 10, fontSize: 10 }]}><Text style={styles.text}>{userIdToInfo.getName(users, from)}</Text></View>}
+                    {chatType !== 'user' && <View style={[styles.contentLeftName, { justifyContent: 'flex-start', marginLeft: 10 }]}><Text style={[styles.text, {fontSize: 10}]}>{userIdToInfo.getName(users, from)}</Text></View>}
                     <View style={[styles.contentDiv, {marginTop: chatType === 'user' ? 21 : 0}]}>
                         <Text style={styles.text}>{content}</Text>
                     </View>

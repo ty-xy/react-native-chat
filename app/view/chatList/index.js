@@ -134,8 +134,15 @@ class Home extends Component {
         const res = await localStorage('login').get();
         return res;
     }
-    _goChatWindow = (to, name) => {
+    _goChatWindow = (to, name, type, unreadMessage) => {
         const { navigation } = this.props;
+        if (unreadMessage > 0) {
+            Meteor.call('readMessage', to, type, (err) => {
+                if (err) {
+                    return;
+                }
+            });
+        }
         navigation.navigate('ChatWindow', { to, name });
     }
     _goNewFriends = () => {
@@ -160,19 +167,50 @@ class Home extends Component {
             Meteor.call('deleteChat', groupId, type);
         }
     }
+    // 置顶
+    _handleTopUp = (stickTop, groupId) => {
+        console.log('_handleTopUp', stickTop, groupId)
+        let isTop = false;
+        stickTop.forEach((item) => {
+            if (item.userId === Meteor.userId()) {
+                isTop = true;
+            }
+        });
+        if (!isTop) {
+            Meteor.call('setGroupStickTop', groupId, (err, res) => {
+                if (!err) {
+                    this._handleCloseList()
+                }
+            });
+        } else {
+            Meteor.call('cancelGroupStickTop', groupId, (err, res) => {
+                if (!err) {
+                    this._handleCloseList()
+                }
+            });
+        }
+    }
+    // rowMap[rowKey].closeRow() 左滑打开
+    _handleOpenList = (rowKey, rowMap) => {
+        this.setState({ rowKey, rowMap });
+    }
+    _handleCloseList = () => {
+        const { rowKey, rowMap } = this.state;
+        rowMap[rowKey].closeRow()
+    }
     _renderItem = ({item}) => {
         return (<Card
             {...item}
             key={item._id}
             _goNewFriends={this._goNewFriends}
-            _goChatWindow={() => this._goChatWindow(item.groupId, item.name)}
+            _goChatWindow={() => this._goChatWindow(item.groupId, item.name, item.type, item.unreadMessage)}
         />);
     }
     _compare = property => (a, b) => b[property] - a[property];
 
     // 左滑显示的东西
     _moveLeft = (item) => {
-        console.log('_moveLeft', item)
+        // console.log('_moveLeft', item)
         if (item.type !== 'newFreidsAccept') {
             return (
                 <View style={styles.rowBack}>
@@ -184,7 +222,7 @@ class Home extends Component {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.opacityView, { backgroundColor: '#29B6F6', marginRight: 10 }]}
-                        onPress={this._handleTopUp}
+                        onPress={() => this._handleTopUp(item.stickTop, item.groupId)}
                     >
                         <Text style={styles.topUp}>&#xe644;</Text>
                     </TouchableOpacity>
@@ -256,6 +294,7 @@ class Home extends Component {
                         renderHiddenItem={(data, rowMap) => this._moveLeft(data.item)}
                         ListFooterComponent={() => <View style={{height: 15}} />}
                         rightOpenValue={-80}
+                        onRowOpen={(rowKey, rowMap) => this._handleOpenList(rowKey, rowMap)}
                     />
                 </View>
             </View>

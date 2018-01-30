@@ -33,12 +33,15 @@ export default class Card extends PureComponent {
 
     }
     _renderGroup = (avatar, name, lastMessage, time, type, unreadMessage, id, stickTop) => {
-        // const isMyDisturb = isDisturb.includes(Meteor.userId());
-        // const selfStickTop = stickTop.find(x => x.userId && x.userId === Meteor.userId());
-        // const arr = this.props.location.pathname.split('/');
+        let isTop = false;
+        stickTop.forEach((item) => {
+            if (item.userId === Meteor.userId()) {
+                isTop = true;
+            }
+        });
         return (
             <TouchableOpacity
-            onPress={() => this.props._goChatWindow()}
+                onPress={this.props._goChatWindow}
                 key={id}
                 style={styles.card}
                 activeOpacity={1}
@@ -50,7 +53,7 @@ export default class Card extends PureComponent {
                     />
                 </View>
                 <View style={styles.chatList}>
-                    {stickTop.length ? <View style={styles.top} /> : null}
+                    {isTop ? <View style={styles.top} /> : null}
                     <View style={styles.chatlistContent}>
                         <View style={styles.chatTitle}>
                             <Text style={styles.chatContent}>{name}</Text>
@@ -77,7 +80,7 @@ export default class Card extends PureComponent {
             key={id}
             style={styles.card}
             activeOpacity={1}
-            onPress={() => this.props._goNewFriends()}
+            onPress={this.props._goNewFriends()}
         >
             <View style={styles.avatar}>
                 <Image
@@ -121,12 +124,18 @@ export default class Card extends PureComponent {
         }
     }
     _renderUser = (user = { profile: {} }, lastMessage, time, type, unreadMessage, id, stickTop) => {
+        let isTop = false;
+        stickTop.forEach((item) => {
+            if (item.userId === Meteor.userId()) {
+                isTop = true;
+            }
+        });
         return (
             <TouchableOpacity
                 key={id}
                 style={styles.card}
                 activeOpacity={1}
-                onPress={() => this.props._goChatWindow()}
+                onPress={this.props._goChatWindow}
             >
                 <View style={styles.avatar}>
                     <Image
@@ -135,7 +144,7 @@ export default class Card extends PureComponent {
                     />
                 </View>
                 <View style={styles.chatList}>
-                    {stickTop.length ? <View style={styles.top} /> : null}
+                    {isTop ? <View style={styles.top} /> : null}
                     <View style={styles.chatlistContent}>
                         <View style={styles.chatTitle}>
                             <Text style={styles.chatContent}>{user.profile.name}</Text>
