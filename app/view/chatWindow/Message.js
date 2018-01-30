@@ -24,7 +24,6 @@ export default class Message extends PureComponent {
     messageLeft = () => {
         const { from, content, chatType, users } = this.props;
         const uri = userIdToInfo.getAvatar(users, from);  
-        
         return (
             <View style={styles.message}>
                 <Image
@@ -32,7 +31,7 @@ export default class Message extends PureComponent {
                     source={uri ? { uri } : require('../../image/toufemail.png') }                    
                 />
                 <View style={styles.content}>
-                    {chatType !== 'user' && <View style={[styles.contentLeftName, { justifyContent: 'flex-start' }]}><Text style={styles.text}>{userIdToInfo.getName(users, from)}</Text></View>}
+                    {chatType !== 'user' && <View style={[styles.contentLeftName, { justifyContent: 'flex-start', marginLeft: 10 }]}><Text style={[styles.text, {fontSize: 10}]}>{userIdToInfo.getName(users, from)}</Text></View>}
                     <View style={[styles.contentDiv, {marginTop: chatType === 'user' ? 21 : 0}]}>
                         <Text style={styles.text}>{content}</Text>
                     </View>
