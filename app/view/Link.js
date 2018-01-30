@@ -34,6 +34,7 @@ const navigationOptions = (navigation) => ({
         fontSize: 16,
         fontWeight: 'normal'
     },
+     headerLeft:(<Text style={{color:'transparent'}}>111</Text>),
      tabBarIcon: ({ tintColor }) => (<Text style={{fontFamily:'iconfont',color:tintColor,fontSize:24}} >&#xe635;</Text>),
      headerRight:   (
         <TouchableOpacity onPress={() =>navigation.navigate('AddFriend')}>
@@ -92,12 +93,39 @@ class Link extends PureComponent {
         navigation.navigate('FriendDetail', { id, name, number,avatar, area: '北京市-海淀区', company:'万达集团股份有限公司' });
     }
 }
+_linkConcat = (data) => {
+    if(data.length>0){
+        return   (<Concat datalist={data}  _onPressButton={this._onPressButton}/>)
+    }else {
+        return  (<View style={styles.emptymessage}>
+            <Image source={require('../image/noFriend.png')} style={styles.imgicon}/>
+            <Text style={styles.emptyText}>暂无好友，赶快去添加吧！</Text>
+        </View>)
+    }
+}
   render() {
     const data =this.props.pinyinData
-    return (
-        <Concat datalist={data}  _onPressButton={this._onPressButton}/>
-    );
+      return this._linkConcat(data)
   }
 }
 
 export default MeteorContainer(navigationOptions, subCollection())(Link);
+const styles = StyleSheet.create({
+    emptymessage:{
+        flex:1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor:"#f6f6f6",
+    },
+    emptyText:{
+      marginTop:24,
+      fontSize: 16,
+      color: '#666666',
+      letterSpacing: 0.19,
+    },
+    imgicon:{
+        width:244,
+        height:196,
+    }
+});

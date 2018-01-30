@@ -24,7 +24,7 @@ import Camera from './view/common/Camera';
 import Geolocation from './view/common/Geolocation';
 import Login from './view/Login';
 import RTC from './view/common/rtc';
-
+import Register from './view/Register';
 
 
 import AddFriend from './view/link/AddFriend';
@@ -155,6 +155,9 @@ const Navigation = StackNavigator({
     },
     RTC: {
         screen: RTC,
+    },
+    Register:{
+        screen:Register,
     }
 });
 

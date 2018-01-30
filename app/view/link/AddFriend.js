@@ -88,6 +88,7 @@ export default class Person extends Component {
     headerTitleStyle: {
       alignSelf: 'center',
     },
+    headerRight:(<Text style={{color:'transparent'}}>111</Text>),
   }
   _onpressButton=(id)=>{
       const { navigation} = this.props;

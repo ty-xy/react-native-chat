@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   Image,
-  TouchableHighlight,
+//   TouchableOpacity,
   Button,
   Modal,
 } from 'react-native';
@@ -85,33 +85,33 @@ class Book extends Component {
            style={{width:'100%', height: 160}}
            >
             <View style={styles.first}>
-            <Image source={{uri:avatar}} style={styles.img} />
+            <Image source={avatar?{uri:avatar}:require('../image/toufemail.png')} style={styles.img} />
             <Text style={styles.firstname} >{name}</Text>
             <Text style={styles.numbert}>账号:{username}</Text>
             </View>
            </ImageBackground>
            <View  style={styles.mybody}>
-           <TouchableHighlight onPress={ () => this._onPressButton('Person',name,username) }>
+           <TouchableOpacity onPress={ () => this._onPressButton('Person',name,username) }>
              <View style={styles.mytext} >
                <Image source={require('../image/curriculum.png')} style={styles.imgicon} />
                <Text >个人资料</Text>
              </View>
-             </TouchableHighlight>
-             <TouchableHighlight onPress={() => this._onPressButton('System')}>
+             </TouchableOpacity>
+             <TouchableOpacity onPress={() => this._onPressButton('System')}>
              <View style={styles.mytext}>
                <Image source={require('../image/repair.png')} style={styles.imgicon} />
                <Text>系统设置</Text>
              </View>
-            </TouchableHighlight>
-            <TouchableHighlight onPress={() => this._onPressButton('Account')}>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this._onPressButton('Account')}>
              <View style={[styles.mytext,{marginRight:0}] }>
                <Image source={require('../image/human-resources.png')} style={styles.imgicon} />
                <Text>账号管理</Text>
              </View>
-             </TouchableHighlight>
+             </TouchableOpacity>
              </View>
              <View  style={styles.mybody}>
-             <TouchableHighlight 
+             <TouchableOpacity 
             onPress={() => {
               this.setModalVisible(true)}
             }>
@@ -119,13 +119,13 @@ class Book extends Component {
                <Image source={require('../image/networking.png')} style={styles.imgicon} />
                <Text>邀请朋友</Text>
              </View>
-             </TouchableHighlight>
-             <TouchableHighlight onPress={() => this._onPressButton('Aboutus')}>
+             </TouchableOpacity>
+             <TouchableOpacity onPress={() => this._onPressButton('Aboutus')}>
              <View style={styles.mytext}>
                <Image source={require('../image/businessmen.png')} style={styles.imgicon} />
                <Text>关于我们</Text>
              </View>
-             </TouchableHighlight>
+             </TouchableOpacity>
              <View style={[styles.mytext,{backgroundColor:'transparent'}]}/>
            </View>
         </View>

@@ -18,8 +18,9 @@ import pinyin from 'pinyin';
 import Meteor from 'react-native-meteor';
 import MeteorContainer from '../../component/MeteorContainer';
 import UserUtil from '../../util/user';
-import userinfo, { userIdToInfo } from '../../util/user';
 import PopulateUtil from '../../util/populate';
+import userinfo, { userIdToInfo } from '../../util/user';
+// import PopulateUtil from '../../util/populate';
 
 
 const navigationOptions =()=>{
@@ -29,8 +30,14 @@ const subCollection = () => () => {
     Meteor.subscribe('notice');
     // 找出别人向你发起的好友认证
     Meteor.subscribe('users');
+    // const {_id}=navigation.state.params
+    // const chatUser = Meteor.collection('users').findOne({ _id}) || {};
+    // console.log(chatUser,navigation.state.params);
+    // return {
+    //     chatUser,
+    // };
     const friendIds = UserUtil.getFriends();
-    // console.log(friendIds);
+    // .log(friendIds);
     const users = [];
     const name=[];
     friendIds.forEach((_id) => {
@@ -198,7 +205,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding:15,
-    backgroundColor:'#F6F6F6',
+    backgroundColor: '#F6F6F6',
   },
   search:{
     backgroundColor:'#fff',

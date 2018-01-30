@@ -415,7 +415,7 @@ class RCTWebRTC extends Component {
     }
     // 切换语音
     _handleTabAudio = () => {
-        console.log('切换语音')
+        console.log('切换语音')                        
     }
     // 接听
     _handleAccept = () => {
