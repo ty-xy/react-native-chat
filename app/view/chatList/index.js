@@ -106,7 +106,7 @@ class Home extends Component {
         console.log('video', video, user)
         if (video && video.videoId && (user.video.videoId !== video.videoId)) {
             console.log('RTCto')
-            this.props.navigation.navigate('RTC', { callId: user.video.groupId, send: true });
+            this.props.navigation.navigate('RTC', { callId: user.video.groupId, call: false, accept: true });
         }
     }
     
