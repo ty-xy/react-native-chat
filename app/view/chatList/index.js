@@ -284,6 +284,7 @@ class Home extends Component {
         return (
             <View style={styles.wrap}>
                 <View style={styles.container}>
+                   {res.length>0?
                     <SwipeListView
                         useFlatList
                         style={{paddingTop: 15, paddingBottom: 30}}
@@ -295,7 +296,12 @@ class Home extends Component {
                         ListFooterComponent={() => <View style={{height: 15}} />}
                         rightOpenValue={-80}
                         onRowOpen={(rowKey, rowMap) => this._handleOpenList(rowKey, rowMap)}
-                    />
+                    />:
+                    <View style={styles.emptymessage}>
+                        <Image source={require('../../image/noMessage.png')} style={styles.imgicon}/>
+                        <Text style={styles.emptyText}>暂无消息</Text>
+                    </View>
+                    }
                 </View>
             </View>
         );
@@ -369,4 +375,20 @@ const styles = StyleSheet.create({
     width: 32,
     borderRadius: 16,
   },
+  emptymessage:{
+      flex:1,
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+  },
+  emptyText:{
+    marginTop:24,
+    fontSize: 16,
+    color: '#666666',
+    letterSpacing: 0.19,
+  },
+  imgicon:{
+      width:244,
+      height:196,
+  }
 });
