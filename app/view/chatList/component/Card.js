@@ -181,7 +181,6 @@ export default class Card extends PureComponent {
         return null;
     }
     render() {
-        const { style = {}, lastMessage, _id, name } = this.props;
         return this._renderChatListItem(this.props);
     }
 }

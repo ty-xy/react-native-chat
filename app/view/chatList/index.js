@@ -134,7 +134,8 @@ class Home extends Component {
         const res = await localStorage('login').get();
         return res;
     }
-    _goChatWindow = (to, name, type, unreadMessage) => {
+    _goChatWindow = (to, name, type, unreadMessage, members) => {
+        console.log('_goChatWindow', to, name, type, unreadMessage)
         const { navigation } = this.props;
         if (unreadMessage > 0) {
             Meteor.call('readMessage', to, type, (err) => {
@@ -143,6 +144,12 @@ class Home extends Component {
                 }
             });
         }
+        if (type === 'user') {
+            members = members.filter(i => i !== Meteor.userId());
+            const _user = Meteor.collection('users').findOne({ _id: members[0] }) || { profile: {} };
+            name = _user.profile.name;          
+        }
+        this._handleCloseList();
         navigation.navigate('ChatWindow', { to, name });
     }
     _goNewFriends = () => {
@@ -151,7 +158,6 @@ class Home extends Component {
     }
     // 删除列表显示新增好友
     _handleRemoveNewFriendNotice = () => {
-        console.log('_handleRemoveNewFriendNotice')
         Meteor.call('hideFriendNotice');
     }
     // 删除聊天列表
@@ -169,7 +175,6 @@ class Home extends Component {
     }
     // 置顶
     _handleTopUp = (stickTop, groupId) => {
-        console.log('_handleTopUp', stickTop, groupId)
         let isTop = false;
         stickTop.forEach((item) => {
             if (item.userId === Meteor.userId()) {
@@ -203,7 +208,7 @@ class Home extends Component {
             {...item}
             key={item._id}
             _goNewFriends={this._goNewFriends}
-            _goChatWindow={() => this._goChatWindow(item.groupId, item.name, item.type, item.unreadMessage)}
+            _goChatWindow={() => this._goChatWindow(item.groupId, item.name, item.type, item.unreadMessage, item.members)}
         />);
     }
     _compare = property => (a, b) => b[property] - a[property];
