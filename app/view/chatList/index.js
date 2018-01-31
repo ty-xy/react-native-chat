@@ -115,9 +115,9 @@ class Home extends Component {
         }
     }
       
-    componentUnWillMount(){  
-        BackHandler.addEventListener('hardwareBackPress', this._onBackAndroid);  
-    }  
+    // componentUnWillMount(){  
+    //     BackHandler.addEventListener('hardwareBackPress', this._onBackAndroid);  
+    // }  
       
     _onBackAndroid = () => {  
         let now = new Date().getTime();  
@@ -149,7 +149,6 @@ class Home extends Component {
             const _user = Meteor.collection('users').findOne({ _id: members[0] }) || { profile: {} };
             name = _user.profile.name;          
         }
-        this._handleCloseList();
         navigation.navigate('ChatWindow', { to, name });
     }
     _goNewFriends = () => {
@@ -182,26 +181,10 @@ class Home extends Component {
             }
         });
         if (!isTop) {
-            Meteor.call('setGroupStickTop', groupId, (err, res) => {
-                if (!err) {
-                    this._handleCloseList()
-                }
-            });
+            Meteor.call('setGroupStickTop', groupId);
         } else {
-            Meteor.call('cancelGroupStickTop', groupId, (err, res) => {
-                if (!err) {
-                    this._handleCloseList()
-                }
-            });
+            Meteor.call('cancelGroupStickTop', groupId);
         }
-    }
-    // rowMap[rowKey].closeRow() 左滑打开
-    _handleOpenList = (rowKey, rowMap) => {
-        this.setState({ rowKey, rowMap });
-    }
-    _handleCloseList = () => {
-        const { rowKey, rowMap } = this.state;
-        rowMap[rowKey].closeRow()
     }
     _renderItem = ({item}) => {
         return (<Card
@@ -300,7 +283,12 @@ class Home extends Component {
                         renderHiddenItem={(data, rowMap) => this._moveLeft(data.item)}
                         ListFooterComponent={() => <View style={{height: 15}} />}
                         rightOpenValue={-80}
-                        onRowOpen={(rowKey, rowMap) => this._handleOpenList(rowKey, rowMap)}
+                        onRowOpen={(rowKey, rowMap) => {
+                            console.log(rowKey,rowMap[rowKey]) 
+                             setTimeout(() => {
+                                 rowMap[rowKey]?rowMap[rowKey].closeRow():null
+                             }, 2000)
+                         }}
                     />:
                     <View style={styles.emptymessage}>
                         <Image source={require('../../image/noMessage.png')} style={styles.imgicon}/>
