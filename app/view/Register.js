@@ -96,7 +96,7 @@ export default class Register extends Component {
   sendMessage = async () => {
     const form = this.props.form;
     const username = form.getFieldValue('username');
-    if (!username) {
+    if (!username){
         return feedback.dealWarning('请输入正确的手机号');
     }
 
