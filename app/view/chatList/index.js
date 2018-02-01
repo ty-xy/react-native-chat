@@ -97,36 +97,29 @@ class Home extends Component {
         const loginstatus = this._getLoginStorage();
         BackHandler.addEventListener('hardwareBackPress', this._onBackAndroid );
         loginstatus.then((res) => {
-            console.log('loginstatus', res)
             if (!res) {
                 _navigation.reset(this.props.navigation, 'Login');
             } else {
                 this.setState({ loginInfo: res });
-            }
+            };
+            
         });
     }
     componentWillReceiveProps(nextProps) {
-        const { video } = this.props.user;
-        const { user } = nextProps;
-        console.log('video', video, user)
-        if (video && video.videoId && (user.video.videoId !== video.videoId)) {
-            console.log('RTCto')
-            this.props.navigation.navigate('RTC', { callId: user.video.groupId, call: false, accept: true });
+        const { user} = nextProps;
+        if (user && user.video && user.video.videoId) {
+            this.props.navigation.navigate('RTC', { callId: user.video.roomID, groupId: user.video.groupId, call: false, accept: true });
         }
     }
-      
-    // componentUnWillMount(){  
-    //     BackHandler.addEventListener('hardwareBackPress', this._onBackAndroid);  
-    // }  
       
     _onBackAndroid = () => {  
         let now = new Date().getTime();  
         if(now - this.lastBackPressed < 2500) {  
             return false;  
-        }  
-        this.lastBackPressed = now;  
+        }
+        this.lastBackPressed = now;
         ToastAndroid.show('再点击一次退出应用',ToastAndroid.SHORT);  
-        return true;  
+        return true;
     }  
     
     // 恢复聊天记录
@@ -135,7 +128,6 @@ class Home extends Component {
         return res;
     }
     _goChatWindow = (to, name, type, unreadMessage, members) => {
-        console.log('_goChatWindow', to, name, type, unreadMessage)
         const { navigation } = this.props;
         if (unreadMessage > 0) {
             Meteor.call('readMessage', to, type, (err) => {
@@ -198,7 +190,6 @@ class Home extends Component {
 
     // 左滑显示的东西
     _moveLeft = (item) => {
-        // console.log('_moveLeft', item)
         if (item.type !== 'newFreidsAccept') {
             return (
                 <View style={styles.rowBack}>
@@ -245,7 +236,7 @@ class Home extends Component {
         }
         const newDefaultTopChat = defaultTopChat.sort(this._compare('sortTime'));
         const sortedChatList = [...newStickTopChat, ...newDefaultTopChat];
-        console.log('sortedChatList', sortedChatList, newStickTopChat, newDefaultTopChat, chatList, newFriendNotice);
+        // console.log('sortedChatList', sortedChatList, newStickTopChat, newDefaultTopChat, chatList, newFriendNotice);
         const newArr = [];
         const spliceNum = [];
         // 去重
@@ -268,7 +259,6 @@ class Home extends Component {
         } else {
             res = sortedChatList;
         }
-        console.log('res', res, Meteor.user())
         return (
             <View style={styles.wrap}>
                 <View style={styles.container}>
@@ -284,7 +274,6 @@ class Home extends Component {
                         ListFooterComponent={() => <View style={{height: 15}} />}
                         rightOpenValue={-80}
                         onRowOpen={(rowKey, rowMap) => {
-                            console.log(rowKey,rowMap[rowKey]) 
                              setTimeout(() => {
                                  rowMap[rowKey]?rowMap[rowKey].closeRow():null
                              }, 2000)
