@@ -97,36 +97,29 @@ class Home extends Component {
         const loginstatus = this._getLoginStorage();
         BackHandler.addEventListener('hardwareBackPress', this._onBackAndroid );
         loginstatus.then((res) => {
-            console.log('loginstatus', res)
             if (!res) {
                 _navigation.reset(this.props.navigation, 'Login');
             } else {
                 this.setState({ loginInfo: res });
-            }
+            };
+            
         });
     }
     componentWillReceiveProps(nextProps) {
-        const { video } = this.props.user;
-        const { user } = nextProps;
-        console.log('video', video, user)
-        if (video && video.videoId && (user.video.videoId !== video.videoId)) {
-            console.log('RTCto')
-            this.props.navigation.navigate('RTC', { callId: user.video.groupId, call: false, accept: true });
+        const { user} = nextProps;
+        if (user && user.video && user.video.videoId) {
+            this.props.navigation.navigate('RTC', { callId: user.video.roomID, groupId: user.video.groupId, call: false, accept: true });
         }
     }
-      
-    componentUnWillMount(){  
-        BackHandler.addEventListener('hardwareBackPress', this._onBackAndroid);  
-    }  
       
     _onBackAndroid = () => {  
         let now = new Date().getTime();  
         if(now - this.lastBackPressed < 2500) {  
             return false;  
-        }  
-        this.lastBackPressed = now;  
+        }
+        this.lastBackPressed = now;
         ToastAndroid.show('再点击一次退出应用',ToastAndroid.SHORT);  
-        return true;  
+        return true;
     }  
     
     // 恢复聊天记录
@@ -134,7 +127,7 @@ class Home extends Component {
         const res = await localStorage('login').get();
         return res;
     }
-    _goChatWindow = (to, name, type, unreadMessage) => {
+    _goChatWindow = (to, name, type, unreadMessage, members) => {
         const { navigation } = this.props;
         if (unreadMessage > 0) {
             Meteor.call('readMessage', to, type, (err) => {
@@ -142,6 +135,11 @@ class Home extends Component {
                     return;
                 }
             });
+        }
+        if (type === 'user') {
+            members = members.filter(i => i !== Meteor.userId());
+            const _user = Meteor.collection('users').findOne({ _id: members[0] }) || { profile: {} };
+            name = _user.profile.name;          
         }
         navigation.navigate('ChatWindow', { to, name });
     }
@@ -151,7 +149,6 @@ class Home extends Component {
     }
     // 删除列表显示新增好友
     _handleRemoveNewFriendNotice = () => {
-        console.log('_handleRemoveNewFriendNotice')
         Meteor.call('hideFriendNotice');
     }
     // 删除聊天列表
@@ -169,7 +166,6 @@ class Home extends Component {
     }
     // 置顶
     _handleTopUp = (stickTop, groupId) => {
-        console.log('_handleTopUp', stickTop, groupId)
         let isTop = false;
         stickTop.forEach((item) => {
             if (item.userId === Meteor.userId()) {
@@ -177,40 +173,23 @@ class Home extends Component {
             }
         });
         if (!isTop) {
-            Meteor.call('setGroupStickTop', groupId, (err, res) => {
-                if (!err) {
-                    this._handleCloseList()
-                }
-            });
+            Meteor.call('setGroupStickTop', groupId);
         } else {
-            Meteor.call('cancelGroupStickTop', groupId, (err, res) => {
-                if (!err) {
-                    this._handleCloseList()
-                }
-            });
+            Meteor.call('cancelGroupStickTop', groupId);
         }
-    }
-    // rowMap[rowKey].closeRow() 左滑打开
-    _handleOpenList = (rowKey, rowMap) => {
-        this.setState({ rowKey, rowMap });
-    }
-    _handleCloseList = () => {
-        const { rowKey, rowMap } = this.state;
-        rowMap[rowKey].closeRow()
     }
     _renderItem = ({item}) => {
         return (<Card
             {...item}
             key={item._id}
             _goNewFriends={this._goNewFriends}
-            _goChatWindow={() => this._goChatWindow(item.groupId, item.name, item.type, item.unreadMessage)}
+            _goChatWindow={() => this._goChatWindow(item.groupId, item.name, item.type, item.unreadMessage, item.members)}
         />);
     }
     _compare = property => (a, b) => b[property] - a[property];
 
     // 左滑显示的东西
     _moveLeft = (item) => {
-        // console.log('_moveLeft', item)
         if (item.type !== 'newFreidsAccept') {
             return (
                 <View style={styles.rowBack}>
@@ -257,7 +236,7 @@ class Home extends Component {
         }
         const newDefaultTopChat = defaultTopChat.sort(this._compare('sortTime'));
         const sortedChatList = [...newStickTopChat, ...newDefaultTopChat];
-        console.log('sortedChatList', sortedChatList, newStickTopChat, newDefaultTopChat, chatList, newFriendNotice);
+        // console.log('sortedChatList', sortedChatList, newStickTopChat, newDefaultTopChat, chatList, newFriendNotice);
         const newArr = [];
         const spliceNum = [];
         // 去重
@@ -280,7 +259,6 @@ class Home extends Component {
         } else {
             res = sortedChatList;
         }
-        console.log('res', res, Meteor.user())
         return (
             <View style={styles.wrap}>
                 <View style={styles.container}>
@@ -295,7 +273,11 @@ class Home extends Component {
                         renderHiddenItem={(data, rowMap) => this._moveLeft(data.item)}
                         ListFooterComponent={() => <View style={{height: 15}} />}
                         rightOpenValue={-80}
-                        onRowOpen={(rowKey, rowMap) => this._handleOpenList(rowKey, rowMap)}
+                        onRowOpen={(rowKey, rowMap) => {
+                             setTimeout(() => {
+                                 rowMap[rowKey]?rowMap[rowKey].closeRow():null
+                             }, 2000)
+                         }}
                     />:
                     <View style={styles.emptymessage}>
                         <Image source={require('../../image/noMessage.png')} style={styles.imgicon}/>
