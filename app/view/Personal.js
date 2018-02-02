@@ -103,7 +103,7 @@ class Book extends Component {
                <Text>系统设置</Text>
              </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => this._onPressButton('Account')}>
+            <TouchableOpacity onPress={() => this._onPressButton('Account',name,username)}>
              <View style={[styles.mytext,{marginRight:0}] }>
                <Image source={require('../image/human-resources.png')} style={styles.imgicon} />
                <Text>账号管理</Text>

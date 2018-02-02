@@ -4,7 +4,7 @@ export default () => {
     // Meteor.connect('ws://127.0.0.1:3000/websocket');
     // const url = 'wss://www.zg18.com:13220/websocket';
     // const url = 'ws://192.168.1.142:3000/websocket';
-    const url = 'ws://192.168.1.100:3000/websocket';
+    const url = 'ws://192.168.1.103:3000/websocket';
     
     Meteor.connect(url);
 }

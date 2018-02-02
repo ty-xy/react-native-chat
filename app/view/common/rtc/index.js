@@ -218,7 +218,8 @@ function exchange(data) {
 function leave(socketId) {
     const pc = pcPeers[socketId];
     console.log('leave', pc, pcPeers);
-    const viewIndex = pc.viewIndex;
+    // const viewIndex = pc.viewIndex;
+    // console.log(viewIndex)
     pc.close();
     delete pcPeers[socketId];
 

@@ -93,15 +93,15 @@ handleRegister = async (e) => {
     if (this.state.countDownNum <= 0 && this.state.countDownNum >= 60) {
         return util.alertOk('请重新接受验证码');
     }
-        if (!this.state.number) {
-            return util.alertOk('请输入验证码');
-        }
+   if (!this.state.number) {
+        return util.alertOk('请输入验证码');
+    }
         const _this = this;
     await Meteor.call('queryDetail', this.state.username, this.state.BizId, Number(this.state.number),(err,queryResult)=>{
              if(err){
                 return util.alertOk(err);
              }else if (!queryResult) {
-                return futil.alertOk('请输入正确的验证码');
+                return util.alertOk('请输入正确的验证码');
             console.log(_this.state.text,_this.state.password,_this.state.name)
             }else{
                 console.log(_this.state.text,_this.state.password,_this.state.name)
@@ -154,25 +154,25 @@ handleRegister = async (e) => {
                              </TouchableOpacity>
                               :
                               null
-                       }
-                                        {
-                                            this.state.sendBtnStatus === 1 ?
-                                            <TouchableOpacity>
-                                                <Text>
-                                                剩余{this.state.countDownNum}秒 
-                                                </Text>
-                                                </TouchableOpacity>
-                                                :
-                                                null
-                                        }
-                                        {
-                                            this.state.sendBtnStatus === 2 ?
-                                            <TouchableOpacity onPress={this.sendMessage}>
-                                                 <Text style={styles.validateword}>重新发送</Text>
-                                            </TouchableOpacity>
-                                                :
-                                                null
-                                        }
+                    }
+                    {
+                        this.state.sendBtnStatus === 1 ?
+                            <TouchableOpacity>
+                                <Text>
+                                     剩余{this.state.countDownNum}秒 
+                                        </Text>
+                                        </TouchableOpacity>
+                                         :
+                                         null
+                    }
+                    {
+                        this.state.sendBtnStatus === 2 ?
+                            <TouchableOpacity onPress={this.sendMessage}>
+                                 <Text style={styles.validateword}>重新发送</Text>
+                                     </TouchableOpacity>
+                                         :
+                                     null
+                    }
                 </View>
            </View>
            <View style={styles.wrap}>
