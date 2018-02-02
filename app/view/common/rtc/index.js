@@ -88,7 +88,7 @@ function join(roomID, groupId) {
     // 通知对象
     if (!roomID) {
         roomID = Math.random().toString(36).substr(2);
-        socket.emit('connect', roomID)
+        // socket.emit('connect', roomID)
         Meteor.call('callVideo', roomID, groupId, (err, res) => {
             console.log('发送视频消息', err, res)
             if (res) {
@@ -103,7 +103,7 @@ function join(roomID, groupId) {
             }
         });
     } else {
-        socket.emit('connect', roomID)
+        // socket.emit('connect', roomID);
         socket.emit('join', roomID, function(socketIds, res){
             console.log('接听', socketIds, res, roomID);
             for (const i in socketIds) {
@@ -114,6 +114,25 @@ function join(roomID, groupId) {
         });
     }
 }
+socket.on('exchange', function(data){
+    exchange(data);
+});
+socket.on('leave', function(socketId){
+    console.log('socket------leave', socketId)
+    leave(socketId);
+    
+});
+socket.on('connect', function(data) {
+    console.log('------connect--------', data);
+    getLocalStream(true, function(stream) {
+        localStream = stream;
+        container.setState({selfViewSrc: stream.toURL()});
+        container.setState({status: 'ready', info: 'Please enter or create room ID'});
+    });
+});
+socket.on('join', function(data) {
+    console.log('join', data)
+})
 
 function createPC(socketId, isOffer) {
     const pc = new RTCPeerConnection(configuration);
@@ -244,8 +263,8 @@ function leave(socketId) {
     delete remoteList[socketId]
     container.setState({ remoteList: remoteList });
     container.setState({info: 'One peer leave!'});
-    // container.props.navigation.navigate('ChatWindow', { to: state.params.callId, name: state.params.name, index: 2 });    
     container.props.navigation.goBack(null);
+    // socket = null;
 }
 
 function logError(error, name) {
@@ -315,25 +334,6 @@ class RCTWebRTC extends Component {
     componentDidMount() {
         container = this;
         // socket.connect();
-        socket.on('exchange', function(data){
-            exchange(data);
-        });
-        socket.on('leave', function(socketId){
-            console.log('socket------leave', socketId)
-            leave(socketId);
-            
-        });
-        socket.on('connect', function(data) {
-            console.log('------connect--------', data);
-            // getLocalStream(true, function(stream) {
-            //     localStream = stream;
-            //     container.setState({selfViewSrc: stream.toURL()});
-            //     container.setState({status: 'ready', info: 'Please enter or create room ID'});
-            // });
-        });
-        socket.on('join', function(data) {
-            console.log('join', data)
-        })
 
         const { params } = this.props.navigation.state;
         console.log('componentDidMount==========', params)
@@ -421,7 +421,7 @@ class RCTWebRTC extends Component {
         socket.emit('leave');
         leave(socketId.from);
         Meteor.call('hangUpVideo', params.groupId);
-        socket.close();
+        // socket.close();
     }
     // 静音
     _handleMute = () => {

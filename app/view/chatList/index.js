@@ -95,7 +95,6 @@ class Home extends Component {
     }
     componentWillMount() {
         const loginstatus = this._getLoginStorage();
-        BackHandler.addEventListener('hardwareBackPress', this._onBackAndroid );
         loginstatus.then((res) => {
             if (!res) {
                 _navigation.reset(this.props.navigation, 'Login');
@@ -105,13 +104,21 @@ class Home extends Component {
             
         });
     }
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', this._onBackAndroid );
+    }
     componentWillReceiveProps(nextProps) {
         const { user} = nextProps;
         if (user && user.video && user.video.videoId) {
+            console.log('跳转', user.video.roomID, user.video.groupId);
             this.props.navigation.navigate('RTC', { callId: user.video.roomID, groupId: user.video.groupId, call: false, accept: true });
         }
     }
-      
+    componentWillUnmount() {
+        console.log('chatlist--componentWillUnmount')
+        BackHandler.removeEventListener('hardwareBackPress', this._onBackAndroid );
+    }
+    
     _onBackAndroid = () => {  
         let now = new Date().getTime();  
         if(now - this.lastBackPressed < 2500) {  
@@ -236,7 +243,7 @@ class Home extends Component {
         }
         const newDefaultTopChat = defaultTopChat.sort(this._compare('sortTime'));
         const sortedChatList = [...newStickTopChat, ...newDefaultTopChat];
-        // console.log('sortedChatList', sortedChatList, newStickTopChat, newDefaultTopChat, chatList, newFriendNotice);
+        console.log('sortedChatList', sortedChatList, newStickTopChat, newDefaultTopChat, chatList, newFriendNotice);
         const newArr = [];
         const spliceNum = [];
         // 去重
@@ -259,6 +266,7 @@ class Home extends Component {
         } else {
             res = sortedChatList;
         }
+        console.log('res', res)
         return (
             <View style={styles.wrap}>
                 <View style={styles.container}>

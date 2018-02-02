@@ -270,6 +270,10 @@ class ChatWindow extends Component {
             toast.toast('时间太短', this);
         }
     }
+    // 发送表情包
+    _handleClickEmoji = (name) => {
+        console.log('发送表情包')
+    }
     // 发送按钮
     _sendButton = () => {
         const { sendButton } = this.state;
@@ -351,7 +355,7 @@ class ChatWindow extends Component {
         const { showEmoji } = this.state;
         if (showEmoji) {
             return (
-                <Emoji sendEmoji={this.sendEmoji} />
+                <Emoji sendEmoji={this.sendEmoji} _handleClickEmoji={this._handleClickEmoji} />
             );
         }
         return null;
