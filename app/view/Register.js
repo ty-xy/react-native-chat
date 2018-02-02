@@ -12,6 +12,8 @@ import Meteor from 'react-native-meteor';
 import Toast from 'react-native-easy-toast';
 import toast from '../util/util';
 import _navigation from '../util/navigation';
+import util from '../util/util';
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -77,7 +79,10 @@ export default class Register extends Component {
         text:'',
         name:'',
         number:'',
-        password:''
+        password:'',
+        countDownNum: 60,
+        sendBtnStatus: 0,
+        BizId: '',
   }
 }
   static navigationOptions = {
@@ -94,33 +99,40 @@ export default class Register extends Component {
   }
 
   sendMessage = async () => {
-    const form = this.props.form;
-    const username = form.getFieldValue('username');
-    if (!username) {
-        return feedback.dealWarning('请输入正确的手机号');
+    // const form = this.props.form;
+    const username = this.state.username;
+    // console.log(Meteor.collection('groups').find({}));
+    const re =/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;
+    if (!re.test(username)) {
+        util.alertOk('请输入正确的手机号');
+        return false;
     }
-
+    const _this=this;
     this.setState({
-        sendBtnStatus: 1,
-    });
-    let countDownNum = this.state.countDownNum;
-    const countDownDate = setInterval(() => {
-        countDownNum--;
-        this.setState({
-            countDownNum,
+         sendBtnStatus: 1,
         });
-        if (countDownNum <= 0) {
+        let countDownNum = _this.state.countDownNum;
+        const countDownDate = setInterval(() => {
+            countDownNum--;
             this.setState({
-                sendBtnStatus: 2,
-                countDownNum: 60,
+                countDownNum,
             });
-            clearInterval(countDownDate);
-        }
-    }, 1000);
-    // const result = await Meteor.callPromise('sendRegisterSMS', username);
-    // this.setState({
-    //     BizId: result.BizId,
-    // });
+            if (countDownNum <= 0) {
+                this.setState({
+                    sendBtnStatus: 2,
+                    countDownNum: 60,
+                });
+                clearInterval(countDownDate);
+            }
+        }, 1000);
+       await Meteor.call('sendRegisterSMS',username,(err,result)=>{
+                console.log(err,result)
+                if(err) {console.log(err,); return; }
+                console.log(result)
+                _this.setState({
+                    BizId: result.BizId,
+                });
+        });
 }
 hasErrors = fieldsError => Object.keys(fieldsError).some(field => fieldsError[field]);
 login = (userId) => {
@@ -133,46 +145,42 @@ login = (userId) => {
         history.push('/login');
     }
 }
-handleRegister =  (e) => {
+handleRegister =async (e) => {
     e.preventDefault();
     // const form = this.props.form;
-    // if (this.state.countDownNum <= 0 && this.state.countDownNum >= 60) {
-    //     return feedback.dealWarning('请重新接受验证码');
-    // }
-    // form.validateFieldsAndScroll(async (err, values) => {
-    //     console.log(values);
-    //     if (!err) {
-    //         console.log('Received values of form: ', values);
-    //     }
-    //     if (!values.agreement) {
-    //         return feedback.dealWarning('请先同意用户协议');
-    //     }
-        // if (!values.verificationCode) {
-        //     return feedback.dealWarning('请输入验证码');
-        // }
-        // const queryResult = await Meteor.callPromise('queryDetail', values.username, this.state.BizId, Number(values.verificationCode));
-        // if (!queryResult) {
-        //     return feedback.dealWarning('请输入正确的验证码');
-        console.log(this.state.text,this.state.password,this.state.name)
-        // }
-        Meteor.call('register',
-        // this.state.text,this.state.password,this.state.name,
-        
+    if (this.state.countDownNum <= 0 && this.state.countDownNum >= 60) {
+        return util.alertOk('请重新接受验证码');
+    }
+    if (!this.state.number) {
+        return util.alertOk('请输入验证码');
+    }
+    
+    await Meteor.call('queryDetail', this.state.username, this.state.BizId, Number(this.state.number),(err,queryResult)=>{
+        if(err){
+           return util.alertOk(err);
+        }else if (!queryResult) {
+           return util.alertOk('请输入正确的验证码');
+       }else{
+           console.log(this.state.username,this.state.password,this.state.name)
+           Meteor.call('register',
          {
-             username:this.state.text,
+             username:this.state.username,
              password:this.state.password,
              name:this.state.name,
          },
          (error, userId) => {
             if (error) {
-               console.log(error)
+                util.alertOk(error.reason);
+                return 
             }
             console.log(userId);
             toast.toast('登陆成功', this);
             _navigation.reset(this.props.navigation, 'Login')
-            Meteor.loginWithPassword(this.state.text,this.state.password);
+            // Meteor.loginWithPassword(this.state.text,this.state.password);
         });
-    };
+     }
+  });
+};
   render() {
     return (
       <View style={styles.container}>
@@ -180,12 +188,12 @@ handleRegister =  (e) => {
                 <Text style={styles.title}>手机号</Text>
                 <TextInput
                     underlineColorAndroid="transparent"
-                    onChangeText={(text) => this.setState({text})}
+                    onChangeText={(username) => this.setState({username})}
                     maxLength = {326}
                      multiline = {false}
                     placeholder="请输入手机号码"
-                    style={styles.textinput}
-                    value={this.state.text}/>
+                    style={styles.textinput}    
+                    value={this.state.username}/>
                     
            </View>
            <View style={styles.wrap}>
@@ -210,9 +218,33 @@ handleRegister =  (e) => {
                     placeholder="请输入验证码"
                     style={styles.textinput}
                     value={this.state.number}/>
-                    <TouchableOpacity>
-                        <Text style={styles.validateword}>获取验证码</Text>
-                    </TouchableOpacity>
+                  {
+                    this.state.sendBtnStatus === 0 ?
+                         <TouchableOpacity onPress={this.sendMessage}>
+                            <Text style={styles.validateword}>获取验证码</Text>
+                         </TouchableOpacity>
+                          :
+                          null
+                }
+                {
+                    this.state.sendBtnStatus === 1 ?
+                        <TouchableOpacity>
+                            <Text>
+                                 剩余{this.state.countDownNum}秒 
+                                    </Text>
+                                    </TouchableOpacity>
+                                     :
+                                     null
+                }
+                {
+                    this.state.sendBtnStatus === 2 ?
+                        <TouchableOpacity onPress={this.sendMessage}>
+                             <Text style={styles.validateword}>重新发送</Text>
+                                 </TouchableOpacity>
+                                     :
+                                 null
+                }
+
                 </View>
            </View>
            <View style={styles.wrap}>

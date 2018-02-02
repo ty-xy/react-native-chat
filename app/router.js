@@ -25,6 +25,7 @@ import Geolocation from './view/common/Geolocation';
 import Login from './view/Login';
 import RTC from './view/common/rtc';
 import Register from './view/Register';
+import ForgetPassword from './view/ForgetPassword';
 
 
 import AddFriend from './view/link/AddFriend';
@@ -158,6 +159,9 @@ const Navigation = StackNavigator({
     },
     Register:{
         screen:Register,
+    },
+    ForgetPassword:{
+        screen:ForgetPassword
     }
 });
 

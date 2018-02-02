@@ -94,7 +94,7 @@ class Person extends Component {
     super(props);
     this.state={
         name:"",
-        address:"",
+        address:[],
         company:"",
   }
 }
