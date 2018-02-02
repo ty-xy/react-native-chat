@@ -10,11 +10,9 @@ import {
 } from 'react-native';
 import Meteor from 'react-native-meteor';
 import Toast from 'react-native-easy-toast';
-import toast from '../../util/util';
-import _navigation from '../../util/navigation';
-import util from '../..//util/util';
-import localStorage from '../../util/storage';
-// import { setTimeout } from 'timers';
+import toast from '../util/util';
+import _navigation from '../util/navigation';
+import util from '../util/util';
 
 
 const onButtonPress = () => {
@@ -34,7 +32,7 @@ export default class Register extends Component {
   }
 }
   static navigationOptions = {
-    title: '修改当前绑定账号',
+    title: '忘记密码',
     // tabBarLabel: '个人信息',
     alignSelf: 'center',
     headerStyle: {
@@ -48,7 +46,7 @@ export default class Register extends Component {
 
   sendMessage = async () => {
     // const form = this.props.form;
-    const username=this.state.username;
+    const username = this.state.username;
     // console.log(Meteor.collection('groups').find({}));
     const re =/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;
     if (!re.test(username)) {
@@ -56,11 +54,12 @@ export default class Register extends Component {
         return false;
     }
     const _this=this;
-    Meteor.call('makeSureRegister',username,(err,result)=>{
-           if(err){
-               return toast.toast(err.reason, this);
-           }
-           _this.setState({
+     Meteor.call('makeSureNumber',username,(error,result)=>{
+         if(error){
+            util.alertOk(error.reason || '未知错误');
+            return;
+         }
+         _this.setState({
             sendBtnStatus: 1,
         });
         let countDownNum = _this.state.countDownNum;
@@ -77,17 +76,17 @@ export default class Register extends Component {
                 clearInterval(countDownDate);
             }
         }, 1000);
-        toast.toast(`已给您的 ${username} 手机号发送了一条验证短信`, this);
         Meteor.call('sendRegisterSMS',username,(err,result)=>{
+                console.log(err,result)
                 if(err) {console.log(err,); return; }
+                console.log(result)
                 _this.setState({
                     BizId: result.BizId,
                 });
         });
-    })
-        
+    }) 
 }
-
+hasErrors = fieldsError => Object.keys(fieldsError).some(field => fieldsError[field]);
 
 handleRegister = async (e) => {
     e.preventDefault();
@@ -95,69 +94,49 @@ handleRegister = async (e) => {
         return util.alertOk('请重新接受验证码');
     }
    if (!this.state.number) {
-        return toast.toast('请输入正确的验证码', this);
+        return util.alertOk('请输入验证码');
     }
         const _this = this;
-    const username=this.state.username;
-    const oldname=this.props.navigation.state.params.username;
-    await Meteor.call('queryDetail', username, this.state.BizId, Number(this.state.number),(err,queryResult)=>{
+    await Meteor.call('queryDetail', this.state.username, this.state.BizId, Number(this.state.number),(err,queryResult)=>{
              if(err){
                 return util.alertOk(err);
              }else if (!queryResult) {
-                return toast.toast('请输入正确的验证码', this);
+                return util.alertOk('请输入正确的验证码');
+            console.log(_this.state.text,_this.state.password,_this.state.name)
             }else{
-                console.log(oldname,_this.state.password)
-                Meteor.loginWithPassword(oldname,_this.state.password, (error) => {
+                console.log(_this.state.text,_this.state.password,_this.state.name)
+                Meteor.call('setUserPassword',
+                   {newPassword:_this.state.password,
+                    username:_this.state.username},
+                    (error, result) => {
                     if (error) {
-                        util.alertOk('当前密码错误')
-                    } else {
-                           Meteor.call('changeUserName',
-                                username,
-                            (error, result) => {
-                            if (error) {
-                                console.log(error)
-                                // util.alertOk(error.reason || '未知错误');
-                                return ;
-                            }
-                            toast.toast('修改成功', this);
-                            _navigation.reset(this.props.navigation, 'Login')
-                        });
+                        console.log(error)
+                        util.alertOk(error.reason || '未知错误');
+                        return ;
                     }
+                    util.alertOk('修改成功')
+                    _navigation.reset(this.props.navigation, 'Login')
                 });
-                // Meteor.call('changeUserName',
-                //      username,
-                //     (error, result) => {
-                //     if (error) {
-                //         console.log(error)
-                //         util.alertOk(error.reason || '未知错误');
-                //         return ;
-                //     }
-                //     toast.toast('修改成功', this);
-                //     _navigation.reset(this.props.navigation, 'Login')
-                // });
             }
         });
     };
   render() {
-    const username=this.props.navigation.state.params.username;
+    
     return (
       <View style={styles.container}>
            <View style={styles.wrap}>
                 <Text style={styles.title}>手机号</Text>
                 <TextInput
                     underlineColorAndroid="transparent"
+                    onChangeText={(username) => this.setState({username})}
                     maxLength = {326}
                      multiline = {false}
-                    //  editable={false}
-                    onChangeText={(username) => this.setState({username})}
-                    style={[styles.textinput,{color:'#666666'}]}
+                    placeholder="请输入手机号码"
+                    style={styles.textinput}
                     value={this.state.username}/>
-                    <View style={styles.nownumber}>
-                        <Text>您当前的账号为:</Text>
-                        <Text style={{marginLeft:5,color:'#12C5FF' }}>{username}</Text>
-                    </View>
+                    
            </View>
-           <View style={[styles.wrap,{height:67}]}>
+           <View style={styles.wrap}>
                 <Text style={styles.title}>验证码</Text>
                 <View style={styles.yanzheng}>
                     <TextInput
@@ -195,17 +174,15 @@ handleRegister = async (e) => {
                                      null
                     }
                 </View>
-                {/* {this.state.username?
-                <Text style={styles.detail}>已给您的<Text style={styles.validateword}>{this.state.username}</Text>手机号发送了一条验证短信</Text>:null} */}
            </View>
-           <View style={[styles.wrap,{height:67}]}>
-                <Text style={styles.title}>密码</Text>
+           <View style={styles.wrap}>
+                <Text style={styles.title}>新密码</Text>
                 <TextInput
                     underlineColorAndroid="transparent"
                     onChangeText={(password) => this.setState({password})}
                     maxLength = {326}
                      multiline = {false}
-                    placeholder="请输入当前使用密码"
+                    placeholder="请输入密码"
                     style={styles.textinput}
                     value={this.state.password}/>
                     
@@ -237,7 +214,7 @@ const styles = StyleSheet.create({
       // backgroundColor: '#EBF8FD',
     },
     wrap:{
-      height:92,
+      height:67,
       padding:10,
       backgroundColor:'#fff',
       width:'100%',
@@ -277,15 +254,5 @@ const styles = StyleSheet.create({
       // backgroundColor:'red',
       marginTop:5,
       height:22,
-  },
-  nownumber:{
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems:'center',
-  },
-  detail:{
-    fontSize:14,
-    color: '#777777',
-    letterSpacing: 0.17,
   }
   });

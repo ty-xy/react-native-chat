@@ -98,13 +98,15 @@ export default class Aboutus extends Component {
       alignSelf: 'center',
     },
   }
-  _onPressButton(id){
-      this.props.navigation.navigate(id)
+  _onPressButton(id,username){
+      this.props.navigation.navigate(id,{username})
   }
   _renderFlatlist(item) {
+      const username=this.props.navigation.state.params.username;
+      console.log(username)
       return (
         <TouchableHighlight 
-        onPress={ () => this._onPressButton(item.route) } 
+        onPress={ () => this._onPressButton(item.route,username) } 
         underlayColor='transparent'
         style={{paddingTop:15}}
         >

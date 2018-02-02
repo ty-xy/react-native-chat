@@ -121,7 +121,9 @@ class Login extends Component {
                                <TouchableOpacity onPress={()=>this.props.navigation.navigate('Register')}>
                                 <Text style={styles.register}>新用户注册</Text>
                                 </TouchableOpacity>
+                                <TouchableOpacity onPress={()=>this.props.navigation.navigate('ForgetPassword')}>
                                 <Text style={styles.register}>忘记密码</Text>
+                                </TouchableOpacity>
                             </View>
                             <View style={styles.other}>
                                 <View style={styles.border} />
