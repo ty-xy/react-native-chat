@@ -87,7 +87,7 @@ export default class Card extends PureComponent {
             key={id}
             style={styles.card}
             activeOpacity={1}
-            onPress={this.props._goNewFriends()}
+            onPress={this.props._goNewFriends}
         >
             <View style={styles.avatar}>
                 <Image

@@ -44,7 +44,7 @@ export default class Card extends PureComponent {
                {showType?
         <TouchableOpacity
             style={styles.card}
-            // underlayColor={'rgba(100,100,100,0.2)'}
+            activeOpacity={1}
             onPress={() => {
                 this.props._goChatWindow(from,name,username,avatar,dealResult);
             }}

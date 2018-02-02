@@ -118,9 +118,9 @@ dealNotice = async (noticeId, index, friendId, user) => {
             // await this.props.changeTo(result, result, '', 'message');
             // await this.props.handleToggle(result);
             // await this.handleAddGroup();
-            feedback.dealSuccess('成功创建群聊');
+            // feedback.dealSuccess('成功创建群聊');
         } catch (err) {
-            feedback.dealError(err);
+            // feedback.dealError(err);
         }
     }
 }
