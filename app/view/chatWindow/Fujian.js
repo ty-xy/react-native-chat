@@ -27,10 +27,10 @@ export default class Fujian extends Component {
         this.props.navigation.navigate('Love', { cardCase: true });
     }
     _sendRtc = () => {
-        this.props.navigation.navigate('RTC', { callId: this.props.to, call: true, accept: false });
+        this.props.navigation.navigate('RTC', { groupId: this.props.to, call: true, accept: false });
     }
     render() {
-        // console.log('fujian', this.props)
+        console.log('fujian', this.props)
         return (
             <View style={styles.files}>
                 <View style={styles.row}>
@@ -66,7 +66,7 @@ export default class Fujian extends Component {
                         <Text style={styles.text}>文件</Text>
                     </View>  
                 </View>     
-                <View style={[styles.row, { justifyContent: 'flex-start' }]}>
+                <View style={[styles.row]}>
                     <TouchableHighlight
                         onPress={this._sendRtc}
                         underlayColor="#ffffff"
@@ -74,6 +74,31 @@ export default class Fujian extends Component {
                         <View style={styles.fujian}>
                             <Image resizeMode='contain' source={require('../../image/videoChat.png')} style={{ width: 44, height: 44,  }} />
                             <Text style={styles.text}>视频</Text>
+                        </View>
+                    </TouchableHighlight>
+                    <TouchableHighlight
+                        onPress={this._sendRtc}
+                        underlayColor="#ffffff"
+                    >
+                        <View style={styles.fujian}>
+                            <Image resizeMode='contain' source={require('../../image/Voice.png')} style={{ width: 44, height: 44,  }} />
+                            <Text style={styles.text}>语音</Text>
+                        </View>
+                    </TouchableHighlight>
+                    <TouchableHighlight
+                        underlayColor="#ffffff"
+                    >
+                        <View style={styles.fujian}>
+                            <View style={{ width: 44, height: 44,  }} />
+                            <Text style={styles.text}></Text>
+                        </View>
+                    </TouchableHighlight>
+                    <TouchableHighlight
+                        underlayColor="#ffffff"
+                    >
+                        <View style={styles.fujian}>
+                            <View style={{ width: 44, height: 44,  }} />
+                            <Text style={styles.text}></Text>
                         </View>
                     </TouchableHighlight>
                 </View> 

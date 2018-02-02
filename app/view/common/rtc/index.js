@@ -84,23 +84,36 @@ function getLocalStream(isFront, callback) {
     }, logError);
 }
 
-function join(roomID) {
-    socket.emit('connect', roomID);
-    console.log('join', roomID)
+function join(roomID, groupId) {
+    console.log('---join----', roomID, groupId)
     // 通知对象
-    Meteor.call('callVideo', roomID, (err, res) => {
-        console.log('发送视频消息', err, res)
-        if (res) {
-            socket.emit('join', roomID, function(socketIds, res){
-                console.log('socketIds', socketIds, res);
-                for (const i in socketIds) {
-                    console.log('-------for-in----------')
-                    const socketId = socketIds[i];
-                    createPC(socketId, true);
-                }
-            });
-        }
-    });
+    if (!roomID) {
+        roomID = Math.random().toString(36).substr(2);
+        socket.emit('connect', roomID)
+        Meteor.call('callVideo', roomID, groupId, (err, res) => {
+            console.log('发送视频消息', err, res)
+            if (res) {
+                socket.emit('join', roomID, function(socketIds, res){
+                    console.log('拨打', socketIds, res, roomID);
+                    for (const i in socketIds) {
+                        console.log('-------for-in----------', roomID)
+                        const socketId = socketIds[i];
+                        createPC(socketId, true);
+                    }
+                });
+            }
+        });
+    } else {
+        socket.emit('connect', roomID)
+        socket.emit('join', roomID, function(socketIds, res){
+            console.log('接听', socketIds, res, roomID);
+            for (const i in socketIds) {
+                console.log('-------for-in----------', roomID)
+                const socketId = socketIds[i];
+                createPC(socketId, true);
+            }
+        });
+    }
 }
 
 function createPC(socketId, isOffer) {
@@ -217,10 +230,14 @@ function exchange(data) {
 
 function leave(socketId) {
     const pc = pcPeers[socketId];
-    console.log('leave', pc, pcPeers);
-    // const viewIndex = pc.viewIndex;
-    // console.log(viewIndex)
-    pc.close();
+    console.log('leave', socketId, pc, pcPeers);
+    // if (pc) {
+    //     const viewIndex = pc.viewIndex;
+    //     pc.close();
+    // }
+    if (pc) {
+        pc.close();
+    }
     delete pcPeers[socketId];
 
     const { state } = container.props.navigation;
@@ -298,7 +315,7 @@ class RCTWebRTC extends Component {
     }
     componentDidMount() {
         container = this;
-        socket.connect();
+        // socket.connect();
         socket.on('exchange', function(data){
             exchange(data);
         });
@@ -308,34 +325,31 @@ class RCTWebRTC extends Component {
             
         });
         socket.on('connect', function(data) {
-            console.log('connect', container);
-            getLocalStream(true, function(stream) {
-                localStream = stream;
-                container.setState({selfViewSrc: stream.toURL()});
-                container.setState({status: 'ready', info: 'Please enter or create room ID'});
-            });
+            console.log('------connect--------', data);
+            // getLocalStream(true, function(stream) {
+            //     localStream = stream;
+            //     container.setState({selfViewSrc: stream.toURL()});
+            //     container.setState({status: 'ready', info: 'Please enter or create room ID'});
+            // });
         });
         socket.on('join', function(data) {
             console.log('join', data)
         })
-        // setTimeout(() => {
-        //     this._press();
-        // }, 500);
+
         const { params } = this.props.navigation.state;
-        console.log('componentDidMount==========', params.callId, params.send)
-        if (params.callId && params.call && !params.accept) {
-            this._call();
+        console.log('componentDidMount==========', params)
+        if (!params.callId && params.call && !params.accept) {
+            console.log('-----call-----')
+            this._call(null, params.groupId);
         }
     }
     // componentWillUnmount() {
     //     console.log('componentWillUnmount')
     // }
     
-    _call = () => {
-        // this.roomID.blur();
-        const { params } = this.props.navigation.state;
+    _call = (roomId, groupId) => {
         this.setState({status: 'connect', info: 'Connecting'});
-        join(params.callId);
+        join(roomId, groupId);
         // console.log('_call', this.props)
     }
     _switchVideoType = () => {
@@ -403,12 +417,12 @@ class RCTWebRTC extends Component {
     // 挂断
     _handleHangUp = () => {
         console.log('挂断')
-        const { state } = this.props.navigation;
+        const { params } = this.props.navigation.state;
         const { socketId } = this.state;
-        // this.props.navigation.navigate('ChatWindow', { to: state.params.callId, name: state.params.name, index: 2 });
+        socket.emit('leave');
         leave(socketId.from);
+        Meteor.call('hangUpVideo', params.groupId);
         socket.close();
-        // socket.emit('leave', socketId.from);
     }
     // 静音
     _handleMute = () => {
@@ -422,8 +436,8 @@ class RCTWebRTC extends Component {
     _handleAccept = () => {
         console.log('接听')
         this.setState({ accept: false, chatVideo: true, connected: true });
-        this._call();
-
+        const { params } = this.props.navigation.state;
+        this._call(params.callId, null);
     }
     render() {
         const { isVideo, chatAudio, chatVideo, selfViewSrc, status, remoteList, call, accept, connected } = this.state;
@@ -515,16 +529,20 @@ const styles = StyleSheet.create({
     },
     listVideo: {
         position: 'absolute',
-        height: 400,
-        bottom: 150,
-        width: window.windth,
+        minHeight: 180,
+        bottom: 200,
+        // width: window.windth,
+        left: 0,
+        right: 0,
         flexDirection: 'row',
         justifyContent: 'flex-end',
         backgroundColor: 'red',
     },
     remoteView: {
         width: 160,
-        height: 180,
+        // height: 180,
+        top: 0,
+        bottom: 0,
         position: 'absolute',
         right: 0,
     },

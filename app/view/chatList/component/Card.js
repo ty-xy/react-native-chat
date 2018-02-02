@@ -32,6 +32,12 @@ export default class Card extends PureComponent {
     componentDidMount() {
 
     }
+    _trigon = () => {
+        return (<View style={styles.top}>
+            <View style={styles.blue} />
+            <View style={styles.white} />            
+        </View>);
+    }
     _renderGroup = (avatar, name, lastMessage, time, type, unreadMessage, id, stickTop) => {
         let isTop = false;
         stickTop.forEach((item) => {
@@ -39,6 +45,7 @@ export default class Card extends PureComponent {
                 isTop = true;
             }
         });
+        const defaultImg = require('../../../image/defaultAvatar.png');
         return (
             <TouchableOpacity
                 onPress={this.props._goChatWindow}
@@ -49,11 +56,10 @@ export default class Card extends PureComponent {
                 <View style={styles.avatar}>
                     <Image
                         style={styles.image}
-                        source={avatar ? {uri: avatar} : require('../../../image/toufemail.png')}
+                        source={avatar ? ({ uri: avatar }) : defaultImg}
                     />
                 </View>
                 <View style={styles.chatList}>
-                    {isTop ? <View style={styles.top} /> : null}
                     <View style={styles.chatlistContent}>
                         <View style={styles.chatTitle}>
                             <Text style={styles.chatContent}>{name}</Text>
@@ -70,6 +76,7 @@ export default class Card extends PureComponent {
                             {this.state.tag === 1 && (<Text style={{ fontSize:15, lineHeight:20, color: '#999999' }}>...</Text>)}
                         </View>
                     </View>
+                    {isTop ? this._trigon() : null}
                 </View>
                 {unreadMessage > 0 ? <View style={styles.badge}><Text style={{fontSize: 12, color: '#fff'}}>{unreadMessage}</Text></View> : null}                
             </TouchableOpacity>
@@ -144,7 +151,6 @@ export default class Card extends PureComponent {
                     />
                 </View>
                 <View style={styles.chatList}>
-                    {isTop ? <View style={styles.top} /> : null}
                     <View style={styles.chatlistContent}>
                         <View style={styles.chatTitle}>
                             <Text style={styles.chatContent}>{user.profile.name}</Text>
@@ -161,6 +167,7 @@ export default class Card extends PureComponent {
                             {this.state.tag === 1 && (<Text style={{ fontSize:15, lineHeight:20, color: '#999999' }}>...</Text>)}
                         </View>
                     </View>
+                    {isTop ? this._trigon() : null}
                 </View>
                 {unreadMessage > 0 ? <View style={styles.badge}><Text style={{fontSize: 12, color: '#fff'}}>{unreadMessage}</Text></View> : null}
             </TouchableOpacity>
@@ -181,7 +188,6 @@ export default class Card extends PureComponent {
         return null;
     }
     render() {
-        const { style = {}, lastMessage, _id, name } = this.props;
         return this._renderChatListItem(this.props);
     }
 }
@@ -276,16 +282,28 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.4,
     },
     top: {
-        borderLeftWidth: 8,
-        borderTopWidth: 8,
-        borderColor: 'transparent',
-        borderLeftColor: '#29B6F6',
-        borderRightColor: '#29B6F6',        
-        width: 0,
-        height: 0,
+        width: 18,
+        height: 12,
         position: 'absolute',
-        left: 1,
-        top: 1,
-        transform: [{rotateZ: '90deg'}]
-    }
+        left: 2,
+        top: 2,
+        overflow: 'hidden',
+    },
+    blue: {
+        width: 8,
+        height: 8,
+        backgroundColor: '#29B6F6',
+        position: 'absolute',
+        left: 0,
+        top: 0,
+    },
+    white: {
+        width: 16,
+        height: 16,
+        backgroundColor: '#fff',
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        transform: [{rotateZ: '45deg'}]
+    },
 });
